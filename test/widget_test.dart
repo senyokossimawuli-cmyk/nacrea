@@ -1,30 +1,23 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:nacrea/main.dart';
+import 'package:nacrea/services/erreurs.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test('les erreurs de connexion sont traduites en français', () {
+    expect(
+      messageErreur(AuthException('Invalid login credentials')),
+      'E-mail ou mot de passe incorrect.',
+    );
+    expect(
+      messageErreur(AuthException('User already registered')),
+      'Un compte existe déjà avec cet e-mail. Connectez-vous.',
+    );
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  test('une coupure réseau donne un message clair', () {
+    expect(
+      messageErreur(Exception('SocketException: Failed host lookup')),
+      'Pas de connexion internet. Vérifiez votre réseau puis réessayez.',
+    );
   });
 }
