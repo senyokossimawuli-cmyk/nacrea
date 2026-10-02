@@ -5,7 +5,7 @@ import '../services/erreurs.dart';
 import '../services/membre.dart';
 import '../theme/nacrea_theme.dart';
 import '../widgets/nacrea_logo.dart';
-import 'home_screen.dart';
+import 'shell_screen.dart';
 import 'login_screen.dart';
 import 'onboarding_screen.dart';
 
@@ -86,7 +86,7 @@ class _ChargementMembreState extends State<_ChargementMembre> {
         }
         final membre = snap.data;
         if (membre == null) return OnboardingScreen(quandCree: _recharger);
-        return HomeScreen(membre: membre);
+        return ShellScreen(membre: membre);
       },
     );
   }

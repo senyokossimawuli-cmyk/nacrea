@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../services/erreurs.dart';
+import '../data/produits_repo.dart';
 import '../services/membre.dart';
 import '../theme/nacrea_theme.dart';
-import '../widgets/nacrea_logo.dart';
+import '../utils/format.dart';
 
-/// Accueil après connexion : salutation et liste des boutiques avec leur abonnement.
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.membre});
+/// Page d'accueil : salutation et liste des boutiques avec leur abonnement.
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key, required this.membre, required this.boutiques});
   final Membre membre;
+  final List<Boutique> boutiques;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DashboardPageState extends State<DashboardPage> {
   late Future<List<Map<String, dynamic>>> _boutiques = _chargerBoutiques();
 
   Future<List<Map<String, dynamic>>> _chargerBoutiques() async {
@@ -29,31 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final m = widget.membre;
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 72,
-        titleSpacing: 24,
-        title: const NacreaLogo(taille: 26, avecSlogan: false),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Center(
-              child: Text(m.nom, style: const TextStyle(fontWeight: FontWeight.w600)),
-            ),
-          ),
-          IconButton(
-            tooltip: 'Se déconnecter',
-            icon: const Icon(Icons.logout),
-            onPressed: () => Supabase.instance.client.auth.signOut(),
-          ),
-          const SizedBox(width: 16),
-        ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: NacreaColors.bordure),
-        ),
-      ),
-      body: RefreshIndicator(
+    return RefreshIndicator(
         color: NacreaColors.prune,
         onRefresh: () async {
           setState(() => _boutiques = _chargerBoutiques());
@@ -68,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Bonjour, ${m.nom.split(' ').first}', style: NacreaTheme.titre(size: 40)),
+                    Text('Bonjour, ${m.nom}', style: NacreaTheme.titre(size: 40)),
                     const SizedBox(height: 6),
                     Text(
                       '${m.nomCompte} · ${m.estPatronne ? 'Patronne' : 'Employée'}',
@@ -117,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(width: 14),
                           Expanded(
                             child: Text(
-                              'Bientôt ici : la caisse, les produits et le stock.',
+                              'Bientôt ici : la caisse et les ventes du jour.',
                               style: TextStyle(fontSize: 15),
                             ),
                           ),
@@ -130,7 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 }
@@ -181,9 +158,7 @@ class _CarteBoutique extends StatelessWidget {
 
   static (String, Color, Color) _statut(Map? abo) {
     final fin = DateTime.tryParse(abo?['current_period_end'] as String? ?? '')?.toLocal();
-    final date = fin == null
-        ? ''
-        : ' jusqu\'au ${fin.day.toString().padLeft(2, '0')}/${fin.month.toString().padLeft(2, '0')}/${fin.year}';
+    final date = fin == null ? '' : ' jusqu\'au ${dateCourte(fin)}';
     switch (abo?['status']) {
       case 'trial':
         return ('Essai gratuit$date', NacreaColors.orTexte, const Color(0xFFF7EEDB));

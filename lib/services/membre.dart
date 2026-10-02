@@ -9,6 +9,7 @@ class Membre {
     required this.compteId,
     required this.nomCompte,
     this.boutiqueId,
+    this.peutVoirCouts = false,
   });
 
   final String id;
@@ -17,6 +18,9 @@ class Membre {
   final String compteId;
   final String nomCompte;
   final String? boutiqueId;
+
+  /// Peut voir les prix d'achat et les marges (toujours vrai pour la patronne).
+  final bool peutVoirCouts;
 
   bool get estPatronne => role == 'owner';
 
@@ -29,7 +33,7 @@ class Membre {
 
     final ligne = await client
         .from('members')
-        .select('id, role, display_name, account_id, shop_id, accounts(name)')
+        .select('id, role, display_name, account_id, shop_id, can_see_costs, accounts(name)')
         .eq('user_id', userId)
         .eq('active', true)
         .limit(1)
@@ -44,6 +48,7 @@ class Membre {
       compteId: ligne['account_id'] as String,
       nomCompte: compte is Map ? (compte['name'] as String? ?? '') : '',
       boutiqueId: ligne['shop_id'] as String?,
+      peutVoirCouts: ligne['role'] == 'owner' || ligne['can_see_costs'] == true,
     );
   }
 }
