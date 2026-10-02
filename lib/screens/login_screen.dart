@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _seConnecter() async {
+    if (_chargement) return; // évite un double clic
     if (!_form.currentState!.validate()) return;
     setState(() {
       _chargement = true;

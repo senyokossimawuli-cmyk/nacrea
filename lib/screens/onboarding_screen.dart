@@ -34,6 +34,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _creer() async {
+    if (_chargement) return; // évite un double clic
     if (!_form.currentState!.validate()) return;
     setState(() {
       _chargement = true;
@@ -49,6 +50,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       });
       widget.quandCree();
     } catch (e) {
+      // L'entreprise existe déjà (par exemple après un double clic) : on affiche l'accueil.
+      if (e is PostgrestException && e.message.contains('déjà une entreprise')) {
+        widget.quandCree();
+        return;
+      }
       if (mounted) setState(() => _erreur = messageErreur(e));
     } finally {
       if (mounted) setState(() => _chargement = false);

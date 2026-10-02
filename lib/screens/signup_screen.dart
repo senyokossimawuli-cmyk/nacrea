@@ -31,6 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Future<void> _creerCompte() async {
+    if (_chargement) return; // évite un double clic
     if (!_form.currentState!.validate()) return;
     setState(() {
       _chargement = true;
