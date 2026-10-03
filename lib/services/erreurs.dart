@@ -25,11 +25,20 @@ String messageErreur(Object erreur) {
     if (erreur.message.contains('déjà une entreprise')) {
       return 'Ce compte possède déjà une entreprise.';
     }
+    if (erreur.message.contains('Could not find the function')) {
+      return 'La base de données n\'est pas à jour : un script SUPABASE n\'a pas été exécuté.';
+    }
     return 'Erreur de la base de données : ${erreur.message}';
   }
   final texte = erreur.toString().toLowerCase();
-  if (texte.contains('socket') || texte.contains('failed host lookup') || texte.contains('network')) {
+  if (texte.contains('socket') || texte.contains('failed host lookup') ||
+      texte.contains('network') || texte.contains('clientexception')) {
     return 'Pas de connexion internet. Vérifiez votre réseau puis réessayez.';
+  }
+  // Messages écrits par Nacréa lui-même (Exception('…')) : affichés tels quels.
+  final brut = erreur.toString();
+  if (erreur is Exception && brut.startsWith('Exception: ')) {
+    return brut.substring('Exception: '.length);
   }
   return 'Une erreur est survenue. Réessayez.';
 }

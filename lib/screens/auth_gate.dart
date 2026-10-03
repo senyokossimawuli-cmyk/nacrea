@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../data/base_locale.dart';
 import '../services/erreurs.dart';
 import '../services/membre.dart';
 import '../theme/nacrea_theme.dart';
+import '../widgets/deconnexion.dart';
 import '../widgets/nacrea_logo.dart';
 import 'shell_screen.dart';
 import 'login_screen.dart';
@@ -37,9 +39,18 @@ class _ChargementMembre extends StatefulWidget {
 }
 
 class _ChargementMembreState extends State<_ChargementMembre> {
-  late Future<Membre?> _membre = Membre.charger();
+  late Future<Membre?> _membre = _charger();
 
-  void _recharger() => setState(() => _membre = Membre.charger());
+  /// Attend que les données de l'appareil soient prêtes, puis lit la personne connectée.
+  static Future<Membre?> _charger({bool attendreServeur = false}) async {
+    await attendrePremiereSynchro();
+    return attendreServeur ? Membre.attendre() : Membre.charger();
+  }
+
+  void _recharger() => setState(() => _membre = _charger());
+
+  /// Après la création de l'entreprise : elle arrive du serveur en quelques secondes.
+  void _apresCreation() => setState(() => _membre = _charger(attendreServeur: true));
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +86,7 @@ class _ChargementMembreState extends State<_ChargementMembre> {
                       child: FilledButton(onPressed: _recharger, child: const Text('Réessayer')),
                     ),
                     TextButton(
-                      onPressed: () => Supabase.instance.client.auth.signOut(),
+                      onPressed: () => deconnexion(context),
                       child: const Text('Se déconnecter'),
                     ),
                   ],
@@ -85,7 +96,7 @@ class _ChargementMembreState extends State<_ChargementMembre> {
           );
         }
         final membre = snap.data;
-        if (membre == null) return OnboardingScreen(quandCree: _recharger);
+        if (membre == null) return OnboardingScreen(quandCree: _apresCreation);
         return ShellScreen(membre: membre);
       },
     );

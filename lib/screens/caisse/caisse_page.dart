@@ -25,8 +25,9 @@ class CaissePage extends StatefulWidget {
 
 class _CaissePageState extends State<CaissePage> {
   late final _produitsRepo = ProduitsRepo(compteId: widget.membre.compteId);
-  late final _ventesRepo = VentesRepo(boutique: widget.boutique);
-  late Future<List<Produit>> _produits = _produitsRepo.produitsAvecStock(widget.boutique.id);
+  late final _ventesRepo = VentesRepo(boutique: widget.boutique, compteId: widget.membre.compteId);
+  // Catalogue en direct : le stock affiché suit chaque vente.
+  late final Stream<List<Produit>> _produits = _produitsRepo.surveillerProduits(widget.boutique.id);
 
   final _recherche = TextEditingController();
   final _focusRecherche = FocusNode();
@@ -260,7 +261,6 @@ class _CaissePageState extends State<CaissePage> {
       setState(() {
         _panier.clear();
         _remise = 0;
-        _produits = _produitsRepo.produitsAvecStock(widget.boutique.id);
       });
       await afficherTicket(
         context,
@@ -295,8 +295,8 @@ class _CaissePageState extends State<CaissePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Produit>>(
-      future: _produits,
+    return StreamBuilder<List<Produit>>(
+      stream: _produits,
       builder: (context, snap) {
         if (snap.hasError) {
           return Center(
@@ -304,11 +304,7 @@ class _CaissePageState extends State<CaissePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(messageErreur(snap.error!)),
-                TextButton(
-                  onPressed: () => setState(
-                      () => _produits = _produitsRepo.produitsAvecStock(widget.boutique.id)),
-                  child: const Text('Réessayer'),
-                ),
+
               ],
             ),
           );

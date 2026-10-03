@@ -3,10 +3,13 @@ import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../utils/format.dart';
-
-SupabaseClient get _db => Supabase.instance.client;
+import 'base_locale.dart';
 
 int _entier(Object? v) => v is int ? v : (v is num ? v.toInt() : int.tryParse('$v') ?? 0);
+int? _entierOuNull(Object? v) => v == null ? null : _entier(v);
+
+/// Lit une date venant de la base (texte), ou null.
+DateTime? _date(Object? v) => v == null ? null : DateTime.tryParse('$v')?.toLocal();
 
 class Boutique {
   Boutique({required this.id, required this.nom, this.adresse});
@@ -14,13 +17,18 @@ class Boutique {
   final String nom;
   final String? adresse;
 
+  static Boutique _depuis(Map<String, Object?> l) =>
+      Boutique(id: l['id'] as String, nom: l['name'] as String? ?? '', adresse: l['address'] as String?);
+
   static Future<List<Boutique>> chargerToutes() async {
-    final lignes = await _db.from('shops').select('id, name, address').order('created_at');
-    return [
-      for (final l in lignes)
-        Boutique(id: l['id'] as String, nom: l['name'] as String, adresse: l['address'] as String?),
-    ];
+    final lignes = await db.getAll('SELECT id, name, address FROM shops ORDER BY julianday(created_at)');
+    return [for (final l in lignes) _depuis(l)];
   }
+
+  /// Liste des boutiques, mise à jour automatiquement (ex. nouvelle boutique créée ailleurs).
+  static Stream<List<Boutique>> surveiller() => db
+      .watch('SELECT id, name, address FROM shops ORDER BY julianday(created_at)')
+      .map((lignes) => [for (final l in lignes) _depuis(l)]);
 }
 
 class Categorie {
@@ -79,21 +87,7 @@ class Produit {
   String get nomComplet =>
       (variante == null || variante!.isEmpty) ? nom : '$nom · $variante';
 
-  Map<String, dynamic> versBase(String compteId) => {
-        'account_id': compteId,
-        'name': nom,
-        'brand': _vide(marque),
-        'variant_label': _vide(variante),
-        'barcode': _vide(codeBarres),
-        'photo_url': photoUrl,
-        'purchase_price': prixAchat,
-        'sale_price': prixVente,
-        'wholesale_price': prixGros,
-        'min_stock': stockMin,
-        'category_id': categorieId,
-      };
-
-  static String? _vide(String? s) => (s == null || s.trim().isEmpty) ? null : s.trim();
+  static String? vide(String? s) => (s == null || s.trim().isEmpty) ? null : s.trim();
 }
 
 class Lot {
@@ -105,82 +99,115 @@ class Lot {
   final DateTime recuLe;
 }
 
-/// Toutes les opérations sur les produits et le stock.
+/// Produits avec leur stock dans une boutique (le stock est la somme des lots).
+const _requeteProduits = '''
+SELECT p.id, p.name, p.brand, p.variant_label, p.barcode, p.photo_url, p.purchase_price,
+       p.sale_price, p.wholesale_price, p.min_stock, p.category_id, c.name AS categorie_nom,
+       COALESCE(s.quantite, 0) AS stock, s.prochaine AS prochaine
+  FROM products p
+  LEFT JOIN categories c ON c.id = p.category_id
+  LEFT JOIN (
+        SELECT product_id,
+               SUM(quantity) AS quantite,
+               MIN(CASE WHEN quantity > 0 THEN expiry_date END) AS prochaine
+          FROM stock_lots
+         WHERE shop_id = ?
+         GROUP BY product_id
+       ) s ON s.product_id = p.id
+ WHERE p.account_id = ? AND COALESCE(p.active, 1) IN (1, 'true')
+ ORDER BY p.name COLLATE NOCASE
+''';
+
+Produit _produitDepuis(Map<String, Object?> p) => Produit(
+      id: p['id'] as String,
+      nom: p['name'] as String? ?? '',
+      marque: p['brand'] as String?,
+      variante: p['variant_label'] as String?,
+      codeBarres: p['barcode'] as String?,
+      photoUrl: p['photo_url'] as String?,
+      prixAchat: _entier(p['purchase_price']),
+      prixVente: _entier(p['sale_price']),
+      prixGros: _entierOuNull(p['wholesale_price']),
+      stockMin: _entier(p['min_stock']),
+      categorieId: p['category_id'] as String?,
+      categorieNom: p['categorie_nom'] as String?,
+      stock: _entier(p['stock']),
+      prochainePeremption: _date(p['prochaine']),
+    );
+
+/// Toutes les opérations sur les produits et le stock, sur la base locale.
 class ProduitsRepo {
   ProduitsRepo({required this.compteId});
   final String compteId;
 
   Future<List<Categorie>> categories() async {
-    final lignes = await _db.from('categories').select('id, name').eq('account_id', compteId).order('name');
-    return [for (final l in lignes) Categorie(id: l['id'] as String, nom: l['name'] as String)];
+    final lignes = await db.getAll(
+      'SELECT id, name FROM categories WHERE account_id = ? ORDER BY name COLLATE NOCASE',
+      [compteId],
+    );
+    return [for (final l in lignes) Categorie(id: l['id'] as String, nom: l['name'] as String? ?? '')];
   }
 
   Future<Categorie> creerCategorie(String nom) async {
-    final l = await _db
-        .from('categories')
-        .insert({'account_id': compteId, 'name': nom.trim()})
-        .select('id, name')
-        .single();
-    return Categorie(id: l['id'] as String, nom: l['name'] as String);
+    final id = await nouvelId();
+    await db.execute(
+      'INSERT INTO categories (id, account_id, name, created_at) VALUES (?, ?, ?, ?)',
+      [id, compteId, nom.trim(), maintenantIso()],
+    );
+    return Categorie(id: id, nom: nom.trim());
   }
 
-  /// Produits actifs du compte, avec leur stock dans la boutique donnée.
   Future<List<Produit>> produitsAvecStock(String boutiqueId) async {
-    final produits = await _db
-        .from('products')
-        .select('id, name, brand, variant_label, barcode, photo_url, purchase_price, '
-            'sale_price, wholesale_price, min_stock, category_id, categories(name)')
-        .eq('account_id', compteId)
-        .eq('active', true)
-        .order('name');
-    final lignesStock = await _db
-        .from('product_stock')
-        .select('product_id, quantity, next_expiry')
-        .eq('shop_id', boutiqueId);
-
-    final stocks = <String, Map<String, dynamic>>{
-      for (final s in lignesStock) s['product_id'] as String: s,
-    };
-
-    return [
-      for (final p in produits)
-        Produit(
-          id: p['id'] as String,
-          nom: p['name'] as String,
-          marque: p['brand'] as String?,
-          variante: p['variant_label'] as String?,
-          codeBarres: p['barcode'] as String?,
-          photoUrl: p['photo_url'] as String?,
-          prixAchat: _entier(p['purchase_price']),
-          prixVente: _entier(p['sale_price']),
-          prixGros: p['wholesale_price'] == null ? null : _entier(p['wholesale_price']),
-          stockMin: _entier(p['min_stock']),
-          categorieId: p['category_id'] as String?,
-          categorieNom: (p['categories'] is Map) ? (p['categories']['name'] as String?) : null,
-          stock: _entier(stocks[p['id']]?['quantity']),
-          prochainePeremption: DateTime.tryParse(stocks[p['id']]?['next_expiry'] as String? ?? ''),
-        ),
-    ];
+    final lignes = await db.getAll(_requeteProduits, [boutiqueId, compteId]);
+    return [for (final l in lignes) _produitDepuis(l)];
   }
+
+  /// Produits avec stock, mis à jour automatiquement à chaque vente ou réception.
+  Stream<List<Produit>> surveillerProduits(String boutiqueId) => db
+      .watch(_requeteProduits, parameters: [boutiqueId, compteId])
+      .map((lignes) => [for (final l in lignes) _produitDepuis(l)]);
 
   /// Crée ou met à jour un produit. Renvoie son identifiant.
   Future<String> enregistrer(Produit produit) async {
-    final donnees = produit.versBase(compteId);
+    final valeurs = [
+      Produit.vide(produit.nom) ?? produit.nom,
+      Produit.vide(produit.marque),
+      Produit.vide(produit.variante),
+      Produit.vide(produit.codeBarres),
+      produit.photoUrl,
+      produit.prixAchat,
+      produit.prixVente,
+      produit.prixGros,
+      produit.stockMin,
+      produit.categorieId,
+    ];
     if (produit.id == null) {
-      final l = await _db.from('products').insert(donnees).select('id').single();
-      return l['id'] as String;
+      final id = await nouvelId();
+      await db.execute(
+        'INSERT INTO products (id, account_id, name, brand, variant_label, barcode, photo_url, '
+        'purchase_price, sale_price, wholesale_price, min_stock, category_id, active, created_at) '
+        'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)',
+        [id, compteId, ...valeurs, maintenantIso()],
+      );
+      return id;
     }
-    await _db.from('products').update(donnees).eq('id', produit.id!);
+    await db.execute(
+      'UPDATE products SET name = ?, brand = ?, variant_label = ?, barcode = ?, photo_url = ?, '
+      'purchase_price = ?, sale_price = ?, wholesale_price = ?, min_stock = ?, category_id = ? '
+      'WHERE id = ?',
+      [...valeurs, produit.id],
+    );
     return produit.id!;
   }
 
   /// Retire le produit du catalogue sans effacer son historique de ventes.
   Future<void> archiver(String produitId) async {
-    await _db.from('products').update({'active': false}).eq('id', produitId);
+    await db.execute('UPDATE products SET active = 0 WHERE id = ?', [produitId]);
   }
 
-  /// Envoie une photo et renvoie son adresse publique.
+  /// Envoie une photo (internet nécessaire) et renvoie son adresse publique.
   Future<String> envoyerPhoto(Uint8List octets, String extension) async {
+    final stockage = Supabase.instance.client.storage.from('product-photos');
     final ext = extension.toLowerCase().replaceAll('.', '');
     final chemin = '$compteId/${DateTime.now().millisecondsSinceEpoch}.$ext';
     final type = switch (ext) {
@@ -188,12 +215,11 @@ class ProduitsRepo {
       'webp' => 'image/webp',
       _ => 'image/jpeg',
     };
-    await _db.storage
-        .from('product-photos')
-        .uploadBinary(chemin, octets, fileOptions: FileOptions(contentType: type, upsert: true));
-    return _db.storage.from('product-photos').getPublicUrl(chemin);
+    await stockage.uploadBinary(chemin, octets, fileOptions: FileOptions(contentType: type, upsert: true));
+    return stockage.getPublicUrl(chemin);
   }
 
+  /// Nouveau lot en stock : visible tout de suite, envoyé au serveur dès que possible.
   Future<void> entreeStock({
     required String boutiqueId,
     required String produitId,
@@ -202,25 +228,39 @@ class ProduitsRepo {
     DateTime? peremption,
     String? motif,
   }) async {
-    await _db.rpc('receive_stock', params: {
-      'p_shop_id': boutiqueId,
-      'p_product_id': produitId,
-      'p_quantity': quantite,
-      'p_cost_price': prixAchat,
-      'p_expiry': peremption == null ? null : dateBase(peremption),
-      'p_reason': (motif == null || motif.trim().isEmpty) ? null : motif.trim(),
+    if (quantite <= 0) throw Exception('La quantité doit être supérieure à zéro');
+    final lotId = await nouvelId();
+    final quand = maintenantIso();
+    final date = peremption == null ? null : dateBase(peremption);
+    final note = (motif == null || motif.trim().isEmpty) ? null : motif.trim();
+
+    await db.writeTransaction((tx) async {
+      await tx.execute(
+        'INSERT INTO stock_lots (id, shop_id, account_id, product_id, quantity, cost_price, expiry_date, received_at) '
+        'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [lotId, boutiqueId, compteId, produitId, quantite, prixAchat, date, quand],
+      );
+      await ajouterOperation(tx, 'entree_stock', {
+        'p_shop_id': boutiqueId,
+        'p_product_id': produitId,
+        'p_quantity': quantite,
+        'p_cost_price': prixAchat,
+        'p_expiry': date,
+        'p_reason': note,
+        'p_lot_id': lotId,
+        'p_received_at': quand,
+      });
     });
   }
 
   /// Lots encore en stock, du plus proche de la péremption au plus lointain.
   Future<List<Lot>> lots(String boutiqueId, String produitId) async {
-    final lignes = await _db
-        .from('stock_lots')
-        .select('id, quantity, cost_price, expiry_date, received_at')
-        .eq('shop_id', boutiqueId)
-        .eq('product_id', produitId)
-        .gt('quantity', 0)
-        .order('expiry_date', ascending: true, nullsFirst: false);
+    final lignes = await db.getAll(
+      'SELECT id, quantity, cost_price, expiry_date, received_at FROM stock_lots '
+      'WHERE shop_id = ? AND product_id = ? AND quantity > 0 '
+      'ORDER BY expiry_date IS NULL, expiry_date, julianday(received_at)',
+      [boutiqueId, produitId],
+    );
     return [
       for (final l in lignes)
         Lot(
@@ -228,7 +268,7 @@ class ProduitsRepo {
           quantite: _entier(l['quantity']),
           prixAchat: _entier(l['cost_price']),
           peremption: DateTime.tryParse(l['expiry_date'] as String? ?? ''),
-          recuLe: DateTime.parse(l['received_at'] as String).toLocal(),
+          recuLe: _date(l['received_at']) ?? DateTime.now(),
         ),
     ];
   }

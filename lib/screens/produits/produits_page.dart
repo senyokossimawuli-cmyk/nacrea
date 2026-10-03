@@ -50,7 +50,8 @@ class ProduitsPage extends StatefulWidget {
 
 class _ProduitsPageState extends State<ProduitsPage> {
   late final _repo = ProduitsRepo(compteId: widget.membre.compteId);
-  late Future<List<Produit>> _produits = _repo.produitsAvecStock(widget.boutique.id);
+  // Liste en direct : se met à jour seule après une vente, une réception ou une synchronisation.
+  late Stream<List<Produit>> _produits = _repo.surveillerProduits(widget.boutique.id);
   final _recherche = TextEditingController();
   _Filtre _filtre = _Filtre.tous;
   String? _categorie;
@@ -61,7 +62,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
     super.dispose();
   }
 
-  void _recharger() => setState(() => _produits = _repo.produitsAvecStock(widget.boutique.id));
+  void _recharger() => setState(() => _produits = _repo.surveillerProduits(widget.boutique.id));
 
   Future<void> _ouvrirFormulaire([Produit? produit]) async {
     final change = await Navigator.of(context).push<bool>(
@@ -119,10 +120,10 @@ class _ProduitsPageState extends State<ProduitsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Produit>>(
-      future: _produits,
+    return StreamBuilder<List<Produit>>(
+      stream: _produits,
       builder: (context, snap) {
-        if (snap.connectionState != ConnectionState.done) {
+        if (!snap.hasData && !snap.hasError) {
           return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
         }
         if (snap.hasError) {
@@ -231,7 +232,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
                       color: NacreaColors.prune,
                       onRefresh: () async {
                         _recharger();
-                        await _produits;
+                        await Future<void>.delayed(const Duration(milliseconds: 300));
                       },
                       child: ListView.separated(
                         padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),

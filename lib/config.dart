@@ -6,4 +6,7 @@ class NacreaConfig {
   static const supabaseUrl = 'https://hzbczjfsqqwwpaazfysz.supabase.co';
   static const supabasePublishableKey =
       'sb_publishable_U7Qbem4nKosVVNn3-4r-ig_ZT7D_4BQ';
+
+  /// Adresse de l'instance PowerSync (synchronisation hors ligne).
+  static const powersyncUrl = 'A_REMPLIR';
 }

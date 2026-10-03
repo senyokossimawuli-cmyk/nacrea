@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'config.dart';
+import 'data/base_locale.dart';
 import 'screens/auth_gate.dart';
 import 'theme/nacrea_theme.dart';
 
@@ -12,6 +13,7 @@ Future<void> main() async {
     url: NacreaConfig.supabaseUrl,
     anonKey: NacreaConfig.supabasePublishableKey,
   );
+  await ouvrirBaseLocale();
   runApp(const NacreaApp());
 }
 

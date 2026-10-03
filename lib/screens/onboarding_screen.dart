@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../services/erreurs.dart';
 import '../widgets/auth_layout.dart';
+import '../widgets/deconnexion.dart';
 
 /// Première connexion d'une patronne : elle crée son entreprise et sa première boutique.
 class OnboardingScreen extends StatefulWidget {
@@ -134,7 +135,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 16),
             TextButton(
-              onPressed: () => Supabase.instance.client.auth.signOut(),
+              onPressed: () => deconnexion(context),
               child: const Text('Se déconnecter'),
             ),
           ],

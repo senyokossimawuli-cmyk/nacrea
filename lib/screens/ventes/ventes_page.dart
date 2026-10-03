@@ -19,9 +19,10 @@ class VentesPage extends StatefulWidget {
 }
 
 class _VentesPageState extends State<VentesPage> {
-  late final _repo = VentesRepo(boutique: widget.boutique);
+  late final _repo = VentesRepo(boutique: widget.boutique, compteId: widget.membre.compteId);
   DateTime _jour = DateTime.now();
-  late Future<List<Vente>> _ventes = _repo.ventesDuJour(jour: _jour);
+  // En direct : une vente faite à la caisse (ou dans une autre boutique) apparaît seule.
+  late Stream<List<Vente>> _ventes = _repo.surveillerVentes(_jour);
 
   bool get _aujourdhui {
     final n = DateTime.now();
@@ -31,11 +32,11 @@ class _VentesPageState extends State<VentesPage> {
   void _changerJour(int delta) {
     setState(() {
       _jour = _jour.add(Duration(days: delta));
-      _ventes = _repo.ventesDuJour(jour: _jour);
+      _ventes = _repo.surveillerVentes(_jour);
     });
   }
 
-  void _recharger() => setState(() => _ventes = _repo.ventesDuJour(jour: _jour));
+  void _recharger() => setState(() => _ventes = _repo.surveillerVentes(_jour));
 
   Future<void> _ouvrir(Vente v) async {
     final ticket = Ticket(
@@ -118,10 +119,10 @@ class _VentesPageState extends State<VentesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Vente>>(
-      future: _ventes,
+    return StreamBuilder<List<Vente>>(
+      stream: _ventes,
       builder: (context, snap) {
-        final chargement = snap.connectionState != ConnectionState.done;
+        final chargement = !snap.hasData && !snap.hasError;
         final ventes = snap.data ?? const <Vente>[];
         final valides = ventes.where((v) => !v.annulee).toList();
         final ca = valides.fold(0, (s, v) => s + v.total);
@@ -136,7 +137,7 @@ class _VentesPageState extends State<VentesPage> {
           color: NacreaColors.prune,
           onRefresh: () async {
             _recharger();
-            await _ventes;
+            await Future<void>.delayed(const Duration(milliseconds: 300));
           },
           child: ListView(
             padding: const EdgeInsets.all(24),

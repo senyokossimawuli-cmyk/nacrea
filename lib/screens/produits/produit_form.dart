@@ -146,8 +146,14 @@ class _ProduitFormState extends State<ProduitForm> {
     });
     try {
       var photo = _photoUrl;
+      var photoNonEnvoyee = false;
       if (_nouvellePhoto != null) {
-        photo = await widget.repo.envoyerPhoto(_nouvellePhoto!, _extensionPhoto);
+        try {
+          photo = await widget.repo.envoyerPhoto(_nouvellePhoto!, _extensionPhoto);
+        } catch (_) {
+          // Sans internet, la photo ne peut pas partir : le produit est enregistré quand même.
+          photoNonEnvoyee = true;
+        }
       }
       final prixAchat = int.tryParse(_prixAchat.text) ?? _p?.prixAchat ?? 0;
       final id = await widget.repo.enregistrer(Produit(
@@ -175,7 +181,15 @@ class _ProduitFormState extends State<ProduitForm> {
           motif: 'Stock initial',
         );
       }
-      if (mounted) Navigator.of(context).pop(true);
+      if (!mounted) return;
+      if (photoNonEnvoyee) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Produit enregistré sans la photo (pas de connexion). '
+              'Rouvrez le produit plus tard pour l\'ajouter.'),
+          duration: Duration(seconds: 5),
+        ));
+      }
+      Navigator.of(context).pop(true);
     } catch (e) {
       if (mounted) setState(() => _erreur = messageErreur(e));
     } finally {

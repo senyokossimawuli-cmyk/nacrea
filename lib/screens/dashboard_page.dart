@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../services/erreurs.dart';
+import '../data/base_locale.dart';
 import '../data/produits_repo.dart';
 import '../services/membre.dart';
 import '../theme/nacrea_theme.dart';
@@ -20,12 +20,23 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   late Future<List<Map<String, dynamic>>> _boutiques = _chargerBoutiques();
 
+  /// Boutiques et abonnements, lus sur l'appareil (fonctionne hors ligne).
   Future<List<Map<String, dynamic>>> _chargerBoutiques() async {
-    final lignes = await Supabase.instance.client
-        .from('shops')
-        .select('id, name, address, subscriptions(status, current_period_end)')
-        .order('created_at');
-    return List<Map<String, dynamic>>.from(lignes);
+    final lignes = await db.getAll(
+      'SELECT s.id, s.name, s.address, a.status, a.current_period_end '
+      'FROM shops s LEFT JOIN subscriptions a ON a.shop_id = s.id '
+      'ORDER BY julianday(s.created_at)',
+    );
+    return [
+      for (final l in lignes)
+        {
+          'id': l['id'],
+          'name': l['name'],
+          'address': l['address'],
+          if (l['status'] != null)
+            'subscriptions': {'status': l['status'], 'current_period_end': l['current_period_end']},
+        },
+    ];
   }
 
   @override
@@ -77,7 +88,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         return Wrap(
                           spacing: 16,
                           runSpacing: 16,
-                          children: [for (final b in boutiques) _CarteBoutique(boutique: b)],
+                          children: [
+                            for (final b in boutiques)
+                              _CarteBoutique(boutique: b, avecAbonnement: m.estPatronne),
+                          ],
                         );
                       },
                     ),
@@ -113,8 +127,9 @@ class _DashboardPageState extends State<DashboardPage> {
 }
 
 class _CarteBoutique extends StatelessWidget {
-  const _CarteBoutique({required this.boutique});
+  const _CarteBoutique({required this.boutique, this.avecAbonnement = true});
   final Map<String, dynamic> boutique;
+  final bool avecAbonnement;
 
   @override
   Widget build(BuildContext context) {
@@ -142,13 +157,15 @@ class _CarteBoutique extends StatelessWidget {
                 Text(boutique['address'] as String,
                     style: const TextStyle(color: NacreaColors.gris)),
               ],
-              const SizedBox(height: 14),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(color: fond, borderRadius: BorderRadius.circular(8)),
-                child: Text(texte,
-                    style: TextStyle(color: couleur, fontSize: 13, fontWeight: FontWeight.w600)),
-              ),
+              if (avecAbonnement) ...[
+                const SizedBox(height: 14),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(color: fond, borderRadius: BorderRadius.circular(8)),
+                  child: Text(texte,
+                      style: TextStyle(color: couleur, fontSize: 13, fontWeight: FontWeight.w600)),
+                ),
+              ],
             ],
           ),
         ),

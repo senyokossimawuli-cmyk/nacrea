@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/produits_repo.dart';
 import '../services/erreurs.dart';
 import '../services/membre.dart';
 import '../theme/nacrea_theme.dart';
+import '../widgets/deconnexion.dart';
+import '../widgets/etat_synchro.dart';
 import '../widgets/nacrea_logo.dart';
 import 'caisse/caisse_page.dart';
 import 'dashboard_page.dart';
@@ -22,7 +23,7 @@ class ShellScreen extends StatefulWidget {
 }
 
 class _ShellScreenState extends State<ShellScreen> {
-  late Future<List<Boutique>> _chargement = Boutique.chargerToutes();
+  final Stream<List<Boutique>> _boutiques = Boutique.surveiller();
   Boutique? _boutique;
   // Une employée arrive directement sur la caisse.
   late int _page = widget.membre.estPatronne ? 0 : 1;
@@ -36,10 +37,10 @@ class _ShellScreenState extends State<ShellScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Boutique>>(
-      future: _chargement,
+    return StreamBuilder<List<Boutique>>(
+      stream: _boutiques,
       builder: (context, snap) {
-        if (snap.connectionState != ConnectionState.done) {
+        if (!snap.hasData && !snap.hasError) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
           );
@@ -53,8 +54,8 @@ class _ShellScreenState extends State<ShellScreen> {
                   Text(snap.hasError ? messageErreur(snap.error!) : 'Aucune boutique trouvée.'),
                   const SizedBox(height: 16),
                   TextButton(
-                    onPressed: () => setState(() => _chargement = Boutique.chargerToutes()),
-                    child: const Text('Réessayer'),
+                    onPressed: () => deconnexion(context),
+                    child: const Text('Se déconnecter'),
                   ),
                 ],
               ),
@@ -86,6 +87,10 @@ class _ShellScreenState extends State<ShellScreen> {
       titleSpacing: 24,
       title: const NacreaLogo(taille: 26, avecSlogan: false),
       actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: Center(child: EtatSynchro(compact: !large)),
+        ),
         if (boutiques.length > 1)
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -121,7 +126,7 @@ class _ShellScreenState extends State<ShellScreen> {
         IconButton(
           tooltip: 'Se déconnecter',
           icon: const Icon(Icons.logout),
-          onPressed: () => Supabase.instance.client.auth.signOut(),
+          onPressed: () => deconnexion(context),
         ),
         const SizedBox(width: 16),
       ],
