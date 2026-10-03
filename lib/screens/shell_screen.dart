@@ -6,8 +6,10 @@ import '../services/erreurs.dart';
 import '../services/membre.dart';
 import '../theme/nacrea_theme.dart';
 import '../widgets/nacrea_logo.dart';
+import 'caisse/caisse_page.dart';
 import 'dashboard_page.dart';
 import 'produits/produits_page.dart';
+import 'ventes/ventes_page.dart';
 
 /// Cadre principal après connexion : menu (à gauche sur PC, en bas sur téléphone),
 /// choix de la boutique et page affichée.
@@ -22,11 +24,14 @@ class ShellScreen extends StatefulWidget {
 class _ShellScreenState extends State<ShellScreen> {
   late Future<List<Boutique>> _chargement = Boutique.chargerToutes();
   Boutique? _boutique;
-  int _page = 0;
+  // Une employée arrive directement sur la caisse.
+  late int _page = widget.membre.estPatronne ? 0 : 1;
 
   static const _menu = [
     (icone: Icons.space_dashboard_outlined, iconeActive: Icons.space_dashboard, titre: 'Accueil'),
+    (icone: Icons.point_of_sale_outlined, iconeActive: Icons.point_of_sale, titre: 'Caisse'),
     (icone: Icons.inventory_2_outlined, iconeActive: Icons.inventory_2, titre: 'Produits'),
+    (icone: Icons.receipt_long_outlined, iconeActive: Icons.receipt_long, titre: 'Ventes'),
   ];
 
   @override
@@ -69,7 +74,9 @@ class _ShellScreenState extends State<ShellScreen> {
   Widget _construire(BuildContext context, List<Boutique> boutiques, Boutique boutique) {
     final m = widget.membre;
     final page = switch (_page) {
-      1 => ProduitsPage(key: ValueKey('produits-${boutique.id}'), membre: m, boutique: boutique),
+      1 => CaissePage(key: ValueKey('caisse-${boutique.id}'), membre: m, boutique: boutique),
+      2 => ProduitsPage(key: ValueKey('produits-${boutique.id}'), membre: m, boutique: boutique),
+      3 => VentesPage(key: ValueKey('ventes-${boutique.id}'), membre: m, boutique: boutique),
       _ => DashboardPage(membre: m, boutiques: boutiques),
     };
     final large = MediaQuery.sizeOf(context).width >= 900;

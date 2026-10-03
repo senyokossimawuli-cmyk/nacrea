@@ -95,7 +95,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           SizedBox(width: 14),
                           Expanded(
                             child: Text(
-                              'Bientôt ici : la caisse et les ventes du jour.',
+                              'Bientôt ici : les chiffres du jour et les alertes de toutes vos boutiques.',
                               style: TextStyle(fontSize: 15),
                             ),
                           ),
