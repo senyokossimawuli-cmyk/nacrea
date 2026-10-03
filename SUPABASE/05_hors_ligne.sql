@@ -8,7 +8,7 @@
 -- =====================================================================
 
 -- ---------- 1. Accès en lecture pour PowerSync ----------
-create role powersync_role with replication bypassrls login password '7979Roland.';
+create role powersync_role with replication bypassrls login password 'REMPLACEZ_PAR_UN_MOT_DE_PASSE';
 grant select on all tables in schema public to powersync_role;
 alter default privileges in schema public grant select on tables to powersync_role;
 
