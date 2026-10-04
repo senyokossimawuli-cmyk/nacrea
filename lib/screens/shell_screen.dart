@@ -10,6 +10,8 @@ import '../widgets/nacrea_logo.dart';
 import 'caisse/session_caisse.dart';
 import 'clientes/clientes_page.dart';
 import 'dashboard_page.dart';
+import 'depenses/depenses_page.dart';
+import 'rapports/rapports_page.dart';
 import 'equipe/equipe_page.dart';
 import 'produits/produits_page.dart';
 import 'ventes/ventes_page.dart';
@@ -40,12 +42,43 @@ class _ShellScreenState extends State<ShellScreen> {
       (cle: 'ventes', icone: Icons.receipt_long_outlined, iconeActive: Icons.receipt_long, titre: 'Ventes');
   static const _clientes =
       (cle: 'clientes', icone: Icons.favorite_border, iconeActive: Icons.favorite, titre: 'Clientes');
+  static const _depenses =
+      (cle: 'depenses', icone: Icons.account_balance_wallet_outlined, iconeActive: Icons.account_balance_wallet, titre: 'Dépenses');
+  static const _rapports =
+      (cle: 'rapports', icone: Icons.insights_outlined, iconeActive: Icons.insights, titre: 'Rapports');
   static const _equipe =
       (cle: 'equipe', icone: Icons.groups_outlined, iconeActive: Icons.groups, titre: 'Équipe');
 
   late final _menu = widget.membre.estPatronne
-      ? const [_accueil, _caisse, _produits, _ventes, _clientes, _equipe]
-      : const [_caisse, _produits, _ventes, _clientes];
+      ? const [_accueil, _caisse, _produits, _ventes, _clientes, _depenses, _rapports, _equipe]
+      : const [_caisse, _produits, _ventes, _clientes, _depenses];
+
+  /// Sur téléphone, au-delà de 5 entrées : les 4 premières + « Plus ».
+  static const _nbVisiblesTelephone = 4;
+
+  Future<void> _menuPlus() async {
+    final choix = await showModalBottomSheet<int>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = _nbVisiblesTelephone; i < _menu.length; i++)
+              ListTile(
+                leading: Icon(i == _page ? _menu[i].iconeActive : _menu[i].icone, color: NacreaColors.prune),
+                title: Text(_menu[i].titre,
+                    style: TextStyle(fontWeight: i == _page ? FontWeight.w700 : FontWeight.w500)),
+                selected: i == _page,
+                onTap: () => Navigator.pop(ctx, i),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (choix != null) setState(() => _page = choix);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +125,10 @@ class _ShellScreenState extends State<ShellScreen> {
       'produits' => ProduitsPage(key: ValueKey('produits-${boutique.id}'), membre: m, boutique: boutique),
       'ventes' => VentesPage(key: ValueKey('ventes-${boutique.id}'), membre: m, boutique: boutique),
       'clientes' => ClientesPage(key: ValueKey('clientes-${boutique.id}'), membre: m, boutique: boutique),
+      'depenses' => DepensesPage(
+          key: ValueKey('depenses-${boutique.id}'), membre: m, boutique: boutique, boutiques: boutiques),
+      'rapports' => RapportsPage(
+          key: ValueKey('rapports-${boutique.id}'), membre: m, boutique: boutique, boutiques: boutiques),
       'equipe' => EquipePage(membre: m, boutiques: boutiques),
       _ => DashboardPage(membre: m, boutiques: boutiques),
     };
@@ -169,25 +206,38 @@ class _ShellScreenState extends State<ShellScreen> {
         appBar: barre,
         body: Row(
           children: [
-            NavigationRail(
-              backgroundColor: Colors.white,
-              selectedIndex: _page,
-              onDestinationSelected: (i) => setState(() => _page = i),
-              labelType: NavigationRailLabelType.all,
-              indicatorColor: NacreaColors.nude,
-              selectedIconTheme: const IconThemeData(color: NacreaColors.prune),
-              selectedLabelTextStyle: const TextStyle(
-                color: NacreaColors.prune,
-                fontWeight: FontWeight.w600,
-              ),
-              destinations: [
-                for (final d in _menu)
-                  NavigationRailDestination(
-                    icon: Icon(d.icone),
-                    selectedIcon: Icon(d.iconeActive),
-                    label: Text(d.titre),
+            // Menu défilant si l'écran est trop bas pour toutes les entrées.
+            LayoutBuilder(
+              builder: (context, c) => Container(
+                color: Colors.white,
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: c.maxHeight),
+                    child: IntrinsicHeight(
+                      child: NavigationRail(
+                        backgroundColor: Colors.white,
+                        selectedIndex: _page,
+                        onDestinationSelected: (i) => setState(() => _page = i),
+                        labelType: NavigationRailLabelType.all,
+                        indicatorColor: NacreaColors.nude,
+                        selectedIconTheme: const IconThemeData(color: NacreaColors.prune),
+                        selectedLabelTextStyle: const TextStyle(
+                          color: NacreaColors.prune,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        destinations: [
+                          for (final d in _menu)
+                            NavigationRailDestination(
+                              icon: Icon(d.icone),
+                              selectedIcon: Icon(d.iconeActive),
+                              label: Text(d.titre),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
-              ],
+                ),
+              ),
             ),
             const VerticalDivider(width: 1, color: NacreaColors.bordure),
             Expanded(child: page),
@@ -199,24 +249,37 @@ class _ShellScreenState extends State<ShellScreen> {
     return Scaffold(
       appBar: barre,
       body: page,
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: Colors.white,
-        indicatorColor: NacreaColors.nude,
-        selectedIndex: _page,
-        onDestinationSelected: (i) => setState(() => _page = i),
-        // 6 entrées sur un téléphone : on n'affiche que le nom de la page choisie.
-        labelBehavior: _menu.length > 5
-            ? NavigationDestinationLabelBehavior.onlyShowSelected
-            : NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: [
-          for (final d in _menu)
-            NavigationDestination(
-              icon: Icon(d.icone),
-              selectedIcon: Icon(d.iconeActive, color: NacreaColors.prune),
-              label: d.titre,
-            ),
-        ],
-      ),
+      bottomNavigationBar: Builder(builder: (context) {
+        final avecPlus = _menu.length > 5;
+        final visibles = avecPlus ? _menu.take(_nbVisiblesTelephone).toList() : _menu;
+        final dansPlus = avecPlus && _page >= _nbVisiblesTelephone;
+        return NavigationBar(
+          backgroundColor: Colors.white,
+          indicatorColor: NacreaColors.nude,
+          selectedIndex: dansPlus ? _nbVisiblesTelephone : _page,
+          onDestinationSelected: (i) {
+            if (avecPlus && i == _nbVisiblesTelephone) {
+              _menuPlus();
+            } else {
+              setState(() => _page = i);
+            }
+          },
+          destinations: [
+            for (final d in visibles)
+              NavigationDestination(
+                icon: Icon(d.icone),
+                selectedIcon: Icon(d.iconeActive, color: NacreaColors.prune),
+                label: d.titre,
+              ),
+            if (avecPlus)
+              NavigationDestination(
+                icon: const Icon(Icons.more_horiz),
+                selectedIcon: const Icon(Icons.more_horiz, color: NacreaColors.prune),
+                label: dansPlus ? _menu[_page].titre : 'Plus',
+              ),
+          ],
+        );
+      }),
     );
   }
 }

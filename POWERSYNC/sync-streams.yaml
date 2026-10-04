@@ -24,6 +24,8 @@ streams:
       - SELECT * FROM customer_payments WHERE account_id IN mes_comptes
       - SELECT * FROM sales WHERE account_id IN mes_comptes AND customer_id IS NOT NULL
       - SELECT * FROM payments WHERE account_id IN mes_comptes AND method = 'credit'
+      # Fournisseurs : communs à toutes les boutiques
+      - SELECT * FROM suppliers WHERE account_id IN mes_comptes
 
   boutiques_patronne:
     auto_subscribe: true
@@ -38,6 +40,7 @@ streams:
       - SELECT * FROM payments WHERE account_id IN comptes_patronne
       - SELECT * FROM cash_sessions WHERE account_id IN comptes_patronne
       - SELECT * FROM cash_movements WHERE account_id IN comptes_patronne
+      - SELECT * FROM expenses WHERE account_id IN comptes_patronne
 
   boutique_employee:
     auto_subscribe: true
@@ -51,3 +54,4 @@ streams:
       - SELECT * FROM payments WHERE shop_id IN boutiques_employee
       - SELECT * FROM cash_sessions WHERE shop_id IN boutiques_employee
       - SELECT * FROM cash_movements WHERE shop_id IN boutiques_employee
+      - SELECT * FROM expenses WHERE shop_id IN boutiques_employee

@@ -56,13 +56,15 @@ class ResumeCaisse {
     this.remboursementsEspeces = 0,
     required this.entrees,
     required this.sorties,
+    this.depenses = 0,
   });
   final int fond;
   final int ventesEspeces;
   final int remboursementsEspeces; // dettes payées en espèces par les clientes
   final int entrees;
   final int sorties;
-  int get attendu => fond + ventesEspeces + remboursementsEspeces + entrees - sorties;
+  final int depenses; // dépenses payées avec l'argent de la caisse
+  int get attendu => fond + ventesEspeces + remboursementsEspeces + entrees - sorties - depenses;
 }
 
 class MouvementCaisse {
@@ -181,8 +183,15 @@ class CaisseRepo {
       'FROM cash_movements WHERE session_id = ?',
       [s.id],
     );
+    final dep = await db.get(
+      'SELECT COALESCE(SUM(amount), 0) AS total FROM expenses '
+      'WHERE shop_id = ? AND from_till = 1 '
+      'AND julianday(created_at) >= julianday(?) AND julianday(created_at) <= julianday(?)',
+      [boutiqueId, s.ouverteLe.toUtc().toIso8601String(), fin],
+    );
     return ResumeCaisse(
       fond: s.fond,
+      depenses: _entier(dep['total']),
       ventesEspeces: _entier(ventes['total']),
       remboursementsEspeces: _entier(remb['total']),
       entrees: _entier(mvts['entrees']),

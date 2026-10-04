@@ -81,6 +81,7 @@ const schemaLocal = Schema([
     Column.integer('cost_price'),
     Column.text('expiry_date'),
     Column.text('received_at'),
+    Column.text('supplier_id'),
   ], indexes: [
     Index('boutique_produit', [IndexedColumn('shop_id'), IndexedColumn('product_id')]),
   ]),
@@ -172,6 +173,30 @@ const schemaLocal = Schema([
     Index('cliente', [IndexedColumn('customer_id')]),
   ]),
 
+  Table('suppliers', [
+    Column.text('account_id'),
+    Column.text('name'),
+    Column.text('phone'),
+    Column.text('note'),
+    Column.integer('active'),
+    Column.text('created_at'),
+  ]),
+  Table('expenses', [
+    Column.text('account_id'),
+    Column.text('shop_id'),
+    Column.text('category'),
+    Column.text('label'),
+    Column.integer('amount'),
+    Column.text('method'),
+    Column.integer('from_till'),
+    Column.text('supplier_id'),
+    Column.text('spent_on'),
+    Column.text('user_id'),
+    Column.text('created_at'),
+  ], indexes: [
+    Index('boutique_date', [IndexedColumn('shop_id'), IndexedColumn('spent_on')]),
+  ]),
+
   /// Opérations à rejouer sur le serveur (vente, entrée de stock) : envoyées puis effacées.
   Table.insertOnly('operations', [
     Column.text('type'),
@@ -193,7 +218,7 @@ const schemaLocal = Schema([
 const _tablesViaOperations = {'stock_lots', 'sales', 'sale_items', 'payments'};
 
 /// Colonnes oui/non : SQLite les stocke en 0/1, Supabase attend true/false.
-const _colonnesOuiNon = {'active', 'can_see_costs'};
+const _colonnesOuiNon = {'active', 'can_see_costs', 'from_till'};
 
 /// Erreurs définitives : renvoyer la même donnée ne servira à rien.
 final _erreursDefinitives = [

@@ -432,6 +432,8 @@ class _ClotureDialogState extends State<_ClotureDialog> {
                   ligne('Ventes en espèces', '+ ${fcfa(r.ventesEspeces)}'),
                   if (r.remboursementsEspeces > 0)
                     ligne('Dettes payées en espèces', '+ ${fcfa(r.remboursementsEspeces)}'),
+                  if (r.depenses > 0)
+                    ligne('Dépenses payées avec la caisse', '- ${fcfa(r.depenses)}'),
                   if (r.entrees > 0) ligne('Entrées d\'argent', '+ ${fcfa(r.entrees)}'),
                   if (r.sorties > 0) ligne('Sorties d\'argent', '- ${fcfa(r.sorties)}'),
                   const Divider(color: NacreaColors.bordure),

@@ -246,6 +246,7 @@ class ProduitsRepo {
     required int prixAchat,
     DateTime? peremption,
     String? motif,
+    String? fournisseurId,
   }) async {
     if (quantite <= 0) throw Exception('La quantité doit être supérieure à zéro');
     final lotId = await nouvelId();
@@ -255,9 +256,9 @@ class ProduitsRepo {
 
     await db.writeTransaction((tx) async {
       await tx.execute(
-        'INSERT INTO stock_lots (id, shop_id, account_id, product_id, quantity, cost_price, expiry_date, received_at) '
-        'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [lotId, boutiqueId, compteId, produitId, quantite, prixAchat, date, quand],
+        'INSERT INTO stock_lots (id, shop_id, account_id, product_id, quantity, cost_price, expiry_date, received_at, supplier_id) '
+        'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [lotId, boutiqueId, compteId, produitId, quantite, prixAchat, date, quand, fournisseurId],
       );
       await ajouterOperation(tx, 'entree_stock', {
         'p_shop_id': boutiqueId,
@@ -268,6 +269,7 @@ class ProduitsRepo {
         'p_reason': note,
         'p_lot_id': lotId,
         'p_received_at': quand,
+        if (fournisseurId != null) 'p_supplier_id': fournisseurId,
       });
     });
   }

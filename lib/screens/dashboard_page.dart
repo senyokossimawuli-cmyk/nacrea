@@ -3,10 +3,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/base_locale.dart';
 import '../data/produits_repo.dart';
+import '../data/rapports_repo.dart';
 import '../services/erreurs.dart';
 import '../services/membre.dart';
 import '../theme/nacrea_theme.dart';
 import '../utils/format.dart';
+import '../utils/periode.dart';
+import '../widgets/carte_chiffre.dart';
 
 /// Une boutique et son abonnement, tels qu'affichés sur l'accueil.
 class _BoutiqueAbo {
@@ -51,6 +54,14 @@ class _DashboardPageState extends State<DashboardPage> {
                 (l['monthly_price'] as int?) ?? 22000,
               ),
           ]);
+
+  /// Chiffres du jour et du mois, toutes boutiques confondues (patronne).
+  late final Future<(Rapport, Rapport)> _chiffres = () async {
+    final repo = RapportsRepo(compteId: widget.membre.compteId);
+    final (j1, j2) = Periode.aujourdhui.bornes;
+    final (m1, m2) = Periode.mois.bornes;
+    return (await repo.calculer(debut: j1, fin: j2), await repo.calculer(debut: m1, fin: m2));
+  }();
 
   Future<void> _ajouter() async {
     final ok = await showDialog<bool>(
@@ -155,27 +166,53 @@ class _DashboardPageState extends State<DashboardPage> {
                     );
                   },
                 ),
-                const SizedBox(height: 32),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: NacreaColors.nude,
-                    borderRadius: BorderRadius.circular(16),
+                if (m.estPatronne) ...[
+                  const SizedBox(height: 32),
+                  Text('En un coup d\'œil', style: NacreaTheme.titre(size: 26)),
+                  const SizedBox(height: 4),
+                  const Text('Toutes vos boutiques', style: TextStyle(color: NacreaColors.gris)),
+                  const SizedBox(height: 16),
+                  FutureBuilder<(Rapport, Rapport)>(
+                    future: _chiffres,
+                    builder: (context, snap) {
+                      if (!snap.hasData) {
+                        return const SizedBox(
+                          height: 80,
+                          child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
+                        );
+                      }
+                      final (jour, mois) = snap.data!;
+                      return Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: [
+                          CarteChiffre(
+                            titre: 'Ventes aujourd\'hui',
+                            valeur: fcfa(jour.chiffreAffaires),
+                            sousTitre: '${jour.nbVentes} vente${jour.nbVentes > 1 ? 's' : ''}',
+                          ),
+                          CarteChiffre(
+                            titre: 'Ventes du mois',
+                            valeur: fcfa(mois.chiffreAffaires),
+                            sousTitre: nomMois(DateTime.now()),
+                          ),
+                          CarteChiffre(
+                            titre: mois.benefice >= 0 ? 'Bénéfice du mois' : 'Perte du mois',
+                            valeur: fcfa(mois.benefice),
+                            sousTitre: 'après dépenses',
+                            couleur: mois.benefice >= 0 ? NacreaColors.succes : NacreaColors.erreur,
+                          ),
+                          if (mois.creditsEnCours > 0)
+                            CarteChiffre(
+                              titre: 'Crédits à récupérer',
+                              valeur: fcfa(mois.creditsEnCours),
+                              couleur: NacreaColors.erreur,
+                            ),
+                        ],
+                      );
+                    },
                   ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.auto_awesome_outlined, color: NacreaColors.orTexte),
-                      SizedBox(width: 14),
-                      Expanded(
-                        child: Text(
-                          'Bientôt ici : les chiffres du jour et les alertes de toutes vos boutiques.',
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ],
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../data/depenses_repo.dart';
 import '../../data/produits_repo.dart';
 import '../../services/erreurs.dart';
 import '../../theme/nacrea_theme.dart';
@@ -90,9 +91,55 @@ class _EntreeStockDialogState extends State<_EntreeStockDialog> {
   final _quantite = TextEditingController();
   late final _prix = TextEditingController(text: '${widget.produit.prixAchat}');
   final _motif = TextEditingController();
+  late final _fournisseursRepo = FournisseursRepo(compteId: widget.repo.compteId);
+  List<Fournisseur> _fournisseurs = [];
+  String? _fournisseurId;
   DateTime? _peremption;
   bool _chargement = false;
   String? _erreur;
+
+  @override
+  void initState() {
+    super.initState();
+    _fournisseursRepo.tous().then((liste) {
+      if (mounted) setState(() => _fournisseurs = liste);
+    }, onError: (_) {});
+  }
+
+  Future<void> _nouveauFournisseur() async {
+    final champ = TextEditingController();
+    final nom = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text('Nouveau fournisseur'),
+        content: TextField(
+          controller: champ,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(hintText: 'Grossiste du grand marché'),
+          onSubmitted: (v) => Navigator.of(ctx).pop(v),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(champ.text), child: const Text('Créer')),
+        ],
+      ),
+    );
+    if (nom == null || nom.trim().isEmpty) return;
+    try {
+      final id = await _fournisseursRepo.enregistrer(nom: nom);
+      final liste = await _fournisseursRepo.tous();
+      if (mounted) {
+        setState(() {
+          _fournisseurs = liste;
+          _fournisseurId = id;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _erreur = messageErreur(e));
+    }
+  }
 
   @override
   void dispose() {
@@ -116,6 +163,7 @@ class _EntreeStockDialogState extends State<_EntreeStockDialog> {
         prixAchat: int.tryParse(_prix.text) ?? widget.produit.prixAchat,
         peremption: _peremption,
         motif: _motif.text,
+        fournisseurId: _fournisseurId,
       );
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
@@ -170,6 +218,33 @@ class _EntreeStockDialogState extends State<_EntreeStockDialog> {
                   ),
                   const SizedBox(height: 16),
                 ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String?>(
+                        key: ValueKey('fournisseur-$_fournisseurId-${_fournisseurs.length}'),
+                        initialValue: _fournisseurId,
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Fournisseur (facultatif)',
+                          prefixIcon: Icon(Icons.local_shipping_outlined),
+                        ),
+                        items: [
+                          const DropdownMenuItem<String?>(value: null, child: Text('Non précisé')),
+                          for (final f in _fournisseurs)
+                            DropdownMenuItem<String?>(value: f.id, child: Text(f.nom, overflow: TextOverflow.ellipsis)),
+                        ],
+                        onChanged: (v) => setState(() => _fournisseurId = v),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Nouveau fournisseur',
+                      onPressed: _nouveauFournisseur,
+                      icon: const Icon(Icons.add_circle_outline, color: NacreaColors.prune),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
                 ChampDatePeremption(
                   date: _peremption,
                   quandChoisie: (d) => setState(() => _peremption = d),
