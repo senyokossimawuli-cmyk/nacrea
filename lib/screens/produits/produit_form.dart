@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,7 +47,7 @@ class _ProduitFormState extends State<ProduitForm> {
 
   late String? _categorieId = _p?.categorieId;
   List<Categorie> _categories = [];
-  late String? _photoUrl = _p?.photoUrl;
+  late final String? _photoUrl = _p?.photoUrl;
   Uint8List? _nouvellePhoto;
   String _extensionPhoto = 'jpg';
 
@@ -237,7 +236,7 @@ class _ProduitFormState extends State<ProduitForm> {
     if (ok) {
       setState(() {
         _change = true;
-        _lots = widget.repo.lots(widget.boutique.id, _p!.id!);
+        _lots = widget.repo.lots(widget.boutique.id, _p.id!);
       });
     }
   }
