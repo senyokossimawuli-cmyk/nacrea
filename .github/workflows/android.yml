@@ -6,7 +6,13 @@ name: Application Android
 on:
   workflow_dispatch: # bouton « Run workflow » dans l'onglet Actions
   push:
-    tags: ['android-*']
+    branches: [main]
+    paths: # seulement quand l'application change
+      - 'lib/**'
+      - 'android/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.github/workflows/android.yml'
 
 permissions:
   contents: write
@@ -55,8 +61,8 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || format('android-{0}', github.run_number) }}
-          name: Nacréa Android ${{ github.ref_type == 'tag' && github.ref_name || format('android-{0}', github.run_number) }}
+          tag_name: android-${{ github.run_number }}
+          name: Nacréa Android android-${{ github.run_number }}
           make_latest: true
           body: |
             Application Android de Nacréa.
