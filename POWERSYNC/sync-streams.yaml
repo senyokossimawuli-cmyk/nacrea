@@ -48,6 +48,8 @@ streams:
       boutiques_employee: SELECT shop_id FROM members WHERE user_id = auth.user_id() AND role = 'employee' AND active = true
     queries:
       - SELECT * FROM shops WHERE id IN boutiques_employee
+      # Statut d'abonnement : pour mettre la caisse en pause si la boutique n'est pas à jour
+      - SELECT * FROM subscriptions WHERE shop_id IN boutiques_employee
       - SELECT * FROM stock_lots WHERE shop_id IN boutiques_employee
       - SELECT * FROM sales WHERE shop_id IN boutiques_employee
       - SELECT * FROM sale_items WHERE shop_id IN boutiques_employee

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../data/caisse_repo.dart';
 import '../../data/produits_repo.dart';
+import '../../services/abonnement.dart';
 import '../../services/erreurs.dart';
 import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
@@ -31,9 +32,30 @@ class CaissePorte extends StatefulWidget {
 class _CaissePorteState extends State<CaissePorte> {
   late final _repo = CaisseRepo(boutiqueId: widget.boutique.id, compteId: widget.membre.compteId);
   late final _session = _repo.surveillerOuverte();
+  late final _abonnement = EtatAbonnement.surveiller(widget.boutique.id);
 
   @override
   Widget build(BuildContext context) {
+    return StreamBuilder<EtatAbonnement?>(
+      stream: _abonnement,
+      builder: (context, abo) {
+        final etat = abo.data;
+        if (etat != null && etat.suspendu) {
+          return CaisseBloquee(nomBoutique: widget.boutique.nom, patronne: widget.membre.estPatronne);
+        }
+        // Le panier en cours est gardé si le bandeau apparaît ou disparaît (clé fixe).
+        return Column(
+          children: [
+            if (BandeauAbonnement.utile(etat))
+              BandeauAbonnement(etat: etat!, nomBoutique: widget.boutique.nom, patronne: widget.membre.estPatronne),
+            Expanded(key: const ValueKey('caisse'), child: _caisse()),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _caisse() {
     return StreamBuilder<SessionCaisse?>(
       stream: _session,
       builder: (context, snap) {

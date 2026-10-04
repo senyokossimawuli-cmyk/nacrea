@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/base_locale.dart';
 import '../data/produits_repo.dart';
 import '../data/rapports_repo.dart';
+import '../services/abonnement.dart';
 import '../services/erreurs.dart';
 import '../services/membre.dart';
 import '../theme/nacrea_theme.dart';
@@ -231,7 +232,11 @@ class _CarteBoutique extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (texte, couleur, fond) = _statut(b.statut, b.finPeriode);
+    // Statut recalculé sur l'appareil (essai terminé → en retard, puis suspendu).
+    final effectif = b.statut == null
+        ? null
+        : EtatAbonnement(statutServeur: b.statut!, fin: b.finPeriode).statut;
+    final (texte, couleur, fond) = _statut(effectif, b.finPeriode);
     final boutique = b.boutique;
     return SizedBox(
       width: largeur,

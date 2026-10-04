@@ -9,4 +9,11 @@ class NacreaConfig {
 
   /// Adresse de l'instance PowerSync (synchronisation hors ligne).
   static const powersyncUrl = 'https://6ac1026b2f27853eb0abf174.powersync.journeyapps.com';
+
+  /// Numéro WhatsApp du service client Nacréa (indicatif compris, ex. 22890000000).
+  /// Affiché aux patronnes dont l'abonnement est en retard ou suspendu.
+  static const supportWhatsApp = '';
+
+  /// Jours de retard tolérés avant que la caisse soit bloquée (comme sur le serveur).
+  static const joursDeGrace = 7;
 }
