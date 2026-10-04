@@ -50,12 +50,19 @@ class SessionCaisse {
 
 /// Ce qui doit se trouver dans le tiroir à un instant donné.
 class ResumeCaisse {
-  ResumeCaisse({required this.fond, required this.ventesEspeces, required this.entrees, required this.sorties});
+  ResumeCaisse({
+    required this.fond,
+    required this.ventesEspeces,
+    this.remboursementsEspeces = 0,
+    required this.entrees,
+    required this.sorties,
+  });
   final int fond;
   final int ventesEspeces;
+  final int remboursementsEspeces; // dettes payées en espèces par les clientes
   final int entrees;
   final int sorties;
-  int get attendu => fond + ventesEspeces + entrees - sorties;
+  int get attendu => fond + ventesEspeces + remboursementsEspeces + entrees - sorties;
 }
 
 class MouvementCaisse {
@@ -152,13 +159,20 @@ class CaisseRepo {
     ];
   }
 
-  /// Calcule ce qui doit être dans le tiroir : fond + ventes en espèces + entrées − sorties.
+  /// Ce qui doit être dans le tiroir : fond + ventes en espèces + dettes payées en espèces
+  /// + entrées − sorties.
   Future<ResumeCaisse> resume(SessionCaisse s) async {
     final fin = (s.fermeeLe ?? DateTime.now().add(const Duration(minutes: 1))).toUtc().toIso8601String();
     final ventes = await db.get(
       'SELECT COALESCE(SUM(p.amount), 0) AS total FROM payments p JOIN sales v ON v.id = p.sale_id '
       "WHERE p.shop_id = ? AND p.method = 'cash' AND v.status = 'completed' "
       'AND julianday(v.created_at) >= julianday(?) AND julianday(v.created_at) <= julianday(?)',
+      [boutiqueId, s.ouverteLe.toUtc().toIso8601String(), fin],
+    );
+    final remb = await db.get(
+      'SELECT COALESCE(SUM(amount), 0) AS total FROM customer_payments '
+      "WHERE shop_id = ? AND method = 'cash' "
+      'AND julianday(created_at) >= julianday(?) AND julianday(created_at) <= julianday(?)',
       [boutiqueId, s.ouverteLe.toUtc().toIso8601String(), fin],
     );
     final mvts = await db.get(
@@ -170,6 +184,7 @@ class CaisseRepo {
     return ResumeCaisse(
       fond: s.fond,
       ventesEspeces: _entier(ventes['total']),
+      remboursementsEspeces: _entier(remb['total']),
       entrees: _entier(mvts['entrees']),
       sorties: _entier(mvts['sorties']),
     );

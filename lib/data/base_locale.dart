@@ -97,6 +97,7 @@ const schemaLocal = Schema([
     Column.text('created_at'),
   ], indexes: [
     Index('boutique', [IndexedColumn('shop_id')]),
+    Index('cliente', [IndexedColumn('customer_id')]),
   ]),
   Table('sale_items', [
     Column.text('sale_id'),
@@ -149,6 +150,26 @@ const schemaLocal = Schema([
     Column.text('created_at'),
   ], indexes: [
     Index('session', [IndexedColumn('session_id')]),
+  ]),
+
+  Table('customers', [
+    Column.text('account_id'),
+    Column.text('name'),
+    Column.text('phone'),
+    Column.text('notes'),
+    Column.text('created_at'),
+  ]),
+  Table('customer_payments', [
+    Column.text('account_id'),
+    Column.text('shop_id'),
+    Column.text('customer_id'),
+    Column.integer('amount'),
+    Column.text('method'),
+    Column.text('note'),
+    Column.text('user_id'),
+    Column.text('created_at'),
+  ], indexes: [
+    Index('cliente', [IndexedColumn('customer_id')]),
   ]),
 
   /// Opérations à rejouer sur le serveur (vente, entrée de stock) : envoyées puis effacées.

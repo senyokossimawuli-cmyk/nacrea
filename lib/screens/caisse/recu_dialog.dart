@@ -28,6 +28,8 @@ class Recu {
     this.monnaie = 0,
     this.vendeuse,
     this.annule = false,
+    this.cliente,
+    this.telephoneCliente,
   });
 
   final String boutique;
@@ -44,6 +46,11 @@ class Recu {
   final int monnaie;
   final String? vendeuse;
   final bool annule;
+  final String? cliente;
+  final String? telephoneCliente;
+
+  /// Partie laissée à crédit (« reste à payer »).
+  int get credit => paiements['credit'] ?? 0;
 
   String get heure =>
       '${date.hour.toString().padLeft(2, '0')}h${date.minute.toString().padLeft(2, '0')}';
@@ -176,11 +183,14 @@ class RecuVue extends StatelessWidget {
         ],
         ligne('TOTAL', fcfa(t.total), fort: true, couleur: NacreaColors.prune),
         const SizedBox(height: 8),
-        for (final p in t.paiements.entries) ligne(MoyenPaiement.libelleDe(p.key), fcfa(p.value)),
+        for (final p in t.paiements.entries)
+          if (p.key != 'credit') ligne(MoyenPaiement.libelleDe(p.key), fcfa(p.value)),
         if (t.recuEspeces != null) ...[
           ligne('Reçu en espèces', fcfa(t.recuEspeces!)),
           ligne('Monnaie rendue', fcfa(t.monnaie)),
         ],
+        if (t.cliente != null) ligne('Cliente', t.cliente!),
+        if (t.credit > 0) ligne('Reste à payer', fcfa(t.credit), fort: true, couleur: NacreaColors.erreur),
         const SizedBox(height: 16),
         const Text('Merci de votre visite !',
             textAlign: TextAlign.center, style: TextStyle(fontStyle: FontStyle.italic)),
@@ -238,11 +248,15 @@ Future<Uint8List> recuPdf(Recu r) async {
           ],
           ligne('TOTAL', fcfa(r.total), style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
           pw.SizedBox(height: 4),
-          for (final p in r.paiements.entries) ligne(MoyenPaiement.libelleDe(p.key), fcfa(p.value)),
+          for (final p in r.paiements.entries)
+            if (p.key != 'credit') ligne(MoyenPaiement.libelleDe(p.key), fcfa(p.value)),
           if (r.recuEspeces != null) ...[
             ligne('Reçu en espèces', fcfa(r.recuEspeces!)),
             ligne('Monnaie rendue', fcfa(r.monnaie)),
           ],
+          if (r.cliente != null) ligne('Cliente', r.cliente!),
+          if (r.credit > 0)
+            ligne('RESTE A PAYER', fcfa(r.credit), style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
           pw.SizedBox(height: 10),
           pw.Text('Merci de votre visite !',
               textAlign: pw.TextAlign.center, style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic)),
@@ -285,8 +299,12 @@ String recuTexte(Recu r) {
   b.writeln();
   if (r.remise > 0) b.writeln('Remise : -${fcfa(r.remise)}');
   b.writeln('*TOTAL : ${fcfa(r.total)}*');
-  final moyens = r.paiements.entries.map((p) => '${MoyenPaiement.libelleDe(p.key)} ${fcfa(p.value)}').join(' + ');
+  final moyens = r.paiements.entries
+      .where((p) => p.key != 'credit')
+      .map((p) => '${MoyenPaiement.libelleDe(p.key)} ${fcfa(p.value)}')
+      .join(' + ');
   if (moyens.isNotEmpty) b.writeln('Payé : $moyens');
+  if (r.credit > 0) b.writeln('*Reste à payer : ${fcfa(r.credit)}*');
   b
     ..writeln()
     ..write('Merci de votre visite et à bientôt !');
@@ -295,7 +313,7 @@ String recuTexte(Recu r) {
 
 /// Demande le numéro de la cliente puis ouvre WhatsApp avec le reçu prêt à envoyer.
 Future<void> envoyerRecuWhatsApp(BuildContext context, Recu r) async {
-  final champ = TextEditingController(text: '228 ');
+  final champ = TextEditingController(text: r.telephoneCliente ?? '228 ');
   final numero = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(

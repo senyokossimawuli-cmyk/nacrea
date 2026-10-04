@@ -8,6 +8,7 @@ import '../widgets/deconnexion.dart';
 import '../widgets/etat_synchro.dart';
 import '../widgets/nacrea_logo.dart';
 import 'caisse/session_caisse.dart';
+import 'clientes/clientes_page.dart';
 import 'dashboard_page.dart';
 import 'equipe/equipe_page.dart';
 import 'produits/produits_page.dart';
@@ -37,12 +38,14 @@ class _ShellScreenState extends State<ShellScreen> {
       (cle: 'produits', icone: Icons.inventory_2_outlined, iconeActive: Icons.inventory_2, titre: 'Produits');
   static const _ventes =
       (cle: 'ventes', icone: Icons.receipt_long_outlined, iconeActive: Icons.receipt_long, titre: 'Ventes');
+  static const _clientes =
+      (cle: 'clientes', icone: Icons.favorite_border, iconeActive: Icons.favorite, titre: 'Clientes');
   static const _equipe =
       (cle: 'equipe', icone: Icons.groups_outlined, iconeActive: Icons.groups, titre: 'Équipe');
 
   late final _menu = widget.membre.estPatronne
-      ? const [_accueil, _caisse, _produits, _ventes, _equipe]
-      : const [_caisse, _produits, _ventes];
+      ? const [_accueil, _caisse, _produits, _ventes, _clientes, _equipe]
+      : const [_caisse, _produits, _ventes, _clientes];
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +91,7 @@ class _ShellScreenState extends State<ShellScreen> {
       'caisse' => CaissePorte(key: ValueKey('caisse-${boutique.id}'), membre: m, boutique: boutique),
       'produits' => ProduitsPage(key: ValueKey('produits-${boutique.id}'), membre: m, boutique: boutique),
       'ventes' => VentesPage(key: ValueKey('ventes-${boutique.id}'), membre: m, boutique: boutique),
+      'clientes' => ClientesPage(key: ValueKey('clientes-${boutique.id}'), membre: m, boutique: boutique),
       'equipe' => EquipePage(membre: m, boutiques: boutiques),
       _ => DashboardPage(membre: m, boutiques: boutiques),
     };
@@ -200,6 +204,10 @@ class _ShellScreenState extends State<ShellScreen> {
         indicatorColor: NacreaColors.nude,
         selectedIndex: _page,
         onDestinationSelected: (i) => setState(() => _page = i),
+        // 6 entrées sur un téléphone : on n'affiche que le nom de la page choisie.
+        labelBehavior: _menu.length > 5
+            ? NavigationDestinationLabelBehavior.onlyShowSelected
+            : NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
           for (final d in _menu)
             NavigationDestination(

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../data/clientes_repo.dart';
 import '../../data/produits_repo.dart';
 import '../../data/ventes_repo.dart';
 import '../../services/erreurs.dart';
 import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
+import '../clientes/cliente_dialogs.dart';
 import '../produits/produits_page.dart';
 import 'paiement_dialog.dart';
 import 'recu_dialog.dart';
@@ -26,6 +28,7 @@ class CaissePage extends StatefulWidget {
 class _CaissePageState extends State<CaissePage> {
   late final _produitsRepo = ProduitsRepo(compteId: widget.membre.compteId);
   late final _ventesRepo = VentesRepo(boutique: widget.boutique, compteId: widget.membre.compteId);
+  late final _clientesRepo = ClientesRepo(compteId: widget.membre.compteId);
   // Catalogue en direct : le stock affiché suit chaque vente.
   late final Stream<List<Produit>> _produits = _produitsRepo.surveillerProduits(widget.boutique.id);
 
@@ -33,6 +36,7 @@ class _CaissePageState extends State<CaissePage> {
   final _focusRecherche = FocusNode();
   final List<LignePanier> _panier = [];
   int _remise = 0;
+  Cliente? _cliente;
   bool _enregistrement = false;
 
   @override
@@ -244,7 +248,7 @@ class _CaissePageState extends State<CaissePage> {
 
   Future<void> _encaisser() async {
     if (_panier.isEmpty || _enregistrement) return;
-    final reglement = await ouvrirPaiement(context, _total);
+    final reglement = await ouvrirPaiement(context, _total, cliente: _cliente?.nom);
     if (reglement == null || !mounted) return;
 
     setState(() => _enregistrement = true);
@@ -252,15 +256,18 @@ class _CaissePageState extends State<CaissePage> {
       final lignes = List<LignePanier>.of(_panier);
       final sousTotal = _sousTotal;
       final remise = _remise;
+      final cliente = _cliente;
       final resultat = await _ventesRepo.enregistrer(
         panier: lignes,
         paiements: reglement.paiements,
         remise: remise,
+        clienteId: cliente?.id,
       );
       if (!mounted) return;
       setState(() {
         _panier.clear();
         _remise = 0;
+        _cliente = null;
       });
       await afficherRecu(
         context,
@@ -281,6 +288,8 @@ class _CaissePageState extends State<CaissePage> {
           recuEspeces: reglement.recuEspeces,
           monnaie: reglement.monnaie,
           vendeuse: widget.membre.nom,
+          cliente: cliente?.nom,
+          telephoneCliente: cliente?.telephone,
         ),
       );
     } catch (e) {
@@ -453,6 +462,51 @@ class _CaissePageState extends State<CaissePage> {
     );
   }
 
+  /// Cliente de la vente : facultative, obligatoire pour vendre à crédit.
+  Widget _ligneCliente(void Function(VoidCallback) maj) {
+    final c = _cliente;
+    if (c == null) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton.icon(
+          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+          onPressed: () async {
+            final choisie = await choisirCliente(context, _clientesRepo);
+            if (choisie != null && mounted) maj(() => setState(() => _cliente = choisie));
+          },
+          icon: const Icon(Icons.person_add_alt_1_outlined, size: 18),
+          label: const Text('Ajouter une cliente'),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          const Icon(Icons.person_outline, size: 18, color: NacreaColors.prune),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(c.nom, style: const TextStyle(fontWeight: FontWeight.w600)),
+                if (c.doit)
+                  Text('Doit déjà ${fcfa(c.dette)}',
+                      style: const TextStyle(color: NacreaColors.erreur, fontSize: 12)),
+              ],
+            ),
+          ),
+          IconButton(
+            tooltip: 'Retirer la cliente',
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(Icons.close, size: 18),
+            onPressed: () => maj(() => setState(() => _cliente = null)),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// [rafraichir] sert quand le panier est affiché dans une feuille séparée (téléphone).
   Widget _panneauPanier({VoidCallback? rafraichir}) {
     void maj(VoidCallback f) {
@@ -477,6 +531,7 @@ class _CaissePageState extends State<CaissePage> {
                   onPressed: () => maj(() => setState(() {
                         _panier.clear();
                         _remise = 0;
+                        _cliente = null;
                       })),
                   child: const Text('Vider'),
                 ),
@@ -567,6 +622,7 @@ class _CaissePageState extends State<CaissePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              _ligneCliente(maj),
               Row(
                 children: [
                   const Text('Sous-total'),

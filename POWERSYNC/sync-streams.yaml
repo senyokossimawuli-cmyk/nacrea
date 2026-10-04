@@ -2,7 +2,7 @@
 # NACRÉA · Règles de synchronisation PowerSync (Sync Streams)
 # À coller dans le tableau de bord PowerSync > Sync Streams, puis "Deploy".
 #
-# - Toute personne reçoit le catalogue et l'équipe de son entreprise.
+# - Toute personne reçoit le catalogue, l'équipe et les clientes de son entreprise.
 # - La patronne reçoit toutes ses boutiques (stock, ventes, abonnements).
 # - Une employée ne reçoit que sa boutique.
 # =====================================================================
@@ -19,6 +19,11 @@ streams:
       - SELECT * FROM members WHERE account_id IN mes_comptes
       - SELECT * FROM categories WHERE account_id IN mes_comptes
       - SELECT * FROM products WHERE account_id IN mes_comptes
+      # Clientes et crédit : visibles dans toutes les boutiques de l'entreprise
+      - SELECT * FROM customers WHERE account_id IN mes_comptes
+      - SELECT * FROM customer_payments WHERE account_id IN mes_comptes
+      - SELECT * FROM sales WHERE account_id IN mes_comptes AND customer_id IS NOT NULL
+      - SELECT * FROM payments WHERE account_id IN mes_comptes AND method = 'credit'
 
   boutiques_patronne:
     auto_subscribe: true

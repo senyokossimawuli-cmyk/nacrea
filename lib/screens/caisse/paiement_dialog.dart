@@ -13,16 +13,18 @@ class Reglement {
 }
 
 /// Fenêtre « Encaisser » : choix du paiement et calcul de la monnaie à rendre.
-Future<Reglement?> ouvrirPaiement(BuildContext context, int total) {
+/// [cliente] : nom de la cliente du panier (nécessaire pour vendre à crédit).
+Future<Reglement?> ouvrirPaiement(BuildContext context, int total, {String? cliente}) {
   return showDialog<Reglement>(
     context: context,
-    builder: (_) => _PaiementDialog(total: total),
+    builder: (_) => _PaiementDialog(total: total, cliente: cliente),
   );
 }
 
 class _PaiementDialog extends StatefulWidget {
-  const _PaiementDialog({required this.total});
+  const _PaiementDialog({required this.total, this.cliente});
   final int total;
+  final String? cliente;
 
   @override
   State<_PaiementDialog> createState() => _PaiementDialogState();
@@ -32,11 +34,14 @@ class _PaiementDialogState extends State<_PaiementDialog> {
   MoyenPaiement _moyen = MoyenPaiement.especes;
   bool _mixte = false;
   final _recu = TextEditingController();
+  final _avance = TextEditingController();
+  MoyenPaiement _moyenAvance = MoyenPaiement.especes;
   final _montants = {for (final m in MoyenPaiement.values) m: TextEditingController()};
 
   @override
   void dispose() {
     _recu.dispose();
+    _avance.dispose();
     for (final c in _montants.values) {
       c.dispose();
     }
@@ -44,6 +49,13 @@ class _PaiementDialogState extends State<_PaiementDialog> {
   }
 
   int get _recuValeur => int.tryParse(_recu.text) ?? 0;
+  int get _avanceValeur => int.tryParse(_avance.text) ?? 0;
+
+  /// Moyens proposés : le crédit seulement si une cliente est choisie (en paiement mixte).
+  List<MoyenPaiement> get _moyensMixte => [
+        for (final m in MoyenPaiement.values)
+          if (m != MoyenPaiement.credit || widget.cliente != null) m,
+      ];
   int get _sommeMixte => _montants.values.fold(0, (s, c) => s + (int.tryParse(c.text) ?? 0));
 
   /// Billets courants pour proposer des montants reçus en un clic.
@@ -59,6 +71,9 @@ class _PaiementDialogState extends State<_PaiementDialog> {
 
   String? get _probleme {
     if (_mixte) {
+      if ((int.tryParse(_montants[MoyenPaiement.credit]!.text) ?? 0) > 0 && widget.cliente == null) {
+        return 'Choisissez la cliente pour vendre à crédit';
+      }
       final ecart = widget.total - _sommeMixte;
       if (ecart > 0) return 'Il manque ${fcfa(ecart)}';
       if (ecart < 0) return 'Trop saisi de ${fcfa(-ecart)}';
@@ -66,6 +81,10 @@ class _PaiementDialogState extends State<_PaiementDialog> {
     }
     if (_moyen == MoyenPaiement.especes && _recu.text.isNotEmpty && _recuValeur < widget.total) {
       return 'Montant reçu insuffisant';
+    }
+    if (_moyen == MoyenPaiement.credit) {
+      if (widget.cliente == null) return 'Choisissez d\'abord la cliente';
+      if (_avanceValeur > widget.total) return 'L\'avance dépasse le total';
     }
     return null;
   }
@@ -76,6 +95,14 @@ class _PaiementDialogState extends State<_PaiementDialog> {
       Navigator.of(context).pop(Reglement(paiements: [
         for (final e in _montants.entries)
           if ((int.tryParse(e.value.text) ?? 0) > 0) Paiement(e.key, int.parse(e.value.text)),
+      ]));
+      return;
+    }
+    if (_moyen == MoyenPaiement.credit) {
+      final avance = _avanceValeur;
+      Navigator.of(context).pop(Reglement(paiements: [
+        if (avance > 0) Paiement(_moyenAvance, avance),
+        if (widget.total - avance > 0) Paiement(MoyenPaiement.credit, widget.total - avance),
       ]));
       return;
     }
@@ -98,6 +125,60 @@ class _PaiementDialogState extends State<_PaiementDialog> {
         decoration: InputDecoration(labelText: label, suffixText: 'FCFA'),
       );
 
+  /// Vente à crédit : avance éventuelle, le reste est noté sur le compte de la cliente.
+  Widget _zoneCredit() {
+    if (widget.cliente == null) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: NacreaColors.nude, borderRadius: BorderRadius.circular(12)),
+        child: const Text(
+          'Pour vendre à crédit, revenez au panier et touchez « Ajouter une cliente ».',
+          style: TextStyle(height: 1.4),
+        ),
+      );
+    }
+    final reste = widget.total - _avanceValeur;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _champMontant(_avance, 'Avance payée maintenant (facultatif)', focus: true),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          children: [
+            for (final m in [MoyenPaiement.especes, MoyenPaiement.mobileMoney])
+              ChoiceChip(
+                label: Text('Avance en ${m.libelle.toLowerCase()}'),
+                selected: _moyenAvance == m,
+                onSelected: (_) => setState(() => _moyenAvance = m),
+              ),
+          ],
+        ),
+        if (reste >= 0) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFCEBEB),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text('Reste à payer par ${widget.cliente}',
+                      style: const TextStyle(fontSize: 15, color: NacreaColors.erreur)),
+                ),
+                Text(fcfa(reste),
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.w700, color: NacreaColors.erreur)),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final probleme = _probleme;
@@ -116,6 +197,8 @@ class _PaiementDialogState extends State<_PaiementDialog> {
               const Text('Total à payer', style: TextStyle(color: NacreaColors.gris)),
               Text(fcfa(widget.total),
                   style: NacreaTheme.titre(size: 44, color: NacreaColors.prune)),
+              if (widget.cliente != null)
+                Text('Cliente : ${widget.cliente}', style: const TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 20),
               if (!_mixte) ...[
                 Row(
@@ -173,9 +256,10 @@ class _PaiementDialogState extends State<_PaiementDialog> {
                     ),
                   ],
                 ],
+                if (_moyen == MoyenPaiement.credit) _zoneCredit(),
               ] else ...[
-                for (final m in MoyenPaiement.values) ...[
-                  _champMontant(_montants[m]!, m.libelle),
+                for (final m in _moyensMixte) ...[
+                  _champMontant(_montants[m]!, m == MoyenPaiement.credit ? 'Crédit (reste à payer)' : m.libelle),
                   const SizedBox(height: 12),
                 ],
               ],
@@ -232,6 +316,7 @@ class _BoutonMoyen extends StatelessWidget {
       MoyenPaiement.especes => Icons.payments_outlined,
       MoyenPaiement.mobileMoney => Icons.phone_android,
       MoyenPaiement.carte => Icons.credit_card,
+      MoyenPaiement.credit => Icons.event_note_outlined,
     };
     return Material(
       color: actif ? NacreaColors.prune : Colors.white,

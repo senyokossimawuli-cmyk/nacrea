@@ -9,7 +9,8 @@ int _entier(Object? v) => v is int ? v : (v is num ? v.toInt() : int.tryParse('$
 enum MoyenPaiement {
   especes('cash', 'Espèces'),
   mobileMoney('mobile_money', 'Mobile Money'),
-  carte('card', 'Carte');
+  carte('card', 'Carte'),
+  credit('credit', 'Crédit');
 
   const MoyenPaiement(this.code, this.libelle);
   final String code;
@@ -72,10 +73,12 @@ class Vente {
     required this.vendeuse,
     required this.paiements,
     required this.lignes,
+    this.cliente,
   });
 
   final String id;
   final String ticket;
+  final String? cliente;
   final bool annulee;
   final int sousTotal;
   final int remise;
@@ -86,6 +89,7 @@ class Vente {
   final List<LigneVente> lignes;
 
   int get nbArticles => lignes.fold(0, (s, l) => s + l.quantite);
+  int get credit => paiements['credit'] ?? 0;
 }
 
 class VentesRepo {
@@ -99,8 +103,12 @@ class VentesRepo {
     required List<LignePanier> panier,
     required List<Paiement> paiements,
     required int remise,
+    String? clienteId,
   }) async {
     if (panier.isEmpty) throw Exception('Le panier est vide');
+    if (clienteId == null && paiements.any((p) => p.moyen == MoyenPaiement.credit && p.montant > 0)) {
+      throw Exception('Choisissez la cliente pour vendre à crédit.');
+    }
     final sousTotal = panier.fold(0, (s, l) => s + l.total);
     final total = sousTotal - remise;
     final paye = paiements.fold(0, (s, p) => s + p.montant);
@@ -124,9 +132,9 @@ class VentesRepo {
       ticket = '$jour-${(_entier(nb['n']) + 1).toString().padLeft(4, '0')}';
 
       await tx.execute(
-        'INSERT INTO sales (id, shop_id, account_id, user_id, ticket_number, status, subtotal, discount, total, created_at) '
-        "VALUES (?, ?, ?, ?, ?, 'completed', ?, ?, ?, ?)",
-        [venteId, boutique.id, compteId, userId, ticket, sousTotal, remise, total, quand],
+        'INSERT INTO sales (id, shop_id, account_id, customer_id, user_id, ticket_number, status, subtotal, discount, total, created_at) '
+        "VALUES (?, ?, ?, ?, ?, ?, 'completed', ?, ?, ?, ?)",
+        [venteId, boutique.id, compteId, clienteId, userId, ticket, sousTotal, remise, total, quand],
       );
 
       // Sortie de stock : le lot qui périme le plus tôt part en premier.
@@ -182,9 +190,11 @@ class VentesRepo {
             {'product_id': l.produit.id, 'quantity': l.quantite, 'unit_price': l.prixUnitaire, 'discount': 0},
         ],
         'p_payments': [
-          for (final p in paiements) {'method': p.moyen.code, 'amount': p.montant},
+          for (final p in paiements)
+            if (p.montant > 0) {'method': p.moyen.code, 'amount': p.montant},
         ],
         'p_discount': remise,
+        'p_customer_id': clienteId,
         'p_sale_id': venteId,
         'p_ticket': ticket,
         'p_created_at': quand,
@@ -199,11 +209,12 @@ class VentesRepo {
     final debut = DateTime(jour.year, jour.month, jour.day);
     final fin = debut.add(const Duration(days: 1));
     return db.watch(
-      'SELECT id, ticket_number, status, subtotal, discount, total, created_at, user_id FROM sales '
-      'WHERE shop_id = ? AND julianday(created_at) >= julianday(?) AND julianday(created_at) < julianday(?) '
-      'ORDER BY julianday(created_at) DESC',
+      'SELECT v.id, v.ticket_number, v.status, v.subtotal, v.discount, v.total, v.created_at, v.user_id, '
+      'c.name AS cliente FROM sales v LEFT JOIN customers c ON c.id = v.customer_id '
+      'WHERE v.shop_id = ? AND julianday(v.created_at) >= julianday(?) AND julianday(v.created_at) < julianday(?) '
+      'ORDER BY julianday(v.created_at) DESC',
       parameters: [boutique.id, debut.toUtc().toIso8601String(), fin.toUtc().toIso8601String()],
-      triggerOnTables: const ['sales', 'sale_items', 'payments'],
+      triggerOnTables: const ['sales', 'sale_items', 'payments', 'customers'],
     ).asyncMap(_completer);
   }
 
@@ -248,6 +259,7 @@ class VentesRepo {
           vendeuse: noms[v['user_id']] ?? '—',
           paiements: paiementsParVente[v['id']] ?? const {},
           lignes: _regrouper(lignesParVente[v['id']] ?? const []),
+          cliente: v['cliente'] as String?,
         ),
     ];
   }

@@ -54,6 +54,7 @@ class _VentesPageState extends State<VentesPage> {
       paiements: v.paiements,
       vendeuse: v.vendeuse,
       annule: v.annulee,
+      cliente: v.cliente,
     );
     final peutAnnuler = widget.membre.estPatronne && !v.annulee;
 
@@ -199,7 +200,11 @@ class _VentesPageState extends State<VentesPage> {
                       valeur: valides.isEmpty ? '—' : fcfa((ca / valides.length).round()),
                     ),
                     for (final m in MoyenPaiement.values)
-                      _Chiffre(titre: m.libelle, valeur: fcfa(parMoyen[m.code] ?? 0)),
+                      if (m != MoyenPaiement.credit || (parMoyen[m.code] ?? 0) > 0)
+                        _Chiffre(
+                          titre: m == MoyenPaiement.credit ? 'Vendu à crédit' : m.libelle,
+                          valeur: fcfa(parMoyen[m.code] ?? 0),
+                        ),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -301,7 +306,7 @@ class _LigneVente extends StatelessWidget {
                   children: [
                     Text('Reçu n° ${v.ticket} · ${v.nbArticles} article${v.nbArticles > 1 ? 's' : ''}',
                         style: TextStyle(fontWeight: FontWeight.w600, decoration: barre)),
-                    Text('$moyens · ${v.vendeuse}',
+                    Text('${v.cliente != null ? '${v.cliente} · ' : ''}$moyens · ${v.vendeuse}',
                         style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
                   ],
                 ),
