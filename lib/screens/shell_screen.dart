@@ -94,9 +94,9 @@ class _ShellScreenState extends State<ShellScreen> {
     final large = MediaQuery.sizeOf(context).width >= 900;
 
     final barre = AppBar(
-      toolbarHeight: 72,
-      titleSpacing: 24,
-      title: const NacreaLogo(taille: 26, avecSlogan: false),
+      toolbarHeight: large ? 72 : 60,
+      titleSpacing: large ? 24 : 14,
+      title: NacreaLogo(taille: large ? 26 : 18, avecSlogan: false),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 12),
@@ -104,14 +104,20 @@ class _ShellScreenState extends State<ShellScreen> {
         ),
         if (boutiques.length > 1)
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: EdgeInsets.only(right: large ? 16 : 4),
             child: DropdownButton<String>(
               value: boutique.id,
               underline: const SizedBox.shrink(),
               icon: const Icon(Icons.expand_more, color: NacreaColors.prune),
               items: [
                 for (final b in boutiques)
-                  DropdownMenuItem(value: b.id, child: Text(b.nom)),
+                  DropdownMenuItem(
+                    value: b.id,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: large ? 260 : 110),
+                      child: Text(b.nom, overflow: TextOverflow.ellipsis),
+                    ),
+                  ),
               ],
               onChanged: (id) => setState(() => _boutique = boutiques.firstWhere((b) => b.id == id)),
             ),
@@ -124,7 +130,14 @@ class _ShellScreenState extends State<ShellScreen> {
                 children: [
                   const Icon(Icons.storefront_outlined, size: 20, color: NacreaColors.prune),
                   const SizedBox(width: 8),
-                  Text(boutique.nom, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: large ? 260 : 110),
+                    child: Text(
+                      boutique.nom,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -139,7 +152,7 @@ class _ShellScreenState extends State<ShellScreen> {
           icon: const Icon(Icons.logout),
           onPressed: () => deconnexion(context),
         ),
-        const SizedBox(width: 16),
+        SizedBox(width: large ? 16 : 4),
       ],
       bottom: const PreferredSize(
         preferredSize: Size.fromHeight(1),
