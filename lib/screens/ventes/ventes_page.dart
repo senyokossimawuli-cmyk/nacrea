@@ -7,6 +7,8 @@ import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
 import '../caisse/recu_dialog.dart';
+import '../caisse/session_caisse.dart';
+import '../../data/caisse_repo.dart';
 
 /// Ventes d'une journée : totaux, répartition par paiement et liste des reçus.
 class VentesPage extends StatefulWidget {
@@ -219,6 +221,12 @@ class _VentesPageState extends State<VentesPage> {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: _LigneVente(vente: v, quandTouche: () => _ouvrir(v)),
                     ),
+                const SizedBox(height: 24),
+                _SessionsDuJour(
+                  key: ValueKey('sessions-${dateCourte(_jour)}'),
+                  repo: CaisseRepo(boutiqueId: widget.boutique.id, compteId: widget.membre.compteId),
+                  jour: _jour,
+                ),
               ],
             ],
           ),
@@ -316,6 +324,94 @@ class _LigneVente extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Ouvertures et clôtures de caisse de la journée, avec leur écart.
+class _SessionsDuJour extends StatefulWidget {
+  const _SessionsDuJour({super.key, required this.repo, required this.jour});
+  final CaisseRepo repo;
+  final DateTime jour;
+
+  @override
+  State<_SessionsDuJour> createState() => _SessionsDuJourState();
+}
+
+class _SessionsDuJourState extends State<_SessionsDuJour> {
+  late final _sessions = widget.repo.surveillerDuJour(widget.jour);
+
+  String _h(DateTime d) => '${d.hour.toString().padLeft(2, '0')}h${d.minute.toString().padLeft(2, '0')}';
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<SessionCaisse>>(
+      stream: _sessions,
+      builder: (context, snap) {
+        final sessions = snap.data ?? const <SessionCaisse>[];
+        if (sessions.isEmpty) return const SizedBox.shrink();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Caisse', style: NacreaTheme.titre(size: 26)),
+            const SizedBox(height: 12),
+            for (final s in sessions)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Icon(s.ouverte ? Icons.lock_open : Icons.lock_outline,
+                            color: s.ouverte ? NacreaColors.succes : NacreaColors.gris),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                s.ouverte
+                                    ? 'Ouverte à ${_h(s.ouverteLe)} · en cours'
+                                    : 'De ${_h(s.ouverteLe)} à ${_h(s.fermeeLe!)}',
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                [
+                                  'Fond ${fcfa(s.fond)}',
+                                  if (s.attendu != null) 'Attendu ${fcfa(s.attendu!)}',
+                                  if (s.compte != null) 'Compté ${fcfa(s.compte!)}',
+                                  if (s.fermeePar != null) 'Clôturée par ${s.fermeePar}',
+                                ].join(' · '),
+                                style: const TextStyle(color: NacreaColors.gris, fontSize: 13),
+                              ),
+                              if ((s.note ?? '').isNotEmpty)
+                                Text('« ${s.note} »',
+                                    style: const TextStyle(fontSize: 13, fontStyle: FontStyle.italic)),
+                            ],
+                          ),
+                        ),
+                        if (s.ecart != null)
+                          Builder(builder: (_) {
+                            final (texte, couleur) = libelleEcart(s.ecart!);
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: couleur.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(texte,
+                                  style: TextStyle(color: couleur, fontWeight: FontWeight.w700, fontSize: 13)),
+                            );
+                          }),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

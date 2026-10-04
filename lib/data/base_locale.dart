@@ -122,6 +122,35 @@ const schemaLocal = Schema([
     Index('vente', [IndexedColumn('sale_id')]),
   ]),
 
+  Table('cash_sessions', [
+    Column.text('shop_id'),
+    Column.text('account_id'),
+    Column.text('status'),
+    Column.text('opened_by'),
+    Column.text('opened_at'),
+    Column.integer('opening_float'),
+    Column.text('closed_by'),
+    Column.text('closed_at'),
+    Column.integer('expected_cash'),
+    Column.integer('counted_cash'),
+    Column.integer('difference'),
+    Column.text('note'),
+  ], indexes: [
+    Index('boutique', [IndexedColumn('shop_id')]),
+  ]),
+  Table('cash_movements', [
+    Column.text('session_id'),
+    Column.text('shop_id'),
+    Column.text('account_id'),
+    Column.text('type'),
+    Column.integer('amount'),
+    Column.text('reason'),
+    Column.text('user_id'),
+    Column.text('created_at'),
+  ], indexes: [
+    Index('session', [IndexedColumn('session_id')]),
+  ]),
+
   /// Opérations à rejouer sur le serveur (vente, entrée de stock) : envoyées puis effacées.
   Table.insertOnly('operations', [
     Column.text('type'),

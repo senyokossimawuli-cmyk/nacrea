@@ -31,6 +31,8 @@ streams:
       - SELECT * FROM sales WHERE account_id IN comptes_patronne
       - SELECT * FROM sale_items WHERE account_id IN comptes_patronne
       - SELECT * FROM payments WHERE account_id IN comptes_patronne
+      - SELECT * FROM cash_sessions WHERE account_id IN comptes_patronne
+      - SELECT * FROM cash_movements WHERE account_id IN comptes_patronne
 
   boutique_employee:
     auto_subscribe: true
@@ -42,3 +44,5 @@ streams:
       - SELECT * FROM sales WHERE shop_id IN boutiques_employee
       - SELECT * FROM sale_items WHERE shop_id IN boutiques_employee
       - SELECT * FROM payments WHERE shop_id IN boutiques_employee
+      - SELECT * FROM cash_sessions WHERE shop_id IN boutiques_employee
+      - SELECT * FROM cash_movements WHERE shop_id IN boutiques_employee

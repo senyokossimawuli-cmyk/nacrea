@@ -7,7 +7,7 @@ import '../theme/nacrea_theme.dart';
 import '../widgets/deconnexion.dart';
 import '../widgets/etat_synchro.dart';
 import '../widgets/nacrea_logo.dart';
-import 'caisse/caisse_page.dart';
+import 'caisse/session_caisse.dart';
 import 'dashboard_page.dart';
 import 'produits/produits_page.dart';
 import 'ventes/ventes_page.dart';
@@ -75,7 +75,7 @@ class _ShellScreenState extends State<ShellScreen> {
   Widget _construire(BuildContext context, List<Boutique> boutiques, Boutique boutique) {
     final m = widget.membre;
     final page = switch (_page) {
-      1 => CaissePage(key: ValueKey('caisse-${boutique.id}'), membre: m, boutique: boutique),
+      1 => CaissePorte(key: ValueKey('caisse-${boutique.id}'), membre: m, boutique: boutique),
       2 => ProduitsPage(key: ValueKey('produits-${boutique.id}'), membre: m, boutique: boutique),
       3 => VentesPage(key: ValueKey('ventes-${boutique.id}'), membre: m, boutique: boutique),
       _ => DashboardPage(membre: m, boutiques: boutiques),
