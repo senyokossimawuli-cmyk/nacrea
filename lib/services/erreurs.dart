@@ -28,6 +28,8 @@ String messageErreur(Object erreur) {
     if (erreur.message.contains('Could not find the function')) {
       return 'La base de données n\'est pas à jour : un script SUPABASE n\'a pas été exécuté.';
     }
+    // Messages écrits par Nacréa dans ses scripts SQL (raise exception) : affichés tels quels.
+    if (erreur.code == 'P0001') return erreur.message;
     return 'Erreur de la base de données : ${erreur.message}';
   }
   final texte = erreur.toString().toLowerCase();

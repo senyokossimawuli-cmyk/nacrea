@@ -9,6 +9,7 @@ import '../widgets/etat_synchro.dart';
 import '../widgets/nacrea_logo.dart';
 import 'caisse/session_caisse.dart';
 import 'dashboard_page.dart';
+import 'equipe/equipe_page.dart';
 import 'produits/produits_page.dart';
 import 'ventes/ventes_page.dart';
 
@@ -25,15 +26,23 @@ class ShellScreen extends StatefulWidget {
 class _ShellScreenState extends State<ShellScreen> {
   final Stream<List<Boutique>> _boutiques = Boutique.surveiller();
   Boutique? _boutique;
-  // Une employée arrive directement sur la caisse.
-  late int _page = widget.membre.estPatronne ? 0 : 1;
+  // Une employée n'a pas d'Accueil : elle arrive directement sur la caisse.
+  int _page = 0;
 
-  static const _menu = [
-    (icone: Icons.space_dashboard_outlined, iconeActive: Icons.space_dashboard, titre: 'Accueil'),
-    (icone: Icons.point_of_sale_outlined, iconeActive: Icons.point_of_sale, titre: 'Caisse'),
-    (icone: Icons.inventory_2_outlined, iconeActive: Icons.inventory_2, titre: 'Produits'),
-    (icone: Icons.receipt_long_outlined, iconeActive: Icons.receipt_long, titre: 'Ventes'),
-  ];
+  static const _accueil =
+      (cle: 'accueil', icone: Icons.space_dashboard_outlined, iconeActive: Icons.space_dashboard, titre: 'Accueil');
+  static const _caisse =
+      (cle: 'caisse', icone: Icons.point_of_sale_outlined, iconeActive: Icons.point_of_sale, titre: 'Caisse');
+  static const _produits =
+      (cle: 'produits', icone: Icons.inventory_2_outlined, iconeActive: Icons.inventory_2, titre: 'Produits');
+  static const _ventes =
+      (cle: 'ventes', icone: Icons.receipt_long_outlined, iconeActive: Icons.receipt_long, titre: 'Ventes');
+  static const _equipe =
+      (cle: 'equipe', icone: Icons.groups_outlined, iconeActive: Icons.groups, titre: 'Équipe');
+
+  late final _menu = widget.membre.estPatronne
+      ? const [_accueil, _caisse, _produits, _ventes, _equipe]
+      : const [_caisse, _produits, _ventes];
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +83,12 @@ class _ShellScreenState extends State<ShellScreen> {
 
   Widget _construire(BuildContext context, List<Boutique> boutiques, Boutique boutique) {
     final m = widget.membre;
-    final page = switch (_page) {
-      1 => CaissePorte(key: ValueKey('caisse-${boutique.id}'), membre: m, boutique: boutique),
-      2 => ProduitsPage(key: ValueKey('produits-${boutique.id}'), membre: m, boutique: boutique),
-      3 => VentesPage(key: ValueKey('ventes-${boutique.id}'), membre: m, boutique: boutique),
+    if (_page >= _menu.length) _page = 0;
+    final page = switch (_menu[_page].cle) {
+      'caisse' => CaissePorte(key: ValueKey('caisse-${boutique.id}'), membre: m, boutique: boutique),
+      'produits' => ProduitsPage(key: ValueKey('produits-${boutique.id}'), membre: m, boutique: boutique),
+      'ventes' => VentesPage(key: ValueKey('ventes-${boutique.id}'), membre: m, boutique: boutique),
+      'equipe' => EquipePage(membre: m, boutiques: boutiques),
       _ => DashboardPage(membre: m, boutiques: boutiques),
     };
     final large = MediaQuery.sizeOf(context).width >= 900;
