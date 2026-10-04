@@ -62,7 +62,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: android-${{ github.run_number }}
-          name: Nacréa Android android-${{ github.run_number }}
+          name: Nacréa Android · version ${{ github.run_number }}
           make_latest: true
           body: |
             Application Android de Nacréa.
