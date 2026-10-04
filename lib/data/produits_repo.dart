@@ -12,22 +12,27 @@ int? _entierOuNull(Object? v) => v == null ? null : _entier(v);
 DateTime? _date(Object? v) => v == null ? null : DateTime.tryParse('$v')?.toLocal();
 
 class Boutique {
-  Boutique({required this.id, required this.nom, this.adresse});
+  Boutique({required this.id, required this.nom, this.adresse, this.telephone});
   final String id;
   final String nom;
   final String? adresse;
+  final String? telephone;
 
-  static Boutique _depuis(Map<String, Object?> l) =>
-      Boutique(id: l['id'] as String, nom: l['name'] as String? ?? '', adresse: l['address'] as String?);
+  static Boutique _depuis(Map<String, Object?> l) => Boutique(
+        id: l['id'] as String,
+        nom: l['name'] as String? ?? '',
+        adresse: l['address'] as String?,
+        telephone: l['phone'] as String?,
+      );
 
   static Future<List<Boutique>> chargerToutes() async {
-    final lignes = await db.getAll('SELECT id, name, address FROM shops ORDER BY julianday(created_at)');
+    final lignes = await db.getAll('SELECT id, name, address, phone FROM shops ORDER BY julianday(created_at)');
     return [for (final l in lignes) _depuis(l)];
   }
 
   /// Liste des boutiques, mise à jour automatiquement (ex. nouvelle boutique créée ailleurs).
   static Stream<List<Boutique>> surveiller() => db
-      .watch('SELECT id, name, address FROM shops ORDER BY julianday(created_at)')
+      .watch('SELECT id, name, address, phone FROM shops ORDER BY julianday(created_at)')
       .map((lignes) => [for (final l in lignes) _depuis(l)]);
 }
 

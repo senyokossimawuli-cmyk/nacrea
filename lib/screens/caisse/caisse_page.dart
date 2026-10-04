@@ -9,7 +9,7 @@ import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
 import '../produits/produits_page.dart';
 import 'paiement_dialog.dart';
-import 'ticket_dialog.dart';
+import 'recu_dialog.dart';
 
 /// Remise maximale qu'une employée peut accorder sans la patronne.
 const remiseMaxEmployeePourcent = 10;
@@ -262,10 +262,12 @@ class _CaissePageState extends State<CaissePage> {
         _panier.clear();
         _remise = 0;
       });
-      await afficherTicket(
+      await afficherRecu(
         context,
-        Ticket(
+        Recu(
           boutique: widget.boutique.nom,
+          adresse: widget.boutique.adresse,
+          telephoneBoutique: widget.boutique.telephone,
           numero: resultat.ticket,
           date: DateTime.now(),
           lignes: [

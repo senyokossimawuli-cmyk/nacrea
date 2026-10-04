@@ -6,9 +6,9 @@ import '../../services/erreurs.dart';
 import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
-import '../caisse/ticket_dialog.dart';
+import '../caisse/recu_dialog.dart';
 
-/// Ventes d'une journée : totaux, répartition par paiement et liste des tickets.
+/// Ventes d'une journée : totaux, répartition par paiement et liste des reçus.
 class VentesPage extends StatefulWidget {
   const VentesPage({super.key, required this.membre, required this.boutique});
   final Membre membre;
@@ -39,8 +39,10 @@ class _VentesPageState extends State<VentesPage> {
   void _recharger() => setState(() => _ventes = _repo.surveillerVentes(_jour));
 
   Future<void> _ouvrir(Vente v) async {
-    final ticket = Ticket(
+    final ticket = Recu(
       boutique: widget.boutique.nom,
+      adresse: widget.boutique.adresse,
+      telephoneBoutique: widget.boutique.telephone,
       numero: v.ticket,
       date: v.date,
       lignes: v.lignes,
@@ -58,8 +60,20 @@ class _VentesPageState extends State<VentesPage> {
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
         contentPadding: const EdgeInsets.all(24),
-        content: SizedBox(width: 380, child: SingleChildScrollView(child: TicketVue(ticket: ticket))),
+        content: SizedBox(width: 380, child: SingleChildScrollView(child: RecuVue(recu: ticket))),
         actions: [
+          if (!v.annulee) ...[
+            TextButton.icon(
+              onPressed: () => imprimerRecu(ctx, ticket),
+              icon: const Icon(Icons.print_outlined, size: 18),
+              label: const Text('Imprimer'),
+            ),
+            TextButton.icon(
+              onPressed: () => envoyerRecuWhatsApp(ctx, ticket),
+              icon: const Icon(Icons.chat_outlined, size: 18),
+              label: const Text('WhatsApp'),
+            ),
+          ],
           if (peutAnnuler)
             TextButton(
               style: TextButton.styleFrom(foregroundColor: NacreaColors.erreur),
@@ -77,7 +91,7 @@ class _VentesPageState extends State<VentesPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
-        title: Text('Annuler le ticket ${v.ticket} ?'),
+        title: Text('Annuler le reçu n° ${v.ticket} ?'),
         content: SizedBox(
           width: 380,
           child: Column(
@@ -108,7 +122,7 @@ class _VentesPageState extends State<VentesPage> {
       await _repo.annuler(v.id, motif: motif.text);
       if (!mounted) return;
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Ticket ${v.ticket} annulé, stock remis en place.')));
+          .showSnackBar(SnackBar(content: Text('Reçu n° ${v.ticket} annulé, stock remis en place.')));
       _recharger();
     } catch (e) {
       if (mounted) {
@@ -177,7 +191,7 @@ class _VentesPageState extends State<VentesPage> {
                   runSpacing: 12,
                   children: [
                     _Chiffre(titre: 'Chiffre d\'affaires', valeur: fcfa(ca), principal: true),
-                    _Chiffre(titre: 'Tickets', valeur: '${valides.length}'),
+                    _Chiffre(titre: 'Reçus', valeur: '${valides.length}'),
                     _Chiffre(
                       titre: 'Panier moyen',
                       valeur: valides.isEmpty ? '—' : fcfa((ca / valides.length).round()),
@@ -277,7 +291,7 @@ class _LigneVente extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Ticket ${v.ticket} · ${v.nbArticles} article${v.nbArticles > 1 ? 's' : ''}',
+                    Text('Reçu n° ${v.ticket} · ${v.nbArticles} article${v.nbArticles > 1 ? 's' : ''}',
                         style: TextStyle(fontWeight: FontWeight.w600, decoration: barre)),
                     Text('$moyens · ${v.vendeuse}',
                         style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
