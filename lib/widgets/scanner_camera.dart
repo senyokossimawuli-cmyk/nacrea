@@ -34,7 +34,7 @@ class _PageScannerState extends State<_PageScanner> {
       BarcodeFormat.upcE,
       BarcodeFormat.code128,
       BarcodeFormat.code39,
-      BarcodeFormat.itf,
+      BarcodeFormat.itf14,
       BarcodeFormat.qrCode,
     ],
   );
