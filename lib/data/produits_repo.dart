@@ -206,6 +206,20 @@ class ProduitsRepo {
   }
 
   /// Retire le produit du catalogue sans effacer son historique de ventes.
+  /// Nom du produit (actif) qui utilise déjà ce code-barres, s'il y en a un.
+  Future<String?> produitAvecCode(String code, {String? sauf}) async {
+    final l = await db.getOptional(
+      "SELECT name, brand, variant_label FROM products WHERE account_id = ? AND trim(barcode) = ? "
+      "AND (active IS NULL OR active = 1) AND id != ? LIMIT 1",
+      [compteId, code.trim(), sauf ?? ''],
+    );
+    if (l == null) return null;
+    return [l['name'], l['brand'], l['variant_label']]
+        .whereType<String>()
+        .where((t) => t.trim().isNotEmpty)
+        .join(' · ');
+  }
+
   Future<void> archiver(String produitId) async {
     await db.execute('UPDATE products SET active = 0 WHERE id = ?', [produitId]);
   }

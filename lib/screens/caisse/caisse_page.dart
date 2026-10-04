@@ -8,6 +8,7 @@ import '../../services/erreurs.dart';
 import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
+import '../../widgets/scanner_camera.dart';
 import '../clientes/cliente_dialogs.dart';
 import '../produits/produits_page.dart';
 import 'paiement_dialog.dart';
@@ -71,7 +72,17 @@ class _CaissePageState extends State<CaissePage> {
       _message('Attention : seulement ${p.stock < 0 ? 0 : p.stock} en stock pour ${p.nomComplet}.');
     }
     _recherche.clear();
-    _focusRecherche.requestFocus();
+    // Sur téléphone, on ne rouvre pas le clavier après chaque article.
+    if (!scanCameraDisponible) _focusRecherche.requestFocus();
+  }
+
+  /// Scan avec la caméra du téléphone.
+  Future<void> _scanner(List<Produit>? tous) async {
+    final code = await scannerCodeBarres(context);
+    if (code == null || tous == null || !mounted) return;
+    final parCode = tous.where((p) => p.codeBarres?.trim() == code).toList();
+    if (parCode.isNotEmpty) return _ajouter(parCode.first);
+    _message('Code-barres inconnu ($code). Ajoutez ce produit dans « Produits ».');
   }
 
   /// Entrée dans la recherche : un code-barres exact ou un seul résultat → ajout direct.
@@ -359,7 +370,7 @@ class _CaissePageState extends State<CaissePage> {
           child: TextField(
             controller: _recherche,
             focusNode: _focusRecherche,
-            autofocus: true,
+            autofocus: !scanCameraDisponible,
             onChanged: (_) => setState(() {}),
             // Garde le curseur dans la recherche après chaque scan.
             onEditingComplete: () {},
@@ -371,7 +382,13 @@ class _CaissePageState extends State<CaissePage> {
               hintText: 'Scannez un code-barres ou cherchez un produit…',
               prefixIcon: const Icon(Icons.qr_code_scanner),
               suffixIcon: _recherche.text.isEmpty
-                  ? null
+                  ? (scanCameraDisponible && tous != null
+                      ? IconButton(
+                          tooltip: 'Scanner avec la caméra',
+                          icon: const Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
+                          onPressed: () => _scanner(tous),
+                        )
+                      : null)
                   : IconButton(
                       tooltip: 'Effacer',
                       icon: const Icon(Icons.close),

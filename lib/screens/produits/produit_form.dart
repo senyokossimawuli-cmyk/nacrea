@@ -5,10 +5,12 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../data/produits_repo.dart';
 import '../../services/erreurs.dart';
+import '../../services/fiche_code_barres.dart';
 import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
 import '../../widgets/auth_layout.dart';
+import '../../widgets/scanner_camera.dart';
 import 'entree_stock_dialog.dart';
 import 'produits_page.dart';
 
@@ -20,12 +22,16 @@ class ProduitForm extends StatefulWidget {
     required this.membre,
     required this.boutique,
     this.produit,
+    this.codeBarresInitial,
   });
 
   final ProduitsRepo repo;
   final Membre membre;
   final Boutique boutique;
   final Produit? produit;
+
+  /// Code scanné avant d'ouvrir la fiche (nouveau produit) : la fiche se remplit toute seule.
+  final String? codeBarresInitial;
 
   @override
   State<ProduitForm> createState() => _ProduitFormState();
@@ -37,7 +43,7 @@ class _ProduitFormState extends State<ProduitForm> {
   late final _nom = TextEditingController(text: _p?.nom);
   late final _marque = TextEditingController(text: _p?.marque);
   late final _variante = TextEditingController(text: _p?.variante);
-  late final _codeBarres = TextEditingController(text: _p?.codeBarres);
+  late final _codeBarres = TextEditingController(text: _p?.codeBarres ?? widget.codeBarresInitial);
   late final _prixAchat = TextEditingController(text: _p?.prixAchat.toString() ?? '');
   late final _prixVente = TextEditingController(text: _p?.prixVente.toString() ?? '');
   late final _prixGros = TextEditingController(text: _p?.prixGros?.toString() ?? '');
@@ -47,7 +53,10 @@ class _ProduitFormState extends State<ProduitForm> {
 
   late String? _categorieId = _p?.categorieId;
   List<Categorie> _categories = [];
-  late final String? _photoUrl = _p?.photoUrl;
+  late String? _photoUrl = _p?.photoUrl;
+  bool _rechercheFiche = false;
+  String? _infoFiche; // message sous le code-barres
+  bool _infoAlerte = false;
   Uint8List? _nouvellePhoto;
   String _extensionPhoto = 'jpg';
 
@@ -63,6 +72,129 @@ class _ProduitFormState extends State<ProduitForm> {
     super.initState();
     _chargerCategories();
     if (_modification) _lots = widget.repo.lots(widget.boutique.id, _p!.id!);
+    if (!_modification && (widget.codeBarresInitial?.isNotEmpty ?? false)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _chercherFiche());
+    }
+  }
+
+  Future<void> _scannerCode() async {
+    final code = await scannerCodeBarres(context);
+    if (code == null || !mounted) return;
+    _codeBarres.text = code;
+    await _chercherFiche();
+  }
+
+  /// Vérifie que le code n'est pas déjà utilisé, puis (nouveau produit) préremplit la fiche
+  /// depuis le catalogue Nacréa ou Open Beauty Facts. Ne remplace jamais ce qui est déjà tapé.
+  Future<void> _chercherFiche() async {
+    final code = _codeBarres.text.trim();
+    if (code.isEmpty || _rechercheFiche) return;
+    setState(() {
+      _rechercheFiche = true;
+      _infoFiche = null;
+    });
+    try {
+      final doublon = await widget.repo.produitAvecCode(code, sauf: _p?.id);
+      if (doublon != null) {
+        setState(() {
+          _infoFiche = 'Ce code-barres est déjà utilisé par « $doublon ».';
+          _infoAlerte = true;
+        });
+        return;
+      }
+      if (_modification) return;
+      final fiche = await chercherFiche(code);
+      if (!mounted) return;
+      if (fiche == null) {
+        setState(() {
+          _infoFiche = 'Aucune fiche trouvée pour ce code (ou pas de connexion). '
+              'Remplissez-la : elle servira aussi aux prochaines boutiques Nacréa.';
+          _infoAlerte = false;
+        });
+        return;
+      }
+      setState(() {
+        void remplir(TextEditingController c, String? v) {
+          if (c.text.trim().isEmpty && v != null) c.text = v;
+        }
+
+        remplir(_nom, fiche.nom);
+        remplir(_marque, fiche.marque);
+        remplir(_variante, fiche.variante);
+        if (_photoUrl == null && _nouvellePhoto == null) _photoUrl = fiche.photoUrl;
+        _infoFiche = 'Fiche préremplie grâce ${fiche.source}. Vérifiez-la, puis indiquez vos prix.';
+        _infoAlerte = false;
+      });
+    } catch (e) {
+      if (mounted) setState(() => _infoFiche = messageErreur(e));
+    } finally {
+      if (mounted) setState(() => _rechercheFiche = false);
+    }
+  }
+
+  Widget _champCodeBarres() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextFormField(
+          controller: _codeBarres,
+          textInputAction: TextInputAction.next,
+          onFieldSubmitted: (_) => _chercherFiche(),
+          decoration: InputDecoration(
+            labelText: 'Code-barres',
+            helperText: _modification
+                ? 'Scannez-le ou tapez les chiffres'
+                : 'Commencez par scanner : la fiche peut se remplir toute seule',
+            prefixIcon: const Icon(Icons.qr_code_scanner),
+            suffixIcon: _rechercheFiche
+                ? const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: NacreaColors.prune),
+                    ),
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (scanCameraDisponible)
+                        IconButton(
+                          tooltip: 'Scanner avec la caméra',
+                          icon: const Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
+                          onPressed: _scannerCode,
+                        ),
+                      if (!_modification)
+                        IconButton(
+                          tooltip: 'Chercher la fiche',
+                          icon: const Icon(Icons.travel_explore, color: NacreaColors.prune),
+                          onPressed: _chercherFiche,
+                        ),
+                    ],
+                  ),
+          ),
+        ),
+        if (_infoFiche != null) ...[
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: _infoAlerte ? const Color(0xFFFCEBEB) : const Color(0xFFF7EEDB),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(_infoAlerte ? Icons.warning_amber_rounded : Icons.auto_awesome_outlined,
+                    size: 20, color: _infoAlerte ? NacreaColors.erreur : NacreaColors.orTexte),
+                const SizedBox(width: 10),
+                Expanded(child: Text(_infoFiche!)),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   @override
@@ -434,6 +566,8 @@ class _ProduitFormState extends State<ProduitForm> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _section('Le produit', [
+                        _champCodeBarres(),
+                        const SizedBox(height: 20),
                         _blocPhoto(),
                         const SizedBox(height: 20),
                         _champTexte(_nom, 'Nom du produit',
@@ -471,15 +605,7 @@ class _ProduitFormState extends State<ProduitForm> {
                               ),
                             ],
                           ),
-                          TextFormField(
-                            controller: _codeBarres,
-                            textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                              labelText: 'Code-barres',
-                              helperText: 'Scannez-le ou tapez les chiffres',
-                              prefixIcon: Icon(Icons.qr_code_scanner),
-                            ),
-                          ),
+                          const SizedBox.shrink(),
                         ),
                       ]),
                       const SizedBox(height: 16),

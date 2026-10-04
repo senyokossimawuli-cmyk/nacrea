@@ -5,6 +5,7 @@ import '../../services/erreurs.dart';
 import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
+import '../../widgets/scanner_camera.dart';
 import 'entree_stock_dialog.dart';
 import 'produit_form.dart';
 
@@ -64,7 +65,16 @@ class _ProduitsPageState extends State<ProduitsPage> {
 
   void _recharger() => setState(() => _produits = _repo.surveillerProduits(widget.boutique.id));
 
-  Future<void> _ouvrirFormulaire([Produit? produit]) async {
+  /// Scan avec la caméra : ouvre le produit s'il existe, sinon une nouvelle fiche préremplie.
+  Future<void> _scanner(List<Produit> tous) async {
+    final code = await scannerCodeBarres(context);
+    if (code == null || !mounted) return;
+    final existant = tous.where((p) => p.codeBarres?.trim() == code);
+    if (existant.isNotEmpty) return _ouvrirFormulaire(existant.first);
+    return _ouvrirFormulaire(null, code);
+  }
+
+  Future<void> _ouvrirFormulaire([Produit? produit, String? codeBarres]) async {
     final change = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (_) => ProduitForm(
@@ -72,6 +82,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
           membre: widget.membre,
           boutique: widget.boutique,
           produit: produit,
+          codeBarresInitial: codeBarres,
         ),
       ),
     );
@@ -190,7 +201,13 @@ class _ProduitsPageState extends State<ProduitsPage> {
                   hintText: 'Rechercher un nom, une marque, un code-barres…',
                   prefixIcon: const Icon(Icons.search),
                   suffixIcon: _recherche.text.isEmpty
-                      ? null
+                      ? (scanCameraDisponible
+                          ? IconButton(
+                              tooltip: 'Scanner un produit',
+                              icon: const Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
+                              onPressed: () => _scanner(tous),
+                            )
+                          : null)
                       : IconButton(
                           tooltip: 'Effacer',
                           icon: const Icon(Icons.close),
