@@ -269,7 +269,7 @@ class ProduitsRepo {
         'p_reason': note,
         'p_lot_id': lotId,
         'p_received_at': quand,
-        if (fournisseurId != null) 'p_supplier_id': fournisseurId,
+        'p_supplier_id': ?fournisseurId, // omis si aucun fournisseur
       });
     });
   }
