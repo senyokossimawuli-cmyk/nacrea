@@ -1,0 +1,25 @@
+# Vérifie le code (erreurs de compilation, avertissements) sans fabriquer d'APK.
+# Lancée sur les branches « verif/... » avant de livrer une nouveauté.
+name: Vérification du code
+
+on:
+  push:
+    branches: ['verif/**']
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Analyse
+        run: |
+          dart analyze --format=machine > analyse.txt 2>&1 || true
+          # Chaque problème devient une annotation lisible sur GitHub.
+          awk -F'|' 'NF>=8 { sev=($1=="ERROR")?"error":"warning"; f=$4; sub(/^.*\/lib\//,"lib/",f); print "::" sev " file=" f ",line=" $5 "::" $8 }' analyse.txt
+          if grep -q '^ERROR|' analyse.txt; then exit 1; fi
+      - run: flutter test

@@ -11,7 +11,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: NacreaConfig.supabaseUrl,
-    anonKey: NacreaConfig.supabasePublishableKey,
+    publishableKey: NacreaConfig.supabasePublishableKey,
   );
   await ouvrirBaseLocale();
   runApp(const NacreaApp());
