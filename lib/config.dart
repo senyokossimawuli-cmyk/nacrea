@@ -12,7 +12,7 @@ class NacreaConfig {
 
   /// Numéro WhatsApp du service client Nacréa (indicatif compris, ex. 22890000000).
   /// Affiché aux patronnes dont l'abonnement est en retard ou suspendu.
-  static const supportWhatsApp = '';
+  static const supportWhatsApp = '22879867879';
 
   /// Jours de retard tolérés avant que la caisse soit bloquée (comme sur le serveur).
   static const joursDeGrace = 7;
