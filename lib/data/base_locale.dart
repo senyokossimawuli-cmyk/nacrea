@@ -197,6 +197,41 @@ const schemaLocal = Schema([
     Index('boutique_date', [IndexedColumn('shop_id'), IndexedColumn('spent_on')]),
   ]),
 
+  Table('stock_adjustments', [
+    Column.text('account_id'),
+    Column.text('shop_id'),
+    Column.text('product_id'),
+    Column.integer('quantity'),
+    Column.text('reason'),
+    Column.integer('cost_value'),
+    Column.text('note'),
+    Column.text('inventory_id'),
+    Column.text('user_id'),
+    Column.text('created_at'),
+  ], indexes: [
+    Index('boutique_date', [IndexedColumn('shop_id'), IndexedColumn('created_at')]),
+  ]),
+  Table('inventories', [
+    Column.text('account_id'),
+    Column.text('shop_id'),
+    Column.integer('nb_products'),
+    Column.integer('nb_ecarts'),
+    Column.integer('ecart_valeur'),
+    Column.text('note'),
+    Column.text('user_id'),
+    Column.text('created_at'),
+  ]),
+
+  /// Inventaire en cours de comptage : gardé sur l'appareil jusqu'à la validation.
+  Table.localOnly('inventaire_brouillon', [
+    Column.text('shop_id'),
+    Column.text('product_id'),
+    Column.integer('counted'),
+    Column.text('updated_at'),
+  ], indexes: [
+    Index('boutique_produit', [IndexedColumn('shop_id'), IndexedColumn('product_id')]),
+  ]),
+
   /// Opérations à rejouer sur le serveur (vente, entrée de stock) : envoyées puis effacées.
   Table.insertOnly('operations', [
     Column.text('type'),
@@ -215,7 +250,7 @@ const schemaLocal = Schema([
 
 /// Tables écrites localement en avance (affichage immédiat) mais enregistrées
 /// sur le serveur par une opération : leurs changements ne sont pas envoyés tels quels.
-const _tablesViaOperations = {'stock_lots', 'sales', 'sale_items', 'payments'};
+const _tablesViaOperations = {'stock_lots', 'sales', 'sale_items', 'payments', 'stock_adjustments', 'inventories'};
 
 /// Colonnes oui/non : SQLite les stocke en 0/1, Supabase attend true/false.
 const _colonnesOuiNon = {'active', 'can_see_costs', 'from_till'};
@@ -314,6 +349,10 @@ class _ConnecteurSupabase extends PowerSyncBackendConnector {
           await client.rpc('record_sale', params: donnees);
         case 'entree_stock':
           await client.rpc('receive_stock', params: donnees);
+        case 'ajustement':
+          await client.rpc('adjust_stock', params: donnees);
+        case 'inventaire':
+          await client.rpc('record_inventory', params: donnees);
         default:
           debugPrint('Nacréa : opération inconnue $type');
       }

@@ -32,6 +32,8 @@ class Rapport {
     required this.parBoutique,
     required this.valeurStock,
     required this.creditsEnCours,
+    this.ecartsStock = 0,
+    this.ecartsParMotif = const {},
   });
 
   final int nbVentes;
@@ -48,9 +50,13 @@ class Rapport {
   final int valeurStock; // aujourd'hui, au prix d'achat
   final int creditsEnCours; // ce que doivent toutes les clientes aujourd'hui
 
+  /// Casse, vol, cadeaux, inventaire… au prix d'achat (négatif = perte).
+  final int ecartsStock;
+  final Map<String, int> ecartsParMotif;
+
   int get totalDepenses => depenses.values.fold(0, (s, v) => s + v);
   int get margeBrute => chiffreAffaires - coutMarchandises;
-  int get benefice => margeBrute - totalDepenses;
+  int get benefice => margeBrute - totalDepenses + ecartsStock;
   int get panierMoyen => nbVentes == 0 ? 0 : chiffreAffaires ~/ nbVentes;
   double get tauxMarge => chiffreAffaires == 0 ? 0 : margeBrute / chiffreAffaires;
 }
@@ -100,6 +106,13 @@ class RapportsRepo {
       'WHERE account_id = ? AND (? IS NULL OR shop_id = ?) AND spent_on >= ? AND spent_on <= ? '
       'GROUP BY category ORDER BY total DESC',
       [compteId, boutiqueId, boutiqueId, _jour(debut), _jour(fin)],
+    );
+    final ecarts = await db.getAll(
+      'SELECT reason, COALESCE(SUM(cost_value), 0) AS total FROM stock_adjustments '
+      'WHERE account_id = ? AND (? IS NULL OR shop_id = ?) '
+      'AND julianday(created_at) >= julianday(?) AND julianday(created_at) < julianday(?) '
+      'GROUP BY reason',
+      p,
     );
     final top = await db.getAll(
       'SELECT pr.name, pr.brand, pr.variant_label, SUM(i.quantity) AS qte, '
@@ -175,6 +188,8 @@ class RapportsRepo {
       parBoutique: {for (final l in boutiques) l['name'] as String? ?? '': _entier(l['total'])},
       valeurStock: _entier(stock['valeur']),
       creditsEnCours: du < 0 ? 0 : du,
+      ecartsParMotif: {for (final l in ecarts) l['reason'] as String: _entier(l['total'])},
+      ecartsStock: ecarts.fold(0, (t, l) => t + _entier(l['total'])),
     );
   }
 }

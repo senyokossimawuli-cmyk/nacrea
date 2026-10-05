@@ -7,6 +7,7 @@ import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
 import '../../widgets/scanner_camera.dart';
 import 'entree_stock_dialog.dart';
+import 'inventaire_page.dart';
 import 'produit_form.dart';
 
 /// Vignette photo d'un produit (ou icône si pas de photo).
@@ -181,13 +182,27 @@ class _ProduitsPageState extends State<ProduitsPage> {
                           style: const TextStyle(color: NacreaColors.gris)),
                     ],
                   ),
-                  SizedBox(
-                    width: 240,
-                    child: FilledButton.icon(
-                      onPressed: () => _ouvrirFormulaire(),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Ajouter un produit'),
-                    ),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56)),
+                        onPressed: () => Navigator.of(context).push(MaterialPageRoute<bool>(
+                          builder: (_) => InventairePage(membre: widget.membre, boutique: widget.boutique),
+                        )),
+                        icon: const Icon(Icons.fact_check_outlined),
+                        label: const Text('Inventaire'),
+                      ),
+                      SizedBox(
+                        width: 240,
+                        child: FilledButton.icon(
+                          onPressed: () => _ouvrirFormulaire(),
+                          icon: const Icon(Icons.add),
+                          label: const Text('Ajouter un produit'),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

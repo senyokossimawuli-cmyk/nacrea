@@ -11,6 +11,8 @@ import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
 import '../../widgets/auth_layout.dart';
 import '../../widgets/scanner_camera.dart';
+import '../../data/stock_repo.dart';
+import 'ajustement_dialog.dart';
 import 'entree_stock_dialog.dart';
 import 'produits_page.dart';
 
@@ -373,6 +375,21 @@ class _ProduitFormState extends State<ProduitForm> {
     }
   }
 
+  Future<void> _ajuster() async {
+    final ok = await ouvrirAjustement(
+      context,
+      repo: StockRepo(boutiqueId: widget.boutique.id, compteId: widget.repo.compteId),
+      produit: _p!,
+      peutVoirCouts: widget.membre.peutVoirCouts,
+    );
+    if (ok) {
+      setState(() {
+        _change = true;
+        _lots = widget.repo.lots(widget.boutique.id, _p.id!);
+      });
+    }
+  }
+
   // ---------- Champs ----------
 
   TextFormField _champTexte(TextEditingController c, String label,
@@ -514,16 +531,27 @@ class _ProduitFormState extends State<ProduitForm> {
                   ),
                 ),
             const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: SizedBox(
-                width: 240,
-                child: OutlinedButton.icon(
-                  onPressed: _ajouterStock,
-                  icon: const Icon(Icons.add_box_outlined),
-                  label: const Text('Ajouter du stock'),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                SizedBox(
+                  width: 240,
+                  child: OutlinedButton.icon(
+                    onPressed: _ajouterStock,
+                    icon: const Icon(Icons.add_box_outlined),
+                    label: const Text('Ajouter du stock'),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  width: 240,
+                  child: OutlinedButton.icon(
+                    onPressed: _ajuster,
+                    icon: const Icon(Icons.remove_circle_outline),
+                    label: const Text('Retirer ou corriger'),
+                  ),
+                ),
+              ],
             ),
           ],
         );

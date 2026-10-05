@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../data/depenses_repo.dart' show libelleCategorie;
 import '../../data/produits_repo.dart';
 import '../../data/rapports_repo.dart';
+import '../../data/stock_repo.dart' show MotifAjustement;
 import '../../services/erreurs.dart';
 import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
@@ -62,6 +63,7 @@ class _RapportsPageState extends State<RapportsPage> {
       'Coût des produits vendus : ${fcfa(r.coutMarchandises)}',
       'Marge : ${fcfa(r.margeBrute)}',
       'Dépenses : ${fcfa(r.totalDepenses)}',
+      if (r.ecartsStock != 0) 'Pertes et écarts de stock : ${fcfa(r.ecartsStock)}',
       'Bénéfice : ${fcfa(r.benefice)}',
       if (r.creditsEnCours > 0) 'Crédits clientes à récupérer : ${fcfa(r.creditsEnCours)}',
     ].join('\n').replaceAll(' ', ' ');
@@ -196,6 +198,11 @@ class _RapportsPageState extends State<RapportsPage> {
               const Divider(color: NacreaColors.bordure),
               _ligne('Marge', '${fcfa(r.margeBrute)}  (${(r.tauxMarge * 100).round()} %)', fort: true),
               _ligne('Dépenses', '- ${fcfa(r.totalDepenses)}'),
+              if (r.ecartsStock != 0)
+                _ligne(
+                  r.ecartsStock < 0 ? 'Pertes de stock (casse, vol, inventaire…)' : 'Écarts de stock (en plus)',
+                  '${r.ecartsStock < 0 ? '- ' : '+ '}${fcfa(r.ecartsStock.abs())}',
+                ),
               const Divider(color: NacreaColors.bordure),
               _ligne(positif ? 'Bénéfice' : 'Perte', fcfa(r.benefice), fort: true),
               if (r.coutMarchandises == 0 && r.chiffreAffaires > 0)
@@ -266,6 +273,15 @@ class _RapportsPageState extends State<RapportsPage> {
                 for (final e in r.depenses.entries) libelleCategorie(e.key): e.value,
               }),
       ),
+      // ---------- Pertes de stock ----------
+      if (r.ecartsParMotif.values.any((v) => v < 0))
+        _section(
+          'Pertes de stock',
+          _BarresHorizontales(valeurs: {
+            for (final e in r.ecartsParMotif.entries)
+              if (e.value < 0) MotifAjustement.depuis(e.key).libelle: -e.value,
+          }),
+        ),
       // ---------- Par boutique ----------
       if (_toutes && r.parBoutique.length > 1)
         _section("Chiffre d'affaires par boutique", _BarresHorizontales(valeurs: r.parBoutique)),
