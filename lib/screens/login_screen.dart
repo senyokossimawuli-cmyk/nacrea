@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/erreurs.dart';
 import '../theme/nacrea_theme.dart';
 import '../widgets/auth_layout.dart';
+import 'code_email_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _masque = true;
   bool _chargement = false;
   String? _erreur;
+  bool _nonConfirme = false;
 
   @override
   void dispose() {
@@ -34,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _chargement = true;
       _erreur = null;
+      _nonConfirme = false;
     });
     try {
       await Supabase.instance.client.auth.signInWithPassword(
@@ -42,10 +45,29 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       // La redirection vers l'accueil se fait automatiquement.
     } catch (e) {
-      if (mounted) setState(() => _erreur = messageErreur(e));
+      if (mounted) {
+        setState(() {
+          _erreur = messageErreur(e);
+          _nonConfirme = e is AuthException && e.message.toLowerCase().contains('not confirmed');
+        });
+      }
     } finally {
       if (mounted) setState(() => _chargement = false);
     }
+  }
+
+  /// E-mail pas encore confirmé : on renvoie un code et on ouvre l'écran de saisie.
+  Future<void> _confirmer() async {
+    final email = _email.text.trim();
+    try {
+      await Supabase.instance.client.auth.resend(type: OtpType.signup, email: email);
+    } catch (_) {
+      // Code peut-être déjà envoyé : on ouvre quand même l'écran.
+    }
+    if (!mounted) return;
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => CodeEmailScreen(email: email, mode: ModeCode.inscription),
+    ));
   }
 
   @override
@@ -87,8 +109,25 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               validator: (v) => (v == null || v.isEmpty) ? 'Entrez votre mot de passe' : null,
             ),
-            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (_) => MotDePasseOublieScreen(email: _email.text.trim()),
+                )),
+                child: const Text('Mot de passe oublié ?'),
+              ),
+            ),
+            const SizedBox(height: 12),
             if (_erreur != null) MessageErreur(_erreur!),
+            if (_nonConfirme)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: OutlinedButton(
+                  onPressed: _confirmer,
+                  child: const Text('Confirmer mon e-mail avec un code'),
+                ),
+              ),
             FilledButton(
               onPressed: _chargement ? null : _seConnecter,
               child: _chargement

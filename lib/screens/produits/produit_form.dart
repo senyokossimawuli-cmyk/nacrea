@@ -409,13 +409,21 @@ class _ProduitFormState extends State<ProduitForm> {
     );
   }
 
+  /// Une employée peut créer un produit avec ses prix, mais pas modifier les prix ensuite.
+  bool get _prixVerrouilles => _modification && !widget.membre.estPatronne;
+
   TextFormField _champPrix(TextEditingController c, String label, {bool obligatoire = false}) {
     return TextFormField(
       controller: c,
+      enabled: !_prixVerrouilles,
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(labelText: label, suffixText: 'FCFA'),
+      decoration: InputDecoration(
+        labelText: label,
+        suffixText: 'FCFA',
+        helperText: _prixVerrouilles ? 'Modifiable seulement par la patronne' : null,
+      ),
       validator: obligatoire
           ? (v) => (int.tryParse(v ?? '') == null) ? 'Indiquez un prix' : null
           : null,

@@ -211,6 +211,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
                         icon: const Icon(Icons.qr_code_2),
                         label: const Text('Étiquettes'),
                       ),
+                      if (widget.membre.estPatronne)
                       OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56)),
                         onPressed: _importer,
@@ -346,12 +347,14 @@ class _ProduitsPageState extends State<ProduitsPage> {
                 style: TextStyle(color: NacreaColors.gris, height: 1.5),
               ),
               const SizedBox(height: 24),
-              OutlinedButton.icon(
-                onPressed: _importer,
-                icon: const Icon(Icons.upload_file_outlined),
-                label: const Text('Importer depuis Excel'),
-              ),
-              const SizedBox(height: 12),
+              if (widget.membre.estPatronne) ...[
+                OutlinedButton.icon(
+                  onPressed: _importer,
+                  icon: const Icon(Icons.upload_file_outlined),
+                  label: const Text('Importer depuis Excel'),
+                ),
+                const SizedBox(height: 12),
+              ],
               FilledButton.icon(
                 onPressed: () => _ouvrirFormulaire(),
                 icon: const Icon(Icons.add),

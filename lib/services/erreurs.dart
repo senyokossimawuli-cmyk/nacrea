@@ -11,7 +11,7 @@ String messageErreur(Object erreur) {
       return 'Un compte existe déjà avec cet e-mail. Connectez-vous.';
     }
     if (m.contains('email not confirmed')) {
-      return 'Confirmez d\'abord votre e-mail grâce au lien reçu.';
+      return 'Votre e-mail n\'est pas encore confirmé.';
     }
     if (m.contains('password')) {
       return 'Mot de passe trop faible : 8 caractères minimum.';

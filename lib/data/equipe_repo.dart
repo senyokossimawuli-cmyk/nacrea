@@ -120,6 +120,10 @@ class EquipeRepo {
 
   /// Pour une employée : rejoindre la boutique avec le code reçu de la patronne.
   static Future<void> rejoindre(String code) async {
-    await _serveur.rpc('join_with_invitation', params: {'p_code': code.trim().toUpperCase()});
+    final compte = await _serveur.rpc('join_with_invitation', params: {'p_code': code.trim().toUpperCase()});
+    if (compte == null) {
+      throw Exception('Code invalide, déjà utilisé ou expiré. Vérifiez les lettres et les chiffres, '
+          'ou demandez un nouveau code à la patronne.');
+    }
   }
 }

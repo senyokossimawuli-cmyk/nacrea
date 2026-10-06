@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/erreurs.dart';
 import '../theme/nacrea_theme.dart';
 import '../widgets/auth_layout.dart';
+import 'code_email_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -20,7 +21,6 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _masque = true;
   bool _chargement = false;
   String? _erreur;
-  bool _emailEnvoye = false;
 
   @override
   void dispose() {
@@ -48,7 +48,10 @@ class _SignupScreenState extends State<SignupScreen> {
         // qui affichera la création de la boutique.
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        setState(() => _emailEnvoye = true);
+        // Confirmation par e-mail activée : on demande le code reçu.
+        Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
+          builder: (_) => CodeEmailScreen(email: _email.text.trim(), mode: ModeCode.inscription),
+        ));
       }
     } catch (e) {
       if (mounted) setState(() => _erreur = messageErreur(e));
@@ -59,27 +62,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_emailEnvoye) {
-      return AuthLayout(
-        titre: 'Vérifiez vos e-mails',
-        sousTitre: 'Un lien de confirmation a été envoyé à ${_email.text.trim()}.',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Ouvrez cet e-mail et cliquez sur le lien, puis revenez ici pour vous connecter.',
-              style: TextStyle(fontSize: 15, height: 1.5),
-            ),
-            const SizedBox(height: 32),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Aller à la connexion'),
-            ),
-          ],
-        ),
-      );
-    }
-
     return AuthLayout(
       titre: 'Créer mon compte',
       sousTitre: 'Quelques secondes pour démarrer avec Nacréa.',
