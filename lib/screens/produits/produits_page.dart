@@ -7,6 +7,8 @@ import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
 import '../../widgets/scanner_camera.dart';
 import 'entree_stock_dialog.dart';
+import 'etiquettes_page.dart';
+import 'import_page.dart';
 import 'inventaire_page.dart';
 import 'produit_form.dart';
 
@@ -73,6 +75,13 @@ class _ProduitsPageState extends State<ProduitsPage> {
     final existant = tous.where((p) => p.codeBarres?.trim() == code);
     if (existant.isNotEmpty) return _ouvrirFormulaire(existant.first);
     return _ouvrirFormulaire(null, code);
+  }
+
+  Future<void> _importer() async {
+    final ok = await Navigator.of(context).push<bool>(MaterialPageRoute(
+      builder: (_) => ImportPage(membre: widget.membre, boutique: widget.boutique),
+    ));
+    if (ok == true) _recharger();
   }
 
   Future<void> _ouvrirFormulaire([Produit? produit, String? codeBarres]) async {
@@ -193,6 +202,20 @@ class _ProduitsPageState extends State<ProduitsPage> {
                         )),
                         icon: const Icon(Icons.fact_check_outlined),
                         label: const Text('Inventaire'),
+                      ),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56)),
+                        onPressed: () => Navigator.of(context).push(MaterialPageRoute<bool>(
+                          builder: (_) => EtiquettesPage(membre: widget.membre, boutique: widget.boutique),
+                        )),
+                        icon: const Icon(Icons.qr_code_2),
+                        label: const Text('Étiquettes'),
+                      ),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56)),
+                        onPressed: _importer,
+                        icon: const Icon(Icons.upload_file_outlined),
+                        label: const Text('Importer Excel'),
                       ),
                       SizedBox(
                         width: 240,
@@ -323,6 +346,12 @@ class _ProduitsPageState extends State<ProduitsPage> {
                 style: TextStyle(color: NacreaColors.gris, height: 1.5),
               ),
               const SizedBox(height: 24),
+              OutlinedButton.icon(
+                onPressed: _importer,
+                icon: const Icon(Icons.upload_file_outlined),
+                label: const Text('Importer depuis Excel'),
+              ),
+              const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: () => _ouvrirFormulaire(),
                 icon: const Icon(Icons.add),
