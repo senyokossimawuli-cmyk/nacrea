@@ -43,6 +43,8 @@ streams:
       - SELECT * FROM expenses WHERE account_id IN comptes_patronne
       - SELECT * FROM stock_adjustments WHERE account_id IN comptes_patronne
       - SELECT * FROM inventories WHERE account_id IN comptes_patronne
+      - SELECT * FROM sale_returns WHERE account_id IN comptes_patronne
+      - SELECT * FROM sale_return_items WHERE account_id IN comptes_patronne
 
   boutique_employee:
     auto_subscribe: true
@@ -61,3 +63,5 @@ streams:
       - SELECT * FROM expenses WHERE shop_id IN boutiques_employee
       - SELECT * FROM stock_adjustments WHERE shop_id IN boutiques_employee
       - SELECT * FROM inventories WHERE shop_id IN boutiques_employee
+      - SELECT * FROM sale_returns WHERE shop_id IN boutiques_employee
+      - SELECT * FROM sale_return_items WHERE shop_id IN boutiques_employee

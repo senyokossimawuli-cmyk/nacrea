@@ -34,6 +34,8 @@ class Rapport {
     required this.creditsEnCours,
     this.ecartsStock = 0,
     this.ecartsParMotif = const {},
+    this.retours = 0,
+    this.coutRetoursRemis = 0,
   });
 
   final int nbVentes;
@@ -54,11 +56,18 @@ class Rapport {
   final int ecartsStock;
   final Map<String, int> ecartsParMotif;
 
+  /// Retours : montant remboursé, et prix d'achat des articles remis en rayon.
+  final int retours;
+  final int coutRetoursRemis;
+
   int get totalDepenses => depenses.values.fold(0, (s, v) => s + v);
-  int get margeBrute => chiffreAffaires - coutMarchandises;
+  /// Chiffre d'affaires après retours.
+  int get chiffreNet => chiffreAffaires - retours;
+  int get coutNet => coutMarchandises - coutRetoursRemis;
+  int get margeBrute => chiffreNet - coutNet;
   int get benefice => margeBrute - totalDepenses + ecartsStock;
   int get panierMoyen => nbVentes == 0 ? 0 : chiffreAffaires ~/ nbVentes;
-  double get tauxMarge => chiffreAffaires == 0 ? 0 : margeBrute / chiffreAffaires;
+  double get tauxMarge => chiffreNet == 0 ? 0 : margeBrute / chiffreNet;
 }
 
 String _jour(DateTime d) =>
@@ -97,7 +106,7 @@ class RapportsRepo {
     );
     final remb = await db.get(
       'SELECT COALESCE(SUM(amount), 0) AS total FROM customer_payments '
-      'WHERE account_id = ? AND (? IS NULL OR shop_id = ?) '
+      "WHERE account_id = ? AND (? IS NULL OR shop_id = ?) AND method != 'return' "
       'AND julianday(created_at) >= julianday(?) AND julianday(created_at) < julianday(?)',
       p,
     );
@@ -106,6 +115,15 @@ class RapportsRepo {
       'WHERE account_id = ? AND (? IS NULL OR shop_id = ?) AND spent_on >= ? AND spent_on <= ? '
       'GROUP BY category ORDER BY total DESC',
       [compteId, boutiqueId, boutiqueId, _jour(debut), _jour(fin)],
+    );
+    final retours = await db.get(
+      'SELECT COALESCE(SUM(r.refund_amount), 0) AS rembourse, '
+      '(SELECT COALESCE(SUM(i.quantity * i.cost_price), 0) FROM sale_return_items i JOIN sale_returns r2 ON r2.id = i.return_id '
+      '  WHERE i.restocked = 1 AND r2.account_id = ? AND (? IS NULL OR r2.shop_id = ?) '
+      '  AND julianday(r2.created_at) >= julianday(?) AND julianday(r2.created_at) < julianday(?)) AS cout_remis '
+      'FROM sale_returns r WHERE r.account_id = ? AND (? IS NULL OR r.shop_id = ?) '
+      'AND julianday(r.created_at) >= julianday(?) AND julianday(r.created_at) < julianday(?)',
+      [...p, ...p],
     );
     final ecarts = await db.getAll(
       'SELECT reason, COALESCE(SUM(cost_value), 0) AS total FROM stock_adjustments '
@@ -190,6 +208,8 @@ class RapportsRepo {
       creditsEnCours: du < 0 ? 0 : du,
       ecartsParMotif: {for (final l in ecarts) l['reason'] as String: _entier(l['total'])},
       ecartsStock: ecarts.fold(0, (t, l) => t + _entier(l['total'])),
+      retours: _entier(retours['rembourse']),
+      coutRetoursRemis: _entier(retours['cout_remis']),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/produits_repo.dart';
+import '../../data/retours_repo.dart';
 import '../../data/ventes_repo.dart';
 import '../../services/erreurs.dart';
 import '../../services/membre.dart';
@@ -8,6 +9,7 @@ import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
 import '../caisse/recu_dialog.dart';
 import '../caisse/session_caisse.dart';
+import 'retour_dialog.dart';
 import '../../data/caisse_repo.dart';
 
 /// Ventes d'une journée : totaux, répartition par paiement et liste des reçus.
@@ -58,12 +60,29 @@ class _VentesPageState extends State<VentesPage> {
     );
     final peutAnnuler = widget.membre.estPatronne && !v.annulee;
 
-    final annuler = await showDialog<bool>(
+    final choix = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
         contentPadding: const EdgeInsets.all(24),
-        content: SizedBox(width: 380, child: SingleChildScrollView(child: RecuVue(recu: ticket))),
+        content: SizedBox(
+          width: 380,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                RecuVue(recu: ticket),
+                if (v.rembourse > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text('Retours sur ce reçu : ${fcfa(v.rembourse)} remboursés',
+                        style: const TextStyle(color: NacreaColors.orTexte, fontWeight: FontWeight.w600)),
+                  ),
+              ],
+            ),
+          ),
+        ),
         actions: [
           if (!v.annulee) ...[
             TextButton.icon(
@@ -76,18 +95,42 @@ class _VentesPageState extends State<VentesPage> {
               icon: const Icon(Icons.chat_outlined, size: 18),
               label: const Text('WhatsApp'),
             ),
+            TextButton.icon(
+              onPressed: () => Navigator.of(ctx).pop('retour'),
+              icon: const Icon(Icons.assignment_return_outlined, size: 18),
+              label: const Text('Retour / échange'),
+            ),
           ],
           if (peutAnnuler)
             TextButton(
               style: TextButton.styleFrom(foregroundColor: NacreaColors.erreur),
-              onPressed: () => Navigator.of(ctx).pop(true),
+              onPressed: () => Navigator.of(ctx).pop('annuler'),
               child: const Text('Annuler la vente'),
             ),
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Fermer')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Fermer')),
         ],
       ),
     );
-    if (annuler != true || !mounted) return;
+    if (!mounted) return;
+    if (choix == 'retour') {
+      final r = await ouvrirRetour(
+        context,
+        repo: RetoursRepo(boutiqueId: widget.boutique.id, compteId: widget.membre.compteId),
+        vente: v,
+      );
+      if (r == null || !mounted) return;
+      final (montant, mode) = r;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: const Duration(seconds: 6),
+        content: Text(switch (mode) {
+          Remboursement.especes => 'Retour enregistré. Rendez ${fcfa(montant)} à la cliente (pris dans la caisse).',
+          Remboursement.dette => 'Retour enregistré. ${fcfa(montant)} déduits de la dette de la cliente.',
+          _ => 'Retour enregistré. Remboursez ${fcfa(montant)} par ${mode.libelle}.',
+        }),
+      ));
+      return;
+    }
+    if (choix != 'annuler') return;
 
     final motif = TextEditingController();
     final confirme = await showDialog<bool>(
@@ -195,6 +238,11 @@ class _VentesPageState extends State<VentesPage> {
                   children: [
                     _Chiffre(titre: 'Chiffre d\'affaires', valeur: fcfa(ca), principal: true),
                     _Chiffre(titre: 'Reçus', valeur: '${valides.length}'),
+                    if (valides.any((v) => v.rembourse > 0))
+                      _Chiffre(
+                        titre: 'Retours remboursés',
+                        valeur: '-${fcfa(valides.fold(0, (t, v) => t + v.rembourse))}',
+                      ),
                     _Chiffre(
                       titre: 'Panier moyen',
                       valeur: valides.isEmpty ? '—' : fcfa((ca / valides.length).round()),
@@ -311,6 +359,18 @@ class _LigneVente extends StatelessWidget {
                   ],
                 ),
               ),
+              if (!v.annulee && v.rembourse > 0)
+                Container(
+                  margin: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF7EEDB),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text('Retour -${fcfa(v.rembourse)}',
+                      style: const TextStyle(
+                          color: NacreaColors.orTexte, fontSize: 12, fontWeight: FontWeight.w600)),
+                ),
               if (v.annulee)
                 Container(
                   margin: const EdgeInsets.only(right: 12),

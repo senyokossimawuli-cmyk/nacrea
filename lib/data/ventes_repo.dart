@@ -21,6 +21,7 @@ enum MoyenPaiement {
         'mobile_money' => 'Mobile Money',
         'card' => 'Carte',
         'credit' => 'Crédit',
+        'return' => 'Retour d\'article',
         _ => code,
       };
 }
@@ -74,6 +75,8 @@ class Vente {
     required this.paiements,
     required this.lignes,
     this.cliente,
+    this.clienteId,
+    this.rembourse = 0,
   });
 
   final String id;
@@ -87,6 +90,10 @@ class Vente {
   final String vendeuse;
   final Map<String, int> paiements; // code du moyen → montant
   final List<LigneVente> lignes;
+  final String? clienteId;
+
+  /// Montant remboursé par des retours sur ce reçu.
+  final int rembourse;
 
   int get nbArticles => lignes.fold(0, (s, l) => s + l.quantite);
   int get credit => paiements['credit'] ?? 0;
@@ -210,11 +217,13 @@ class VentesRepo {
     final fin = debut.add(const Duration(days: 1));
     return db.watch(
       'SELECT v.id, v.ticket_number, v.status, v.subtotal, v.discount, v.total, v.created_at, v.user_id, '
-      'c.name AS cliente FROM sales v LEFT JOIN customers c ON c.id = v.customer_id '
+      'v.customer_id, c.name AS cliente, '
+      '(SELECT COALESCE(SUM(r.refund_amount), 0) FROM sale_returns r WHERE r.sale_id = v.id) AS rembourse '
+      'FROM sales v LEFT JOIN customers c ON c.id = v.customer_id '
       'WHERE v.shop_id = ? AND julianday(v.created_at) >= julianday(?) AND julianday(v.created_at) < julianday(?) '
       'ORDER BY julianday(v.created_at) DESC',
       parameters: [boutique.id, debut.toUtc().toIso8601String(), fin.toUtc().toIso8601String()],
-      triggerOnTables: const ['sales', 'sale_items', 'payments', 'customers'],
+      triggerOnTables: const ['sales', 'sale_items', 'payments', 'customers', 'sale_returns'],
     ).asyncMap(_completer);
   }
 
@@ -260,6 +269,8 @@ class VentesRepo {
           paiements: paiementsParVente[v['id']] ?? const {},
           lignes: _regrouper(lignesParVente[v['id']] ?? const []),
           cliente: v['cliente'] as String?,
+          clienteId: v['customer_id'] as String?,
+          rembourse: _entier(v['rembourse']),
         ),
     ];
   }

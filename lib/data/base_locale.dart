@@ -222,6 +222,33 @@ const schemaLocal = Schema([
     Column.text('created_at'),
   ]),
 
+  Table('sale_returns', [
+    Column.text('account_id'),
+    Column.text('shop_id'),
+    Column.text('sale_id'),
+    Column.text('customer_id'),
+    Column.integer('refund_amount'),
+    Column.text('refund_method'),
+    Column.text('note'),
+    Column.text('user_id'),
+    Column.text('created_at'),
+  ], indexes: [
+    Index('vente', [IndexedColumn('sale_id')]),
+    Index('boutique_date', [IndexedColumn('shop_id'), IndexedColumn('created_at')]),
+  ]),
+  Table('sale_return_items', [
+    Column.text('return_id'),
+    Column.text('account_id'),
+    Column.text('shop_id'),
+    Column.text('product_id'),
+    Column.integer('quantity'),
+    Column.integer('unit_refund'),
+    Column.integer('cost_price'),
+    Column.integer('restocked'),
+  ], indexes: [
+    Index('retour', [IndexedColumn('return_id')]),
+  ]),
+
   /// Inventaire en cours de comptage : gardé sur l'appareil jusqu'à la validation.
   Table.localOnly('inventaire_brouillon', [
     Column.text('shop_id'),
@@ -250,7 +277,10 @@ const schemaLocal = Schema([
 
 /// Tables écrites localement en avance (affichage immédiat) mais enregistrées
 /// sur le serveur par une opération : leurs changements ne sont pas envoyés tels quels.
-const _tablesViaOperations = {'stock_lots', 'sales', 'sale_items', 'payments', 'stock_adjustments', 'inventories'};
+const _tablesViaOperations = {
+  'stock_lots', 'sales', 'sale_items', 'payments', 'stock_adjustments', 'inventories',
+  'sale_returns', 'sale_return_items',
+};
 
 /// Colonnes oui/non : SQLite les stocke en 0/1, Supabase attend true/false.
 const _colonnesOuiNon = {'active', 'can_see_costs', 'from_till'};
@@ -353,12 +383,16 @@ class _ConnecteurSupabase extends PowerSyncBackendConnector {
           await client.rpc('adjust_stock', params: donnees);
         case 'inventaire':
           await client.rpc('record_inventory', params: donnees);
+        case 'retour':
+          await client.rpc('record_return', params: donnees);
         default:
           debugPrint('Nacréa : opération inconnue $type');
       }
       return;
     }
     if (_tablesViaOperations.contains(op.table)) return;
+    // Remboursement d'un retour déduit de la dette : créé par le serveur avec le retour.
+    if (op.table == 'customer_payments' && op.opData?['method'] == 'return') return;
 
     final table = client.from(op.table);
     final donnees = <String, dynamic>{
