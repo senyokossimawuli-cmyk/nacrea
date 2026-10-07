@@ -9,7 +9,7 @@ GoTrueClient get _auth => Supabase.instance.client.auth;
 
 enum ModeCode { inscription, motDePasse }
 
-/// Saisie du code reçu par e-mail (6 chiffres) :
+/// Saisie du code reçu par e-mail (6 à 8 chiffres selon le réglage Supabase) :
 /// confirmation de l'inscription, ou mot de passe oublié.
 /// Un code marche pareil sur PC et sur téléphone, sans lien à ouvrir.
 class CodeEmailScreen extends StatefulWidget {
@@ -65,7 +65,7 @@ class _CodeEmailScreenState extends State<CodeEmailScreen> {
 
   Future<void> _verifier() => _faire(() async {
         final code = _code.text.trim();
-        if (code.length < 6) throw Exception('Entrez les 6 chiffres reçus par e-mail.');
+        if (code.length < 6) throw Exception('Entrez le code reçu par e-mail.');
         await _auth.verifyOTP(
           email: widget.email,
           token: code,
@@ -153,7 +153,7 @@ class _CodeEmailScreenState extends State<CodeEmailScreen> {
 
     return AuthLayout(
       titre: widget.mode == ModeCode.inscription ? 'Confirmez votre e-mail' : 'Mot de passe oublié',
-      sousTitre: 'Nous avons envoyé un code à 6 chiffres à ${widget.email}.',
+      sousTitre: 'Nous avons envoyé un code à ${widget.email}.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
