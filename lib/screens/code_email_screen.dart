@@ -166,7 +166,7 @@ class _CodeEmailScreenState extends State<CodeEmailScreen> {
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 30, letterSpacing: 10, fontWeight: FontWeight.w700),
             onSubmitted: (_) => _verifier(),
-            decoration: const InputDecoration(labelText: 'Code reçu par e-mail', hintText: '123456', counterText: ''),
+            decoration: const InputDecoration(labelText: 'Tapez ici le code reçu par e-mail', counterText: ''),
           ),
           const SizedBox(height: 8),
           const Text(
