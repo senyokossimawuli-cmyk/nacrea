@@ -9,6 +9,7 @@ import '../theme/nacrea_theme.dart';
 import '../widgets/deconnexion.dart';
 import '../widgets/nacrea_logo.dart';
 import 'admin/admin_page.dart';
+import 'licence_screen.dart';
 import 'shell_screen.dart';
 import 'login_screen.dart';
 import 'onboarding_screen.dart';
@@ -101,7 +102,11 @@ class _ChargementMembreState extends State<_ChargementMembre> {
           );
         }
         final (membre, admin) = snap.data!;
-        if (membre != null) return ShellScreen(membre: membre, estAdmin: admin);
+        if (membre != null) {
+          // L'administrateur de Nacréa n'a pas besoin de licence.
+          if (admin) return ShellScreen(membre: membre, estAdmin: true);
+          return LicenceGate(membre: membre, enfant: () => ShellScreen(membre: membre, estAdmin: false));
+        }
         if (admin) return const _AdminSeul();
         return OnboardingScreen(quandCree: _apresCreation);
       },

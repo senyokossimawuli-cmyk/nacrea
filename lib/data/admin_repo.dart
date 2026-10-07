@@ -189,3 +189,80 @@ class AdminRepo {
   Future<void> supprimerPaiement(String paiementId) =>
       _serveur.rpc('admin_delete_payment', params: {'p_payment_id': paiementId});
 }
+
+// ---------------------------------------------------------------- Licences
+
+class AppareilAdmin {
+  AppareilAdmin(Map<String, dynamic> j)
+      : id = j['id'] as String,
+        type = j['type'] as String? ?? 'pc',
+        nom = j['nom'] as String?,
+        email = j['email'] as String?,
+        premier = _date(j['premier']),
+        vuLe = _date(j['vu_le']);
+
+  final String id, type;
+  final String? nom, email;
+  final DateTime? premier, vuLe;
+
+  bool get estPc => type == 'pc';
+  String get libelle => nom ?? (estPc ? 'Ordinateur' : 'Téléphone');
+}
+
+class LicenceAdmin {
+  LicenceAdmin(Map<String, dynamic> j)
+      : id = j['id'] as String,
+        cle = j['cle'] as String,
+        note = j['note'] as String?,
+        active = j['active'] == true,
+        maxPc = _entier(j['max_pc']),
+        maxTelephones = _entier(j['max_mobile']),
+        creeLe = _date(j['cree_le']),
+        activeeLe = _date(j['activee_le']),
+        compteId = j['compte_id'] as String?,
+        compte = j['compte'] as String?,
+        appareils = [
+          for (final a in (j['appareils'] as List? ?? const [])) AppareilAdmin(Map<String, dynamic>.from(a as Map))
+        ];
+
+  final String id, cle;
+  final String? note, compteId, compte;
+  final bool active;
+  final int maxPc, maxTelephones;
+  final DateTime? creeLe, activeeLe;
+  final List<AppareilAdmin> appareils;
+
+  bool get libre => compteId == null;
+  int get nbPc => appareils.where((a) => a.estPc).length;
+  int get nbTelephones => appareils.where((a) => !a.estPc).length;
+}
+
+extension LicencesAdmin on AdminRepo {
+  Future<List<LicenceAdmin>> licences({String? compteId}) async {
+    final liste = await _serveur.rpc('admin_licenses', params: {'p_account_id': compteId}) as List;
+    return [for (final l in liste) LicenceAdmin(Map<String, dynamic>.from(l as Map))];
+  }
+
+  /// Renvoie la clé créée.
+  Future<String> creerLicence({String? note, int maxPc = 1, int maxTelephones = 1, String? compteId}) async {
+    final r = await _serveur.rpc('admin_create_license', params: {
+      'p_note': note,
+      'p_max_pc': maxPc,
+      'p_max_mobile': maxTelephones,
+      'p_account_id': compteId,
+    });
+    return '${(r as Map)['cle']}';
+  }
+
+  Future<void> modifierLicence(String id, {String? note, required int maxPc, required int maxTelephones}) =>
+      _serveur.rpc('admin_update_license',
+          params: {'p_id': id, 'p_note': note, 'p_max_pc': maxPc, 'p_max_mobile': maxTelephones});
+
+  Future<void> activerLicence(String id, bool active) =>
+      _serveur.rpc('admin_set_license_active', params: {'p_id': id, 'p_active': active});
+
+  Future<void> libererAppareil(String appareilId) =>
+      _serveur.rpc('admin_remove_license_device', params: {'p_device': appareilId});
+
+  Future<void> supprimerLicence(String id) => _serveur.rpc('admin_delete_license', params: {'p_id': id});
+}

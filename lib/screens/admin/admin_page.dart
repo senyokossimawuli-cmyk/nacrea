@@ -9,6 +9,7 @@ import '../../utils/format.dart';
 import '../../widgets/auth_layout.dart';
 import '../../widgets/carte_chiffre.dart';
 import '../clientes/cliente_dialogs.dart' show ouvrirWhatsApp;
+import 'admin_licences.dart';
 
 final _repo = AdminRepo();
 
@@ -98,7 +99,7 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     final etroit = MediaQuery.sizeOf(context).width < 600;
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: FutureBuilder<(ApercuAdmin, List<ClienteNacrea>)>(
         future: _donnees,
         builder: (context, snap) {
@@ -109,6 +110,8 @@ class _AdminPageState extends State<AdminPage> {
               Container(
                 color: Colors.white,
                 child: TabBar(
+                  isScrollable: etroit,
+                  tabAlignment: etroit ? TabAlignment.start : null,
                   labelColor: NacreaColors.prune,
                   indicatorColor: NacreaColors.prune,
                   unselectedLabelColor: NacreaColors.gris,
@@ -123,6 +126,7 @@ class _AdminPageState extends State<AdminPage> {
                       ),
                       text: 'À relancer',
                     ),
+                    const Tab(icon: Icon(Icons.key_outlined), text: 'Licences'),
                   ],
                 ),
               ),
@@ -161,6 +165,7 @@ class _AdminPageState extends State<AdminPage> {
                         quandChange: () => setState(() {}),
                       ),
                       _OngletRelances(clientes: aRelancer, etroit: etroit, quandOuvrir: _ouvrir),
+                      OngletLicences(etroit: etroit),
                     ],
                   );
                 }),
@@ -622,6 +627,13 @@ class _FicheAdminState extends State<_FicheAdmin> {
               ),
             ),
             const SizedBox(height: 20),
+            LicenceDeLaCliente(
+              compteId: f.id,
+              nomCompte: f.nom,
+              telephone: f.telephoneContact,
+              patronne: f.patronne,
+            ),
+            const SizedBox(height: 8),
             for (final b in f.boutiques)
               Card(
                 child: Padding(

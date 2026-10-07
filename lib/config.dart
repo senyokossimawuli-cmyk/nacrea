@@ -16,4 +16,7 @@ class NacreaConfig {
 
   /// Jours de retard tolérés avant que la caisse soit bloquée (comme sur le serveur).
   static const joursDeGrace = 7;
+
+  /// Sans internet, la licence vérifiée reste valable ce nombre de jours sur l'appareil.
+  static const joursLicenceHorsLigne = 30;
 }

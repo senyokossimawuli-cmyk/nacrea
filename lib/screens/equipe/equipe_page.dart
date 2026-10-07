@@ -7,6 +7,7 @@ import '../../services/erreurs.dart';
 import '../../services/membre.dart';
 import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
+import '../licence_screen.dart' show CarteMaLicence;
 
 /// Page Équipe (patronne) : employées, boutique de chacune, invitations.
 class EquipePage extends StatefulWidget {
@@ -172,6 +173,8 @@ class _EquipePageState extends State<EquipePage> {
           ],
         ),
         const SizedBox(height: 24),
+        const CarteMaLicence(),
+        const SizedBox(height: 12),
         StreamBuilder<List<MembreEquipe>>(
           stream: _membres,
           builder: (context, snap) {
