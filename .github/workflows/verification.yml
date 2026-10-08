@@ -44,6 +44,8 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: dart run powersync:setup_web
+      - name: Moteur de base de données (mêmes versions que l'appli)
+        run: dart compile js -O4 -o web/powersync_db.worker.js tool/powersync_db_worker.dart
       - name: Fabrication du site
         run: |
           set -o pipefail
