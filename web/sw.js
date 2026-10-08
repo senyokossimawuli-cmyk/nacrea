@@ -1,4 +1,5 @@
 // YDS Beauty : garde l'application sur l'appareil pour l'ouvrir sans internet.
+// Le numéro de version du cache est remplacé à chaque mise en ligne.
 // - Fichiers de l'application : internet d'abord (toujours la dernière version),
 //   sinon la copie gardée sur l'appareil.
 // - Polices d'écriture : copie gardée d'abord.
