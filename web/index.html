@@ -1,46 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
+  <!-- Remplacé par l'adresse du site au moment de la fabrication (--base-href). -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="YDS Beauty, logiciel de gestion pour boutiques de cosmétiques.">
 
-  <!-- iOS meta tags & icons -->
+  <!-- iPhone : appli sur l'écran d'accueil -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="nacrea">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="YDS Beauty">
+  <meta name="theme-color" content="#8E3B55">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>nacrea</title>
   <link rel="manifest" href="manifest.json">
+
+  <title>YDS Beauty</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #FBF6F4; }
+    #chargement {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 18px;
+      font-family: Georgia, 'Times New Roman', serif; color: #8E3B55;
+    }
+    #chargement .perle { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #C9A45C; }
+    #chargement .nom { font-size: 40px; letter-spacing: 8px; font-weight: 600; }
+    #chargement .beauty { font-size: 26px; font-style: italic; color: #9A7A36; margin-top: -10px; }
+    #chargement .barre { width: 120px; height: 3px; background: #EBDAD6; border-radius: 2px; overflow: hidden; margin-top: 12px; }
+    #chargement .barre::after { content: ''; display: block; width: 40%; height: 100%; background: #C9A45C; animation: aller 1.2s ease-in-out infinite; }
+    @keyframes aller { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+  </style>
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
-
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+  <div id="chargement">
+    <div class="perle"></div>
+    <div class="nom">YDS</div>
+    <div class="beauty">Beauty</div>
+    <div class="barre"></div>
+  </div>
+  <script>
+    // Garde l'application sur l'appareil pour qu'elle s'ouvre même sans internet.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      });
+    }
+    window.addEventListener('flutter-first-frame', function () {
+      var c = document.getElementById('chargement');
+      if (c) c.remove();
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

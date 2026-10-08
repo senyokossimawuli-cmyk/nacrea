@@ -55,7 +55,7 @@ class _RapportsPageState extends State<RapportsPage> {
 
   Future<void> _envoyerResume(Rapport r) async {
     final texte = [
-      'Nacréa · ${widget.membre.nomCompte}',
+      'YDS Beauty · ${widget.membre.nomCompte}',
       'Rapport ${_periode.libelle.toLowerCase()} (${_titrePeriode()}) · $_perimetre',
       '',
       'Ventes : ${r.nbVentes}',

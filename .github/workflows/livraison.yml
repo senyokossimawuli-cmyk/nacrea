@@ -1,10 +1,10 @@
-# Fabrique Nacréa sur les serveurs de GitHub et publie une version dans « Releases » :
-#   - nacrea.apk                  : application Android
-#   - nacrea-ancien-telephone.apk : Android, pour les téléphones anciens (32 bits)
-#   - Nacrea-Installation.exe     : programme d'installation Windows
+# Fabrique YDS Beauty sur les serveurs de GitHub et publie une version dans « Releases » :
+#   - yds-beauty.apk                  : application Android
+#   - yds-beauty-ancien-telephone.apk : Android, pour les téléphones anciens (32 bits)
+#   - YDS-Beauty-Installation.exe     : programme d'installation Windows
 # Liens toujours à jour :
-#   https://github.com/senyokossimawuli-cmyk/nacrea/releases/latest/download/nacrea.apk
-#   https://github.com/senyokossimawuli-cmyk/nacrea/releases/latest/download/Nacrea-Installation.exe
+#   https://github.com/senyokossimawuli-cmyk/nacrea/releases/latest/download/yds-beauty.apk
+#   https://github.com/senyokossimawuli-cmyk/nacrea/releases/latest/download/YDS-Beauty-Installation.exe
 name: Livraison (Android + Windows)
 
 on:
@@ -63,8 +63,8 @@ jobs:
       - name: Noms des fichiers
         run: |
           mkdir livraison
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk livraison/nacrea.apk
-          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk livraison/nacrea-ancien-telephone.apk
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk livraison/yds-beauty.apk
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk livraison/yds-beauty-ancien-telephone.apk
           ls -lh livraison
       - uses: actions/upload-artifact@v4
         with:
@@ -108,7 +108,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: livraison/Nacrea-Installation.exe
+          path: livraison/YDS-Beauty-Installation.exe
 
   publier:
     needs: [android, windows]
@@ -122,10 +122,10 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ env.NUMERO }}
-          name: Nacréa · version 1.0.${{ env.NUMERO }}
+          name: YDS Beauty · version 1.0.${{ env.NUMERO }}
           make_latest: true
           body: |
-            **Windows** : Nacrea-Installation.exe — à ouvrir sur le PC, puis suivre l'assistant.
-            **Android** : nacrea.apk — pour la plupart des téléphones ;
-            nacrea-ancien-telephone.apk seulement si le premier ne s'installe pas.
+            **Windows** : YDS-Beauty-Installation.exe — à ouvrir sur le PC, puis suivre l'assistant.
+            **Android** : yds-beauty.apk — pour la plupart des téléphones ;
+            yds-beauty-ancien-telephone.apk seulement si le premier ne s'installe pas.
           files: livraison/*

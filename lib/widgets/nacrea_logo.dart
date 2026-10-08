@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/nacrea_theme.dart';
 
-/// Logo NACRÉA : la perle, le nom (É doré), le filet or et le slogan.
+/// Logo YDS Beauty : la perle, YDS, « Beauty » doré, le filet or et le slogan.
 class NacreaLogo extends StatelessWidget {
   const NacreaLogo({
     super.key,
@@ -30,7 +30,7 @@ class NacreaLogo extends StatelessWidget {
     );
 
     return Semantics(
-      label: 'Nacréa',
+      label: 'YDS Beauty',
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -47,15 +47,18 @@ class NacreaLogo extends StatelessWidget {
           Padding(
             // compense l'espacement des lettres pour bien centrer le mot
             padding: EdgeInsets.only(left: taille * 0.16),
-            child: Text.rich(
-              TextSpan(
-                style: styleNom,
-                children: [
-                  const TextSpan(text: 'NACR'),
-                  TextSpan(text: 'É', style: TextStyle(color: couleurE)),
-                  const TextSpan(text: 'A'),
-                ],
-              ),
+            child: Text('YDS', style: styleNom),
+          ),
+          SizedBox(height: taille * 0.06),
+          Text(
+            'Beauty',
+            style: GoogleFonts.cormorantGaramond(
+              fontSize: taille * 0.62,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
+              letterSpacing: taille * 0.04,
+              height: 1,
+              color: couleurE,
             ),
           ),
           if (avecSlogan) ...[

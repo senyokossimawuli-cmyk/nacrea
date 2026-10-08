@@ -23,7 +23,7 @@ class NacreaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Nacréa',
+      title: 'YDS Beauty',
       debugShowCheckedModeBanner: false,
       theme: NacreaTheme.light(),
       locale: const Locale('fr', 'FR'),

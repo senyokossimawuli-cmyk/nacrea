@@ -197,7 +197,7 @@ List<LigneImport> lireFichier(Uint8List octets, String nomFichier) {
   }
   if (debut < 0) {
     throw Exception('Colonnes introuvables. Le fichier doit avoir au moins les colonnes « Nom du produit » '
-        'et « Prix de vente ». Utilisez le modèle Nacréa.');
+        'et « Prix de vente ». Utilisez le modèle YDS Beauty.');
   }
 
   String val(List<String> l, String cle) {

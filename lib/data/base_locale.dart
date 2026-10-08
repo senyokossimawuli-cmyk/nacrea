@@ -2,15 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:powersync/powersync.dart';
 import 'package:sqlite_async/sqlite_async.dart' show SqliteWriteContext;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config.dart';
+import '../services/appareil.dart' as appareil;
 
-/// Base de données locale de Nacréa (sur le PC ou le téléphone).
+/// Base de données locale de YDS Beauty (sur le PC ou le téléphone).
 ///
 /// Le logiciel lit et écrit toujours ici, même sans internet.
 /// PowerSync envoie les changements à Supabase dès que la connexion revient,
@@ -360,7 +359,7 @@ class _ConnecteurSupabase extends PowerSyncBackendConnector {
                 maintenantIso(),
               ],
             );
-            debugPrint('Nacréa : envoi refusé (${op.table}) : ${e.message}');
+            debugPrint('YDS Beauty : envoi refusé (${op.table}) : ${e.message}');
           } else {
             rethrow; // erreur passagère (réseau…) : PowerSync réessaiera plus tard
           }
@@ -386,7 +385,7 @@ class _ConnecteurSupabase extends PowerSyncBackendConnector {
         case 'retour':
           await client.rpc('record_return', params: donnees);
         default:
-          debugPrint('Nacréa : opération inconnue $type');
+          debugPrint('YDS Beauty : opération inconnue $type');
       }
       return;
     }
@@ -419,8 +418,7 @@ void _connecter() {
 
 /// Ouvre la base locale et la relie à la session Supabase.
 Future<void> ouvrirBaseLocale() async {
-  final dossier = await getApplicationSupportDirectory();
-  db = PowerSyncDatabase(schema: schemaLocal, path: p.join(dossier.path, 'nacrea.db'));
+  db = PowerSyncDatabase(schema: schemaLocal, path: await appareil.cheminBaseLocale('nacrea.db'));
   await db.initialize();
 
   final auth = Supabase.instance.client.auth;

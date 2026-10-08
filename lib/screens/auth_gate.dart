@@ -45,7 +45,7 @@ class _ChargementMembreState extends State<_ChargementMembre> {
   late Future<(Membre?, bool)> _membre = _charger();
 
   /// Attend que les données de l'appareil soient prêtes, puis lit la personne connectée.
-  /// Vérifie aussi (en parallèle) si c'est l'administrateur de Nacréa.
+  /// Vérifie aussi (en parallèle) si c'est l'administrateur de YDS Beauty.
   static Future<(Membre?, bool)> _charger({bool attendreServeur = false}) async {
     final admin = AdminRepo.estAdmin();
     await attendrePremiereSynchro();
@@ -103,7 +103,7 @@ class _ChargementMembreState extends State<_ChargementMembre> {
         }
         final (membre, admin) = snap.data!;
         if (membre != null) {
-          // L'administrateur de Nacréa n'a pas besoin de licence.
+          // L'administrateur de YDS Beauty n'a pas besoin de licence.
           if (admin) return ShellScreen(membre: membre, estAdmin: true);
           return LicenceGate(membre: membre, enfant: () => ShellScreen(membre: membre, estAdmin: false));
         }

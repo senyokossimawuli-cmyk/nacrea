@@ -12,7 +12,7 @@ import '../widgets/auth_layout.dart';
 import '../widgets/deconnexion.dart';
 import '../widgets/nacrea_logo.dart';
 
-/// Vérifie la licence avant d'ouvrir Nacréa.
+/// Vérifie la licence avant d'ouvrir YDS Beauty.
 /// Licence valide → [enfant]. Sinon → saisie de la clé, ou explication.
 class LicenceGate extends StatefulWidget {
   const LicenceGate({super.key, required this.membre, required this.enfant});
@@ -51,7 +51,7 @@ class _LicenceGateState extends State<LicenceGate> {
         if (snap.hasError) {
           return AuthLayout(
             titre: 'Vérification de la licence',
-            sousTitre: 'Nacréa doit vérifier votre licence sur internet '
+            sousTitre: 'YDS Beauty doit vérifier votre licence sur internet '
                 '(au moins une fois tous les ${NacreaConfig.joursLicenceHorsLigne} jours).',
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -121,9 +121,9 @@ class _EcranLicenceState extends State<EcranLicence> {
       if (!mounted) return;
       switch (r.etat) {
         case 'cle_incorrecte':
-          setState(() => _erreur = 'Clé incorrecte. Vérifiez chaque caractère (elle commence par NAC-).');
+          setState(() => _erreur = 'Clé incorrecte. Vérifiez chaque caractère (elle commence par YDS-).');
         case 'cle_deja_utilisee':
-          setState(() => _erreur = 'Cette clé est déjà utilisée par une autre entreprise. Contactez Nacréa.');
+          setState(() => _erreur = 'Cette clé est déjà utilisée par une autre entreprise. Contactez YDS Beauty.');
         default:
           widget.quandNouvelEtat(r);
       }
@@ -136,7 +136,7 @@ class _EcranLicenceState extends State<EcranLicence> {
 
   void _activer() {
     if (_cle.text.replaceAll(RegExp(r'[^A-Za-z0-9]'), '').length < 15) {
-      setState(() => _erreur = 'Tapez la clé complète : NAC-XXXX-XXXX-XXXX');
+      setState(() => _erreur = 'Tapez la clé complète : YDS-XXXX-XXXX-XXXX');
       return;
     }
     _faire(() => Licence.activer(_cle.text));
@@ -149,7 +149,7 @@ class _EcranLicenceState extends State<EcranLicence> {
         backgroundColor: Colors.white,
         title: Text('Remplacer « ${a.libelle} » ?'),
         content: const Text(
-          'Cet ancien appareil ne pourra plus ouvrir Nacréa, et celui-ci prendra sa place.\n\n'
+          'Cet ancien appareil ne pourra plus ouvrir YDS Beauty, et celui-ci prendra sa place.\n\n'
           'Vous pourrez refaire un remplacement dans 30 jours. Vos données ne sont pas touchées.',
         ),
         actions: [
@@ -163,7 +163,7 @@ class _EcranLicenceState extends State<EcranLicence> {
 
   void _contacter(String sujet) => contacterNacrea(
         context,
-        'Bonjour Nacréa, $sujet (entreprise « ${widget.membre.nomCompte} »'
+        'Bonjour YDS Beauty, $sujet (entreprise « ${widget.membre.nomCompte} »'
         '${e.cle == null ? '' : ', licence ${e.cle}'}).',
       );
 
@@ -194,7 +194,7 @@ class _EcranLicenceState extends State<EcranLicence> {
   Widget _aucune() {
     if (!_patronne) {
       return AuthLayout(
-        titre: 'Nacréa n\'est pas encore activé',
+        titre: 'YDS Beauty n\'est pas encore activé',
         sousTitre: 'La patronne doit d\'abord entrer la clé de licence sur son appareil. '
             'Ensuite, appuyez sur « Vérifier à nouveau ».',
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -205,8 +205,8 @@ class _EcranLicenceState extends State<EcranLicence> {
       );
     }
     return AuthLayout(
-      titre: 'Activez Nacréa',
-      sousTitre: 'Entrez la clé de licence que Nacréa vous a envoyée. Vous ne la taperez qu\'une seule fois.',
+      titre: 'Activez YDS Beauty',
+      sousTitre: 'Entrez la clé de licence que YDS Beauty vous a envoyée. Vous ne la taperez qu\'une seule fois.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -224,7 +224,7 @@ class _EcranLicenceState extends State<EcranLicence> {
             onSubmitted: (_) => _activer(),
             decoration: const InputDecoration(
               labelText: 'Clé de licence',
-              hintText: 'NAC-XXXX-XXXX-XXXX',
+              hintText: 'YDS-XXXX-XXXX-XXXX',
               prefixIcon: Icon(Icons.key_outlined),
             ),
           ),
@@ -236,7 +236,7 @@ class _EcranLicenceState extends State<EcranLicence> {
             style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
             onPressed: () => _contacter('je souhaite obtenir une clé de licence'),
             icon: const Icon(Icons.chat_outlined),
-            label: const Text('Je n\'ai pas de clé : contacter Nacréa'),
+            label: const Text('Je n\'ai pas de clé : contacter YDS Beauty'),
           ),
           TextButton(onPressed: () => deconnexion(context), child: const Text('Se déconnecter')),
         ],
@@ -250,7 +250,7 @@ class _EcranLicenceState extends State<EcranLicence> {
       titre: 'Licence suspendue',
       sousTitre: 'La licence${e.cle == null ? '' : ' ${e.cle}'} de votre entreprise est désactivée. '
           'Vos données sont en sécurité. '
-          '${_patronne ? 'Contactez Nacréa pour la réactiver.' : 'Prévenez la patronne.'}',
+          '${_patronne ? 'Contactez YDS Beauty pour la réactiver.' : 'Prévenez la patronne.'}',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -259,7 +259,7 @@ class _EcranLicenceState extends State<EcranLicence> {
             FilledButton.icon(
               onPressed: () => _contacter('ma licence est désactivée, je souhaite la réactiver'),
               icon: const Icon(Icons.chat_outlined),
-              label: const Text('Contacter Nacréa'),
+              label: const Text('Contacter YDS Beauty'),
             ),
           ..._basDePage(),
         ],
@@ -318,19 +318,19 @@ class _EcranLicenceState extends State<EcranLicence> {
           else ...[
             Text(
               e.peutRemplacer
-                  ? 'Nouveau $nature ? Appuyez sur « Remplacer » : l\'ancien ne pourra plus ouvrir Nacréa. '
-                      'Pour utiliser plus d\'appareils, contactez Nacréa.'
+                  ? 'Nouveau $nature ? Appuyez sur « Remplacer » : l\'ancien ne pourra plus ouvrir YDS Beauty. '
+                      'Pour utiliser plus d\'appareils, contactez YDS Beauty.'
                   : 'Vous avez déjà remplacé un appareil récemment'
                       '${e.remplacementLe == null ? '' : ' : prochain remplacement possible le ${dateCourte(e.remplacementLe!)}'}. '
-                      'Contactez Nacréa pour libérer une place ou ajouter un $nature.',
+                      'Contactez YDS Beauty pour libérer une place ou ajouter un $nature.',
               style: const TextStyle(color: NacreaColors.gris, height: 1.4),
             ),
             const SizedBox(height: 16),
             OutlinedButton.icon(
               style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
-              onPressed: () => _contacter('je souhaite utiliser Nacréa sur un $nature de plus'),
+              onPressed: () => _contacter('je souhaite utiliser YDS Beauty sur un $nature de plus'),
               icon: const Icon(Icons.chat_outlined),
-              label: const Text('Contacter Nacréa'),
+              label: const Text('Contacter YDS Beauty'),
             ),
           ],
           ..._basDePage(),
@@ -368,7 +368,7 @@ class _CarteMaLicenceState extends State<CarteMaLicence> {
                   children: [
                     const Icon(Icons.verified_outlined, color: NacreaColors.prune),
                     const SizedBox(width: 10),
-                    const Text('Licence Nacréa', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                    const Text('Licence YDS Beauty', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
                     const SizedBox(width: 12),
                     Flexible(
                       child: SelectableText(e.cle!,

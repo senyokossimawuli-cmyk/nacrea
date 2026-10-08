@@ -2,7 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/base_locale.dart';
 
-/// La personne connectée, telle que Nacréa la connaît.
+/// La personne connectée, telle que YDS Beauty la connaît.
 class Membre {
   Membre({
     required this.id,

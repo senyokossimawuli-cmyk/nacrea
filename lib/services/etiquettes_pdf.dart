@@ -76,7 +76,7 @@ Future<Uint8List> etiquettesPdf({
   required String boutique,
   required FormatEtiquette format,
 }) async {
-  final doc = pw.Document(title: 'Étiquettes Nacréa');
+  final doc = pw.Document(title: 'Étiquettes YDS Beauty');
   final liste = [
     for (final (p, n) in quantites)
       if ((p.codeBarres ?? '').trim().isNotEmpty)

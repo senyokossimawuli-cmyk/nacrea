@@ -16,8 +16,8 @@ String _appareils(int pc, int tel) => [
     ].join(' et ');
 
 String _texteLicence(String cle, {String? patronne, required int pc, required int tel, bool dejaLiee = false}) =>
-    'Bonjour${patronne == null || patronne.isEmpty ? '' : ' $patronne'}, voici votre clé de licence Nacréa : $cle\n'
-    '${dejaLiee ? 'Elle est déjà activée sur votre entreprise, vous n\'avez rien à taper.' : 'Ouvrez Nacréa, connectez-vous, puis tapez cette clé quand elle vous est demandée.'} '
+    'Bonjour${patronne == null || patronne.isEmpty ? '' : ' $patronne'}, voici votre clé de licence YDS Beauty : $cle\n'
+    '${dejaLiee ? 'Elle est déjà activée sur votre entreprise, vous n\'avez rien à taper.' : 'Ouvrez YDS Beauty, connectez-vous, puis tapez cette clé quand elle vous est demandée.'} '
     'Elle fonctionne sur ${_appareils(pc, tel)}. Gardez ce message.';
 
 Future<void> _envoyerWhatsApp(BuildContext context, String? telephone, String texte) async {
@@ -217,7 +217,7 @@ class CarteLicenceAdmin extends StatelessWidget {
             !await _confirmer(
                 context,
                 'Désactiver ${l.cle} ?',
-                'Nacréa ne s\'ouvrira plus${l.compte == null ? '' : ' chez « ${l.compte} »'} '
+                'YDS Beauty ne s\'ouvrira plus${l.compte == null ? '' : ' chez « ${l.compte} »'} '
                     'dès sa prochaine connexion à internet (au plus tard dans 30 jours sans internet). '
                     'Ses données sont gardées. Vous pourrez la réactiver.',
                 'Désactiver')) {
@@ -232,7 +232,7 @@ class CarteLicenceAdmin extends StatelessWidget {
             'Supprimer ${l.cle} ?',
             l.libre
                 ? 'Cette clé ne pourra plus être utilisée.'
-                : '« ${l.compte} » devra entrer une nouvelle clé pour ouvrir Nacréa. Ses données sont gardées.',
+                : '« ${l.compte} » devra entrer une nouvelle clé pour ouvrir YDS Beauty. Ses données sont gardées.',
             'Supprimer')) {
           return;
         }
@@ -307,7 +307,7 @@ class CarteLicenceAdmin extends StatelessWidget {
                     if (!await _confirmer(
                         context,
                         'Libérer « ${a.libelle} » ?',
-                        'Cet appareil ne pourra plus ouvrir Nacréa, et sa place pourra être prise par un nouvel appareil.',
+                        'Cet appareil ne pourra plus ouvrir YDS Beauty, et sa place pourra être prise par un nouvel appareil.',
                         'Libérer')) {
                       return;
                     }

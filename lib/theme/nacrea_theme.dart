@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Palette officielle de Nacréa : rose nude et or.
+/// Palette officielle de YDS Beauty : rose nude et or.
 class NacreaColors {
   static const nude = Color(0xFFF6E7E4); // fonds doux
   static const page = Color(0xFFFBF6F4); // fond des écrans

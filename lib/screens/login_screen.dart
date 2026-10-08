@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/erreurs.dart';
 import '../theme/nacrea_theme.dart';
 import '../widgets/auth_layout.dart';
+import '../widgets/bandeau_installation.dart';
 import 'code_email_screen.dart';
 import 'signup_screen.dart';
 
@@ -80,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const BandeauInstallation(),
             TextFormField(
               controller: _email,
               keyboardType: TextInputType.emailAddress,

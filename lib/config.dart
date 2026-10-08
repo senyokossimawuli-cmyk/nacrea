@@ -1,4 +1,4 @@
-/// Connexion au projet Supabase de Nacréa.
+/// Connexion au projet Supabase de YDS Beauty.
 /// La clé publique (publishable) peut figurer dans le logiciel :
 /// la sécurité des données est assurée par les règles de la base.
 /// Ne jamais mettre ici la clé "secret" ou "service_role".
@@ -10,7 +10,7 @@ class NacreaConfig {
   /// Adresse de l'instance PowerSync (synchronisation hors ligne).
   static const powersyncUrl = 'https://6ac1026b2f27853eb0abf174.powersync.journeyapps.com';
 
-  /// Numéro WhatsApp du service client Nacréa (indicatif compris, ex. 22890000000).
+  /// Numéro WhatsApp du service client YDS Beauty (indicatif compris, ex. 22890000000).
   /// Affiché aux patronnes dont l'abonnement est en retard ou suspendu.
   static const supportWhatsApp = '22879867879';
 

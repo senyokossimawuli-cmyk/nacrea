@@ -23,7 +23,7 @@ class ShellScreen extends StatefulWidget {
   const ShellScreen({super.key, required this.membre, this.estAdmin = false});
   final Membre membre;
 
-  /// Administrateur de Nacréa : voit en plus l'espace admin.
+  /// Administrateur de YDS Beauty : voit en plus l'espace admin.
   final bool estAdmin;
 
   @override

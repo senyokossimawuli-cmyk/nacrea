@@ -1,6 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Espace administrateur de Nacréa (pour l'éditeur du logiciel).
+/// Espace administrateur de YDS Beauty (pour l'éditeur du logiciel).
 /// Tout passe par le serveur : il faut internet.
 SupabaseClient get _serveur => Supabase.instance.client;
 
@@ -135,7 +135,7 @@ class FicheClienteNacrea {
 }
 
 class AdminRepo {
-  /// Vrai si la personne connectée est administratrice de Nacréa.
+  /// Vrai si la personne connectée est administratrice de YDS Beauty.
   /// Sans internet (ou si le script 11 n'est pas installé) : faux.
   static Future<bool> estAdmin() async {
     try {

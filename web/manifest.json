@@ -1,12 +1,14 @@
 {
-    "name": "nacrea",
-    "short_name": "nacrea",
+    "name": "YDS Beauty",
+    "short_name": "YDS Beauty",
     "start_url": ".",
+    "scope": ".",
+    "lang": "fr",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#FBF6F4",
+    "theme_color": "#8E3B55",
+    "description": "Gestion de boutiques de cosmétiques : caisse, stock, clientes.",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {

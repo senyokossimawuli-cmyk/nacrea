@@ -1,14 +1,12 @@
-import 'dart:io' show Platform;
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../services/appareil.dart' as appareil;
 import '../theme/nacrea_theme.dart';
 
-/// La caméra sert de scanner sur téléphone (Android, iPhone).
+/// La caméra sert de scanner sur téléphone (Android, iPhone, y compris dans le navigateur).
 /// Sur PC, on utilise une douchette USB, qui tape le code comme un clavier.
-bool get scanCameraDisponible => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+bool get scanCameraDisponible => appareil.cameraScanner;
 
 /// Ouvre la caméra et renvoie le code-barres lu (ou `null` si on annule).
 Future<String?> scannerCodeBarres(BuildContext context) {

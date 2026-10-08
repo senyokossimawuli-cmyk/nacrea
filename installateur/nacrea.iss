@@ -1,5 +1,5 @@
 ﻿; =====================================================================
-; NACRÉA · Programme d'installation Windows (Inno Setup)
+; YDS BEAUTY · Programme d'installation Windows (Inno Setup)
 ; Fabriqué automatiquement par GitHub (.github/workflows/livraison.yml).
 ; =====================================================================
 #define Version GetEnv("NACREA_VERSION")
@@ -9,26 +9,26 @@
 
 [Setup]
 AppId={{8F3C1E52-6A1B-4C7E-9B7A-2D5E4F1A9C30}
-AppName=Nacréa
+AppName=YDS Beauty
 AppVersion={#Version}
-AppVerName=Nacréa {#Version}
-AppPublisher=Nacréa
-DefaultDirName={localappdata}\Programs\Nacrea
-DefaultGroupName=Nacréa
+AppVerName=YDS Beauty {#Version}
+AppPublisher=YDS Beauty
+DefaultDirName={localappdata}\Programs\YDS Beauty
+DefaultGroupName=YDS Beauty
 DisableProgramGroupPage=yes
 ; Installation pour l'utilisateur : pas besoin d'être administrateur
 PrivilegesRequired=lowest
 OutputDir=..\livraison
-OutputBaseFilename=Nacrea-Installation
+OutputBaseFilename=YDS-Beauty-Installation
 SetupIconFile=..\windows\runner\resources\app_icon.ico
 UninstallDisplayIcon={app}\nacrea.exe
-UninstallDisplayName=Nacréa
+UninstallDisplayName=YDS Beauty
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-; Ferme Nacréa si elle est ouverte pendant une mise à jour
+; Ferme YDS Beauty si elle est ouverte pendant une mise à jour
 CloseApplications=yes
 
 [Languages]
@@ -40,9 +40,14 @@ Name: "bureau"; Description: "Créer un raccourci sur le Bureau"; GroupDescripti
 [Files]
 Source: "..\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[InstallDelete]
+; Anciens raccourcis (quand le logiciel s'appelait Nacréa)
+Type: files; Name: "{autoprograms}\Nacréa.lnk"
+Type: files; Name: "{autodesktop}\Nacréa.lnk"
+
 [Icons]
-Name: "{autoprograms}\Nacréa"; Filename: "{app}\nacrea.exe"
-Name: "{autodesktop}\Nacréa"; Filename: "{app}\nacrea.exe"; Tasks: bureau
+Name: "{autoprograms}\YDS Beauty"; Filename: "{app}\nacrea.exe"
+Name: "{autodesktop}\YDS Beauty"; Filename: "{app}\nacrea.exe"; Tasks: bureau
 
 [Run]
-Filename: "{app}\nacrea.exe"; Description: "Ouvrir Nacréa maintenant"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\nacrea.exe"; Description: "Ouvrir YDS Beauty maintenant"; Flags: nowait postinstall skipifsilent

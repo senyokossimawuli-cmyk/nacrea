@@ -1,0 +1,58 @@
+# Fabrique la version web de YDS Beauty (pour les iPhone) et la publie sur GitHub Pages.
+# Adresse : https://senyokossimawuli-cmyk.github.io/<nom du dépôt>/
+# À activer une seule fois : Settings > Pages > Source : « GitHub Actions ».
+name: Site web (iPhone)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'web/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.github/workflows/site.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  fabriquer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      # Base de données hors ligne dans le navigateur (fichiers fournis par PowerSync)
+      - run: dart run powersync:setup_web
+      - name: Fabrication du site
+        run: |
+          flutter build web --release --no-web-resources-cdn \
+            --base-href "/${{ github.event.repository.name }}/" \
+            --build-name=1.0.${{ github.run_number }}
+          # Nouvelle version du site : le téléphone remplace son ancienne copie.
+          sed -i "s/yds-beauty-v1/yds-beauty-${{ github.run_number }}/" build/web/sw.js
+          ls -lh build/web
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  publier:
+    needs: fabriquer
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4

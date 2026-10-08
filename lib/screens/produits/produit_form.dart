@@ -87,7 +87,7 @@ class _ProduitFormState extends State<ProduitForm> {
   }
 
   /// Vérifie que le code n'est pas déjà utilisé, puis (nouveau produit) préremplit la fiche
-  /// depuis le catalogue Nacréa ou Open Beauty Facts. Ne remplace jamais ce qui est déjà tapé.
+  /// depuis le catalogue YDS Beauty ou Open Beauty Facts. Ne remplace jamais ce qui est déjà tapé.
   Future<void> _chercherFiche() async {
     final code = _codeBarres.text.trim();
     if (code.isEmpty || _rechercheFiche) return;
@@ -110,7 +110,7 @@ class _ProduitFormState extends State<ProduitForm> {
       if (fiche == null) {
         setState(() {
           _infoFiche = 'Aucune fiche trouvée pour ce code (ou pas de connexion). '
-              'Remplissez-la : elle servira aussi aux prochaines boutiques Nacréa.';
+              'Remplissez-la : elle servira aussi aux prochaines boutiques YDS Beauty.';
           _infoAlerte = false;
         });
         return;
@@ -666,7 +666,7 @@ class _ProduitFormState extends State<ProduitForm> {
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           decoration: const InputDecoration(
                             labelText: 'Alerte de stock bas',
-                            helperText: 'Nacréa vous prévient quand le stock descend à ce nombre',
+                            helperText: 'YDS Beauty vous prévient quand le stock descend à ce nombre',
                             prefixIcon: Icon(Icons.notifications_none),
                           ),
                         ),

@@ -33,8 +33,8 @@ class _ImportPageState extends State<ImportPage> {
   Future<void> _telechargerModele() async {
     try {
       final chemin = await FilePicker.saveFile(
-        dialogTitle: 'Enregistrer le modèle Nacréa',
-        fileName: 'Modele-produits-Nacrea.xlsx',
+        dialogTitle: 'Enregistrer le modèle YDS Beauty',
+        fileName: 'Modele-produits-YDS-Beauty.xlsx',
         bytes: modeleExcel(),
       );
       if (chemin != null && mounted) {
@@ -171,7 +171,7 @@ class _ImportPageState extends State<ImportPage> {
                             '1. Téléchargez le modèle Excel.\n'
                             '2. Remplissez une ligne par produit : nom, prix de vente, et si possible marque, '
                             'catégorie, code-barres, prix d\'achat, quantité en stock.\n'
-                            '3. Importez le fichier : Nacréa crée les produits, les catégories et le stock.',
+                            '3. Importez le fichier : YDS Beauty crée les produits, les catégories et le stock.',
                             style: TextStyle(height: 1.6),
                           ),
                           const SizedBox(height: 16),
@@ -234,7 +234,7 @@ class _ImportPageState extends State<ImportPage> {
             Text(_fichier ?? '', style: const TextStyle(color: NacreaColors.gris)),
             const SizedBox(height: 8),
             Text('$aCreer nouveau${aCreer > 1 ? 'x' : ''} produit${aCreer > 1 ? 's' : ''}'
-                '${aMettreAJour > 0 ? ' · $aMettreAJour déjà dans Nacréa' : ''}'
+                '${aMettreAJour > 0 ? ' · $aMettreAJour déjà dans YDS Beauty' : ''}'
                 '${erreurs.isNotEmpty ? ' · ${erreurs.length} ligne${erreurs.length > 1 ? 's' : ''} à corriger' : ''}',
                 style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
             if (aMettreAJour > 0)

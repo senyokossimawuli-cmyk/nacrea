@@ -64,7 +64,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return AuthLayout(
       titre: 'Créer mon compte',
-      sousTitre: 'Quelques secondes pour démarrer avec Nacréa.',
+      sousTitre: 'Quelques secondes pour démarrer avec YDS Beauty.',
       child: Form(
         key: _form,
         child: Column(

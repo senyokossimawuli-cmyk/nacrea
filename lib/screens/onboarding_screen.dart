@@ -90,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return AuthLayout(
-      titre: 'Bienvenue sur Nacréa',
+      titre: 'Bienvenue sur YDS Beauty',
       sousTitre: _employee
           ? 'Entrez le code que votre patronne vous a donné.'
           : 'Présentez-nous votre entreprise et votre première boutique.',

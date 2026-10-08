@@ -65,7 +65,7 @@ class _EtiquettesPageState extends State<EtiquettesPage> {
       ];
       final octets = await etiquettesPdf(quantites: choix, boutique: widget.boutique.nom, format: _format);
       if (crees > 0 && mounted) _dire('$crees code${crees > 1 ? 's' : ''}-barres créé${crees > 1 ? 's' : ''} pour vos produits.');
-      await Printing.layoutPdf(name: 'Etiquettes-Nacrea', onLayout: (_) async => octets);
+      await Printing.layoutPdf(name: 'Etiquettes-YDS-Beauty', onLayout: (_) async => octets);
     } catch (e) {
       if (mounted) _dire(messageErreur(e));
     } finally {

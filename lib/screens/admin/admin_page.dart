@@ -50,14 +50,14 @@ String _texteRelance({required String? patronne, required String boutique, requi
   final bonjour = 'Bonjour${patronne == null || patronne.isEmpty ? '' : ' $patronne'}';
   final date = fin == null ? '' : dateCourte(fin);
   final texte = switch (statut) {
-    'trial' => '$bonjour, votre essai gratuit de Nacréa pour « $boutique » se termine le $date. '
-        'Pour continuer à vendre avec Nacréa : ${fcfa(prix)} par mois, payable par Mobile Money. Merci pour votre confiance !',
-    'late' => '$bonjour, l\'abonnement Nacréa de « $boutique » est arrivé à échéance le $date. '
+    'trial' => '$bonjour, votre essai gratuit de YDS Beauty pour « $boutique » se termine le $date. '
+        'Pour continuer à vendre avec YDS Beauty : ${fcfa(prix)} par mois, payable par Mobile Money. Merci pour votre confiance !',
+    'late' => '$bonjour, l\'abonnement YDS Beauty de « $boutique » est arrivé à échéance le $date. '
         'Merci de régler ${fcfa(prix)} pour éviter la mise en pause de la caisse'
         '${fin == null ? '' : ' le ${dateCourte(fin.add(_jours))}'}.',
-    'suspended' => '$bonjour, la caisse Nacréa de « $boutique » est en pause car l\'abonnement n\'est pas réglé. '
+    'suspended' => '$bonjour, la caisse YDS Beauty de « $boutique » est en pause car l\'abonnement n\'est pas réglé. '
         'Vos données sont en sécurité. Dès réception de ${fcfa(prix)}, nous la réactivons immédiatement.',
-    _ => '$bonjour, votre abonnement Nacréa pour « $boutique » se termine le $date. '
+    _ => '$bonjour, votre abonnement YDS Beauty pour « $boutique » se termine le $date. '
         'Pensez à le renouveler (${fcfa(prix)} par mois) pour continuer sans interruption. Merci !',
   };
   return texte.replaceAll(' ', ' ');
@@ -67,7 +67,7 @@ String _texteRelance({required String? patronne, required String boutique, requi
 // Écran principal
 // =====================================================================
 
-/// Espace administrateur : réservé à l'éditeur de Nacréa. Demande internet.
+/// Espace administrateur : réservé à l'éditeur de YDS Beauty. Demande internet.
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
 
@@ -207,7 +207,7 @@ class _OngletApercu extends StatelessWidget {
     return _cadre(etroit, quandTirer: () async => quandActualiser(), [
       Row(
         children: [
-          Expanded(child: Text('Nacréa · Admin', style: NacreaTheme.titre(size: etroit ? 30 : 36))),
+          Expanded(child: Text('YDS Beauty · Admin', style: NacreaTheme.titre(size: etroit ? 30 : 36))),
           IconButton(
             tooltip: 'Actualiser',
             onPressed: quandActualiser,
@@ -465,7 +465,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
         context,
         f.telephoneContact,
         'Bonjour${f.patronne == null ? '' : ' ${f.patronne}'}, nous avons bien reçu votre paiement de '
-                '${fcfa(montant)} pour « ${b.nom} » ($mois mois). Votre abonnement Nacréa est actif'
+                '${fcfa(montant)} pour « ${b.nom} » ($mois mois). Votre abonnement YDS Beauty est actif'
                 '${fin == null ? '' : ' jusqu\'au ${dateCourte(fin)}'}. Merci pour votre confiance !'
             .replaceAll(' ', ' '),
       );
@@ -621,7 +621,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(minimumSize: const Size(0, 44)),
                 onPressed: () => ouvrirWhatsApp(context, f.telephoneContact,
-                    'Bonjour${f.patronne == null ? '' : ' ${f.patronne}'}, ici le service client Nacréa. '),
+                    'Bonjour${f.patronne == null ? '' : ' ${f.patronne}'}, ici le service client YDS Beauty. '),
                 icon: const Icon(Icons.chat_outlined),
                 label: const Text('Écrire sur WhatsApp'),
               ),

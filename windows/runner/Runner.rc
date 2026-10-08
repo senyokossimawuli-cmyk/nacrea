@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "Nacrea" "\0"
-            VALUE "FileDescription", "Nacrea" "\0"
+            VALUE "CompanyName", "YDS Beauty" "\0"
+            VALUE "FileDescription", "YDS Beauty" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "nacrea" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 Nacrea. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 YDS Beauty. All rights reserved." "\0"
             VALUE "OriginalFilename", "nacrea.exe" "\0"
-            VALUE "ProductName", "Nacrea" "\0"
+            VALUE "ProductName", "YDS Beauty" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

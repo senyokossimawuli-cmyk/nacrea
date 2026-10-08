@@ -11,7 +11,7 @@ class FicheTrouvee {
   final String? variante;
   final String? photoUrl;
 
-  /// « au catalogue Nacréa » ou « à Open Beauty Facts » (pour la phrase « grâce … »)
+  /// « au catalogue YDS Beauty » ou « à Open Beauty Facts » (pour la phrase « grâce … »)
   final String source;
 }
 
@@ -21,7 +21,7 @@ String? _texte(Object? v) {
 }
 
 /// Cherche la fiche d'un code-barres (demande internet) :
-/// 1. dans le catalogue Nacréa partagé entre toutes les boutiques ;
+/// 1. dans le catalogue YDS Beauty partagé entre toutes les boutiques ;
 /// 2. sinon dans Open Beauty Facts, la base mondiale gratuite des cosmétiques.
 /// Renvoie `null` si rien n'est trouvé ou sans connexion.
 Future<FicheTrouvee?> chercherFiche(String code) async {
@@ -41,7 +41,7 @@ Future<FicheTrouvee?> chercherFiche(String code) async {
         marque: _texte(l['brand']),
         variante: _texte(l['variant_label']),
         photoUrl: _texte(l['photo_url']),
-        source: 'au catalogue Nacréa',
+        source: 'au catalogue YDS Beauty',
       );
     }
   } catch (_) {
@@ -52,7 +52,7 @@ Future<FicheTrouvee?> chercherFiche(String code) async {
     final reponse = await http.get(
       Uri.parse('https://world.openbeautyfacts.org/api/v2/product/$c.json'
           '?fields=product_name,product_name_fr,brands,quantity,image_front_url,image_url'),
-      headers: const {'User-Agent': 'Nacrea/1.0 (logiciel de gestion de boutiques)'},
+      headers: const {'User-Agent': 'YDSBeauty/1.0 (logiciel de gestion de boutiques)'},
     ).timeout(const Duration(seconds: 10));
     if (reponse.statusCode != 200) return null;
     final donnees = jsonDecode(utf8.decode(reponse.bodyBytes));

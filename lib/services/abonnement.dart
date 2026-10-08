@@ -85,7 +85,7 @@ class CaisseBloquee extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 patronne
-                    ? 'L\'abonnement Nacréa de « $nomBoutique » n\'est pas à jour. '
+                    ? 'L\'abonnement YDS Beauty de « $nomBoutique » n\'est pas à jour. '
                         'Vos données sont en sécurité et restent consultables. '
                         'Réglez votre abonnement pour reprendre les ventes.'
                     : 'L\'abonnement de la boutique n\'est pas à jour. Prévenez la patronne : '
@@ -100,10 +100,10 @@ class CaisseBloquee extends StatelessWidget {
                   child: FilledButton.icon(
                     onPressed: () => contacterNacrea(
                       context,
-                      'Bonjour Nacréa, je souhaite régler l\'abonnement de ma boutique « $nomBoutique ».',
+                      'Bonjour YDS Beauty, je souhaite régler l\'abonnement de ma boutique « $nomBoutique ».',
                     ),
                     icon: const Icon(Icons.chat_outlined),
-                    label: const Text('Contacter Nacréa'),
+                    label: const Text('Contacter YDS Beauty'),
                   ),
                 ),
               ],
@@ -156,7 +156,7 @@ class BandeauAbonnement extends StatelessWidget {
               TextButton(
                 onPressed: () => contacterNacrea(
                   context,
-                  'Bonjour Nacréa, je souhaite régler l\'abonnement de ma boutique « $nomBoutique ».',
+                  'Bonjour YDS Beauty, je souhaite régler l\'abonnement de ma boutique « $nomBoutique ».',
                 ),
                 child: const Text('Payer'),
               ),

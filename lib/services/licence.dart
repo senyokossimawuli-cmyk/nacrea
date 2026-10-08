@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config.dart';
+import 'appareil.dart' as appareil;
 
 SupabaseClient get _serveur => Supabase.instance.client;
 
@@ -58,7 +56,7 @@ class EtatLicence {
   final DateTime? remplacementLe;
   final List<AppareilLicence> appareils;
 
-  /// Nacréa peut s'ouvrir. (« sans_entreprise » : l'écran de création de boutique s'en occupe.)
+  /// YDS Beauty peut s'ouvrir. (« sans_entreprise » : l'écran de création de boutique s'en occupe.)
   bool get valide => etat == 'ok' || etat == 'sans_entreprise';
 
   String get resume => [
@@ -67,40 +65,23 @@ class EtatLicence {
       ].join(' et ');
 }
 
-/// Licence Nacréa : clé liée à l'entreprise, nombre d'appareils limité.
+/// Licence YDS Beauty : clé liée à l'entreprise, nombre d'appareils limité.
 class Licence {
   static String? _idAppareil;
 
-  static bool get _telephone => Platform.isAndroid || Platform.isIOS;
-
   /// 'pc' ou 'mobile'
-  static String get typeAppareil => _telephone ? 'mobile' : 'pc';
+  static String get typeAppareil => appareil.estTelephone ? 'mobile' : 'pc';
 
-  static String get nomAppareil {
-    if (Platform.isAndroid) return 'Téléphone Android';
-    if (Platform.isIOS) return 'iPhone';
-    final nom = Platform.localHostname.trim();
-    final type = Platform.isMacOS ? 'Mac' : 'PC';
-    return nom.isEmpty ? type : '$type $nom';
-  }
-
-  static Future<File> _fichier(String nom) async {
-    final dossier = await getApplicationSupportDirectory();
-    await dossier.create(recursive: true);
-    return File(p.join(dossier.path, nom));
-  }
+  static String get nomAppareil => appareil.nomAppareil;
 
   /// Identifiant de cet appareil, créé une fois puis conservé.
   static Future<String> idAppareil() async {
     if (_idAppareil != null) return _idAppareil!;
-    final f = await _fichier('nacrea-appareil.txt');
-    if (await f.exists()) {
-      final id = (await f.readAsString()).trim();
-      if (id.length >= 16) return _idAppareil = id;
-    }
+    final existant = (await appareil.lireDonnee('nacrea-appareil.txt'))?.trim();
+    if (existant != null && existant.length >= 16) return _idAppareil = existant;
     final r = Random.secure();
     final id = List.generate(16, (_) => r.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
-    await f.writeAsString(id, flush: true);
+    await appareil.ecrireDonnee('nacrea-appareil.txt', id);
     return _idAppareil = id;
   }
 
@@ -114,16 +95,15 @@ class Licence {
 
   static Future<void> _memoriser(EtatLicence e) async {
     try {
-      final f = await _fichier('nacrea-licence.json');
       if (e.etat == 'ok') {
-        await f.writeAsString(jsonEncode({
+        await appareil.ecrireDonnee('nacrea-licence.json', jsonEncode({
           'user': _serveur.auth.currentUser?.id,
           'le': DateTime.now().toUtc().toIso8601String(),
           'cle': e.cle,
           'admin': e.admin,
         }));
-      } else if (await f.exists()) {
-        await f.delete();
+      } else {
+        await appareil.effacerDonnee('nacrea-licence.json');
       }
     } catch (_) {
       // Pas grave : on revérifiera à la prochaine ouverture.
@@ -132,9 +112,9 @@ class Licence {
 
   static Future<EtatLicence?> _derniereValide() async {
     try {
-      final f = await _fichier('nacrea-licence.json');
-      if (!await f.exists()) return null;
-      final j = jsonDecode(await f.readAsString()) as Map<String, dynamic>;
+      final texte = await appareil.lireDonnee('nacrea-licence.json');
+      if (texte == null) return null;
+      final j = jsonDecode(texte) as Map<String, dynamic>;
       final le = DateTime.tryParse('${j['le']}');
       if (j['user'] != _serveur.auth.currentUser?.id || le == null) return null;
       final age = DateTime.now().toUtc().difference(le);

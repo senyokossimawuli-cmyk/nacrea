@@ -30,8 +30,8 @@ class _EquipePageState extends State<EquipePage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(texte)));
 
   String _texteInvitation(String nom, String code) =>
-      'Bonjour $nom, voici ton code pour rejoindre ${widget.membre.nomCompte} sur Nacréa : $code\n\n'
-      'Ouvre Nacréa, crée ton compte, choisis « Je suis employée » et tape ce code. '
+      'Bonjour $nom, voici ton code pour rejoindre ${widget.membre.nomCompte} sur YDS Beauty : $code\n\n'
+      'Ouvre YDS Beauty, crée ton compte, choisis « Je suis employée » et tape ce code. '
       'Il est valable 7 jours.';
 
   Future<void> _partager(String nom, String code) async {
@@ -94,7 +94,7 @@ class _EquipePageState extends State<EquipePage> {
               backgroundColor: Colors.white,
               title: Text('Désactiver ${m.nom} ?'),
               content: const Text(
-                'Elle ne pourra plus se connecter à Nacréa. Ses ventes passées restent dans l\'historique. '
+                'Elle ne pourra plus se connecter à YDS Beauty. Ses ventes passées restent dans l\'historique. '
                 'Vous pourrez la réactiver à tout moment.',
               ),
               actions: [
