@@ -1,0 +1,300 @@
+10-21 12:29:49.011  3828  3843 W err     : 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3015)
+10-21 12:29:49.011  3828  3843 W err     : 	at android.os.Parcel.createException(Parcel.java:2995)
+10-21 12:29:49.011  3828  3843 W err     : 	at android.os.Parcel.readException(Parcel.java:2978)
+10-21 12:29:49.011  3828  3843 W err     : 	at android.os.Parcel.readException(Parcel.java:2920)
+10-21 12:29:49.012  3828  3843 W err     : Error changing state for com.google.android.apps.docs.editors.punch.conversion.PunchOnlineImportActivity
+10-21 12:29:49.012  3828  3843 W err     : java.lang.IllegalArgumentException: Component class com.google.android.apps.docs.editors.punch.conversion.PunchOnlineImportActivity does not exist in com.google.android.apps.docs
+10-21 12:29:49.012  3828  3843 W err     : 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3015)
+10-21 12:29:49.012  3828  3843 W err     : 	at android.os.Parcel.createException(Parcel.java:2995)
+10-21 12:29:49.012  3828  3843 W err     : 	at android.os.Parcel.readException(Parcel.java:2978)
+10-21 12:29:49.012  3828  3843 W err     : 	at android.os.Parcel.readException(Parcel.java:2920)
+10-21 12:29:49.012  3828  3843 W err     : Error changing state for com.google.android.apps.docs.editors.punch.conversion.PunchOnlineImportActivity
+10-21 12:29:49.012  3828  3843 W err     : java.lang.IllegalArgumentException: Component class com.google.android.apps.docs.editors.punch.conversion.PunchOnlineImportActivity does not exist in com.google.android.apps.docs
+10-21 12:29:49.012  3828  3843 W err     : 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3015)
+10-21 12:29:49.012  3828  3843 W err     : 	at android.os.Parcel.createException(Parcel.java:2995)
+10-21 12:29:49.012  3828  3843 W err     : 	at android.os.Parcel.readException(Parcel.java:2978)
+10-21 12:29:49.012  3828  3843 W err     : 	at android.os.Parcel.readException(Parcel.java:2920)
+10-21 12:29:49.053  1420  1449 I DialerCallRecordingInfoStorageAsyncSqlite: com.android.dialer.callrecording.impl.storage.CallRecordingInfoStorageAsyncSqlite.deleteCallLogInitiated:477 enter
+10-21 12:29:49.310  1058  1520 E bwel    : java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-21 12:29:49.526  3939  3988 I c.acve  : Obtained writable database SQLiteDatabase/188068624 instance with path /data/user/0/com.google.android.calendar/databases/cal_v2a
+10-21 12:29:49.580   983   983 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: ImsService is not available for the subscription specified. (code: 1)
+10-21 12:29:49.611  1547  2024 I AiAiEcho: Settings cha with uri: content://settings/secure/send_action_app_error
+10-21 12:29:49.631   983   983 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: ImsService is not available for the subscription specified. (code: 1)
+10-21 12:29:49.676   910   950 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+10-21 12:29:49.732   983   983 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: ImsService is not available for the subscription specified. (code: 1)
+10-21 12:29:49.894   983   983 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: ImsService is not available for the subscription specified. (code: 1)
+10-21 12:29:50.364   301   301 W WVCdm   : [oemcrypto_adapter_dynamic.cpp(1589):OEMCrypto_InitializeAndCheckKeybox] Keybox error: 25. Falling back to L3.
+10-21 12:29:50.654  1058  2927 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=5000, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=<unknown>, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1725920748, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=80000, cd_track_number=null, xmp=[], year=null, _data=/product/media/audio/ringtones/Hydra.ogg, _size=22924, album=ringtones, genre=null, is_alarm=0, title=Hydra, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteConnection.nativeExecuteForLastInsertedRowId(Native Method)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteConnection.executeForLastInsertedRowId(SQLiteConnection.java:961)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteSession.executeForLastInsertedRowId(SQLiteSession.java:790)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteStatement.executeInsert(SQLiteStatement.java:89)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.insert(SQLiteQueryBuilder.java:611)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.lambda$insert$1(SQLiteQueryBuilder.java:575)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.$r8$lambda$J8sHyRt4f9G-jpErUkeO-jG4Hmw(Unknown Source:0)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder$$ExternalSyntheticLambda2.apply(Unknown Source:6)
+10-21 12:29:50.713  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.insert(SQLiteQueryBuilder.java:574)
+10-21 12:29:51.157  1058  2927 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:29:51.328  1845  1854 D StrictMode: StrictMode policy violation: android.os.strictmode.SqliteObjectLeakedViolation: Finalizing a Cursor that has not been deactivated or closed. database = /data/user/0/com.android.providers.contacts/databases/contacts2.db, table = raw_contacts, query = SELECT contacts_view._id AS _id, contacts_view.display_name AS display_name, contacts_view.photo_thumb_uri AS photo_thumb_uri, data1 AS number, data2 AS type, data3 AS label, contacts_view.lookup AS lookup FROM raw_contacts JOIN view_contacts as contacts_view ON (contacts_view._id = raw_contacts.contact_id) JOIN (SELECT data_id,normalized_number FROM phone_lookup WHERE (phone_lookup.min_match = '7654321')) AS lookup ON lookup.data_id=data._id JOIN data ON data.raw_contact_id=raw_contacts._id WHERE (PHONE_NUMBERS_EQUAL(data.data1, '+15551234567', 0, 7)) ORDER BY  length(lookup.normalized_number) DESC
+10-21 12:29:51.328  1845  1854 D StrictMode: 	at android.os.StrictMode.onSqliteObjectLeaked(StrictMode.java:2185)
+10-21 12:29:51.328  1845  1854 D StrictMode: 	at android.database.sqlite.SQLiteCursor.finalize(SQLiteCursor.java:282)
+10-21 12:29:51.330  1845  1854 D StrictMode: 	at android.database.sqlite.SQLiteCursor.finalize(SQLiteCursor.java:291)
+10-21 12:29:51.330  1845  1854 D StrictMode: 	at android.database.sqlite.SQLiteCursor.<init>(SQLiteCursor.java:98)
+10-21 12:29:51.330  1845  1854 D StrictMode: 	at android.database.sqlite.SQLiteDirectCursorDriver.query(SQLiteDirectCursorDriver.java:52)
+10-21 12:29:51.330  1845  1854 D StrictMode: 	at android.database.sqlite.SQLiteDatabase.rawQueryWithFactory(SQLiteDatabase.java:1712)
+10-21 12:29:51.330  1845  1854 D StrictMode: 	at android.database.sqlite.SQLiteQueryBuilder.query(SQLiteQueryBuilder.java:592)
+10-21 12:29:51.463  1294  2542 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:29:51.511  1294  2542 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:29:51.582  3939  4002 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-21 12:29:52.097  1547  3702 I AiAiEcho: Settings cha with uri: content://settings/secure/send_action_app_error
+10-21 12:29:52.259   486   862 E RecoverySnapshotStorage: Error reading snapshot for 10120 from disk
+10-21 12:29:52.259   486   862 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10120.xml: open failed: ENOENT (No such file or directory)
+10-21 12:29:52.259   486   862 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-21 12:29:52.361   983  1283 D MmsSmsDatabaseHelper: [MmsSmsDb] tableName: threads hasAutoIncrement: CREATE TABLE threads (_id INTEGER PRIMARY KEY AUTOINCREMENT,date INTEGER DEFAULT 0,message_count INTEGER DEFAULT 0,recipient_ids TEXT,snippet TEXT,snippet_cs INTEGER DEFAULT 0,read INTEGER DEFAULT 1,archived INTEGER DEFAULT 0,type INTEGER DEFAULT 0,error INTEGER DEFAULT 0,has_attachment INTEGER DEFAULT 0) result: true
+10-21 12:29:52.614   486   824 E RecoverySnapshotStorage: Error reading snapshot for 10120 from disk
+10-21 12:29:52.614   486   824 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10120.xml: open failed: ENOENT (No such file or directory)
+10-21 12:29:52.614   486   824 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-21 12:29:52.627   154   167 E keystore2: keystore2::error: In import_key.
+10-21 12:29:52.627   154   167 E keystore2:     3: Error::Rc(ResponseCode(4))
+10-21 12:29:52.645  1294  2757 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
+10-21 12:29:52.645  1294  2757 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
+10-21 12:29:52.645  1294  2757 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:773)
+10-21 12:29:52.645  1294  2757 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
+10-21 12:29:52.645  1294  2757 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3025)
+10-21 12:29:52.645  1294  2757 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:2995)
+10-21 12:29:52.645  1294  2757 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2978)
+10-21 12:29:52.645  1294  2757 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2920)
+10-21 12:29:52.778  3266  3354 W SQLiteLog: (28) double-quoted string literal: ""
+10-21 12:29:52.778  3266  3354 W SQLiteLog: (28) double-quoted string literal: ""
+10-21 12:29:52.778  3266  3354 W SQLiteLog: (28) double-quoted string literal: ""
+10-21 12:29:52.778  3266  3354 W SQLiteLog: (28) double-quoted string literal: ""
+10-21 12:29:52.778  3266  3354 W SQLiteLog: (28) double-quoted string literal: ""
+10-21 12:29:52.778  3266  3354 W SQLiteLog: (28) double-quoted string literal: ""
+10-21 12:29:52.802  1294  2766 E Vision  : Couldn't read checkbot setting: android.provider.Settings$SettingNotFoundException: multi_cb
+10-21 12:29:52.940  1058  1525 W NetworkScheduler: java.lang.IllegalArgumentException: Only the following extra parameter types are supported: Integer, Long, Double, String, Boolean, and nested Bundles with the same restrictions.
+10-21 12:29:53.188   486  1881 E RecoverySnapshotStorage: Error reading snapshot for 10120 from disk
+10-21 12:29:53.188   486  1881 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10120.xml: open failed: ENOENT (No such file or directory)
+10-21 12:29:53.188   486  1881 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-21 12:29:53.190   154   167 E keystore2: keystore2::error: In import_key.
+10-21 12:29:53.190   154   167 E keystore2:     3: Error::Rc(ResponseCode(4))
+10-21 12:29:53.193  1294  4295 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
+10-21 12:29:53.193  1294  4295 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
+10-21 12:29:53.193  1294  4295 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:773)
+10-21 12:29:53.193  1294  4295 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
+10-21 12:29:53.193  1294  4295 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3025)
+10-21 12:29:53.193  1294  4295 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:2995)
+10-21 12:29:53.193  1294  4295 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2978)
+10-21 12:29:53.193  1294  4295 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2920)
+10-21 12:29:53.201  1058  1497 W NetworkScheduler: java.lang.IllegalArgumentException: Only the following extra parameter types are supported: Integer, Long, Double, String, Boolean, and nested Bundles with the same restrictions.
+10-21 12:29:53.243  1058  2466 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+10-21 12:29:53.279  1058  2927 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=null, duration=3498, is_ringtone=1, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1725920748, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=0, bitrate=80000, cd_track_number=2d315cR, xmp=[], year=null, _data=/product/media/audio/ringtones/CANISMAJOR.ogg, _size=31170, album=ringtones, genre=null, is_alarm=0, title=Canis Major, track=null, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteConnection.nativeExecuteForLastInsertedRowId(Native Method)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteConnection.executeForLastInsertedRowId(SQLiteConnection.java:961)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteSession.executeForLastInsertedRowId(SQLiteSession.java:790)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteStatement.executeInsert(SQLiteStatement.java:89)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.insert(SQLiteQueryBuilder.java:611)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.lambda$insert$1(SQLiteQueryBuilder.java:575)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.$r8$lambda$J8sHyRt4f9G-jpErUkeO-jG4Hmw(Unknown Source:0)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder$$ExternalSyntheticLambda2.apply(Unknown Source:6)
+10-21 12:29:53.454  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.insert(SQLiteQueryBuilder.java:574)
+10-21 12:29:53.576  1058  2927 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:29:54.018  3939  3939 W GnpSdk  : java.lang.NullPointerException: Unable to get GrowthKit Component from host app: com.google.android.calendar
+10-21 12:29:54.214  3266  4394 E AssistantConnector: java.lang.IllegalStateException: Failed to query AGSA value. This is most likely caused by a Google signature check failure. Please make sure both of the AGSA app and the client app are either release or dev builds.
+10-21 12:29:54.221  3266  3362 W Bugle   : AssistantIntegrationStartupTask: Error getting assistant availability.
+10-21 12:29:54.221  3266  3362 W Bugle   : java.lang.IllegalStateException: Failed to query AGSA value. This is most likely caused by a Google signature check failure. Please make sure both of the AGSA app and the client app are either release or dev builds.
+10-21 12:29:55.314  1657  1657 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+10-21 12:29:55.314  1657  1657 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-21 12:29:55.393  1657  2799 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications.platform#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+10-21 12:29:55.393  1657  2799 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-21 12:29:55.550  3266  3440 D StrictMode: 	at android.os.Parcel.readExceptionCode(Parcel.java:2956)
+10-21 12:29:55.550  3266  3440 D StrictMode: 	at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:139)
+10-21 12:29:56.112  3266  3354 W RcsClientLib: Unexpected error when trying to unbind com.google.android.ims.rcsservice.profile.IRcsProfile: Service not registered: bwbs@189e953
+10-21 12:29:56.114  3266  3354 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@189e953
+10-21 12:29:56.114  3266  3354 W RcsClientLib: Unexpected error when trying to unbind com.google.android.ims.rcsservice.businessinfo.IBusinessInfo: Service not registered: bwbs@84eb789
+10-21 12:29:56.114  3266  3354 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@84eb789
+10-21 12:29:56.114  3266  3354 W RcsClientLib: Unexpected error when trying to unbind com.google.android.rcs.client.messaging.IMessaging: Service not registered: bwbs@d3fc7af
+10-21 12:29:56.114  3266  3354 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@d3fc7af
+10-21 12:29:56.115  3266  3354 W RcsClientLib: Unexpected error when trying to unbind com.google.android.ims.rcsservice.transportcontrol.ITransportControl: Service not registered: bwbs@be24345
+10-21 12:29:56.115  3266  3354 W RcsClientLib: java.lang.IllegalArgumentException: Service not registered: bwbs@be24345
+10-21 12:29:56.454     0     0 I binder  : undelivered TRANSACTION_ERROR: 29189
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: Failed to apply ContentProviderOperation(type=insert uri=content://media/internal/file values={instance_id=null, compilation=null, disc_number=0, duration=4383, is_ringtone=0, album_artist=null, resolution=null, orientation=null, artist=pdx, author=null, height=null, is_drm=0, is_audiobook=0, date_modified=1725920748, writer=null, composer=null, _modifier=3, is_recording=0, datetaken=null, mime_type=audio/ogg, is_notification=1, bitrate=96000, cd_track_number=0, xmp=[], year=null, _data=/product/media/audio/notifications/vega.ogg, _size=29476, album=Unknown, genre=Unknown, is_alarm=0, title=Vega, track=0, width=null, is_music=0, document_id=null, is_podcast=0, capture_framerate=null, num_tracks=1, original_document_id=null, media_type=2} exceptionAllowed)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: android.database.sqlite.SQLiteConstraintException: UNIQUE constraint failed: files._data (code 2067 SQLITE_CONSTRAINT_UNIQUE)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteConnection.nativeExecuteForLastInsertedRowId(Native Method)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteConnection.executeForLastInsertedRowId(SQLiteConnection.java:961)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteSession.executeForLastInsertedRowId(SQLiteSession.java:790)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at android.database.sqlite.SQLiteStatement.executeInsert(SQLiteStatement.java:89)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.insert(SQLiteQueryBuilder.java:611)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.lambda$insert$1(SQLiteQueryBuilder.java:575)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.$r8$lambda$J8sHyRt4f9G-jpErUkeO-jG4Hmw(Unknown Source:0)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder$$ExternalSyntheticLambda2.apply(Unknown Source:6)
+10-21 12:29:56.843  1548  2086 W ModernMediaScanner: 	at com.android.providers.media.util.SQLiteQueryBuilder.insert(SQLiteQueryBuilder.java:574)
+10-21 12:29:56.859  4441  4491 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-21 12:29:57.015  1133  1148 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+10-21 12:29:57.349  1548  1770 W MediaProvider: java.io.IOException: Failed to update quota type for /storage/emulated/0/Android
+10-21 12:29:57.352  1548  1770 W MediaProvider: java.io.IOException: Failed to update quota type for /storage/emulated/0/Android/media
+10-21 12:29:57.721   486   694 W FileUtils: android.system.ErrnoException: chmod failed: ENOENT (No such file or directory)
+10-21 12:29:57.785  1133  1148 W BaseSearchIndex: Error initial controller
+10-21 12:29:58.093  4717  4741 E IndexablesProvider: Provider querying exception:
+10-21 12:29:58.093  4717  4741 E IndexablesProvider: java.lang.IllegalStateException: We should initialize FormFactorUtils before getting instance.
+10-21 12:29:58.970  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.android.cellbroadcastreceiver"
+10-21 12:29:58.970  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.android.emergency"
+10-21 12:29:58.970  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.android.permissioncontroller"
+10-21 12:29:58.970  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.android.permissioncontroller.role"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.android.permissioncontroller.safetycenter"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.android.settings"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.android.traceur"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.apps.gsa.opa.AssistantSettingsProvider"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.apps.messaging.settings.search"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.apps.nexuslauncher"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.apps.wellbeing"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.gms"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.gms.accountsettings.content"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.inputmethod.latin"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.marvin.talkback.preference.search.TalkBackSearchIndexablesProvider"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.settings.intelligence.provider.search"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.settings.intelligence.routines.impl"
+10-21 12:29:58.971  4627  4655 W SQLiteLog: (28) double-quoted string literal: "com.google.android.settings.intelligence.smartringer.impl"
+10-21 12:30:00.783  1058  1340 E bwfc    : Phenotype API error. Event # edax@9a7d34c8, EventCode: 32 [CONTEXT service_id=51 ]
+10-21 12:30:00.783  1058  1340 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+10-21 12:30:01.228  1657  1970 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:01.228  1657  1970 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:03.634  1294  3935 E SQLiteLog: (1) no such table: Alarm_cross_device_com.google.android.deskclock_seq_table in "SELECT * FROM [Alarm_cross_device_com.google.android.deskclock_seq_table] WHERE seqno>0 AND tag IS NULL ORDER BY seqno LIMIT 20"
+10-21 12:30:03.635  1294  3935 E Icing   : Cursor call threw an exception: no such table: Alarm_cross_device_com.google.android.deskclock_seq_table (code 1 SQLITE_ERROR): , while compiling: SELECT * FROM [Alarm_cross_device_com.google.android.deskclock_seq_table] WHERE seqno>0 AND tag IS NULL ORDER BY seqno LIMIT 20
+10-21 12:30:03.636  1294  3935 E SQLiteLog: (1) no such table: Stopwatch_cross_device_com.google.android.deskclock_seq_table in "SELECT * FROM [Stopwatch_cross_device_com.google.android.deskclock_seq_table] WHERE seqno>0 AND tag IS NULL ORDER BY seqno LIMIT
+10-21 12:30:03.636  1294  3935 E Icing   : Cursor call threw an exception: no such table: Stopwatch_cross_device_com.google.android.deskclock_seq_table (code 1 SQLITE_ERROR): , while compiling: SELECT * FROM [Stopwatch_cross_device_com.google.android.deskclock_seq_table] WHERE seqno>0 AND tag IS NULL ORDER BY seqno LIMIT 20
+10-21 12:30:04.969   486  1782 E RecoverySnapshotStorage: Error reading snapshot for 10120 from disk
+10-21 12:30:04.969   486  1782 E RecoverySnapshotStorage: java.io.FileNotFoundException: /data/system/recoverablekeystore/snapshots/10120.xml: open failed: ENOENT (No such file or directory)
+10-21 12:30:04.969   486  1782 E RecoverySnapshotStorage: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-21 12:30:04.979   154   167 E keystore2: keystore2::error: In import_key.
+10-21 12:30:04.979   154   167 E keystore2:     3: Error::Rc(ResponseCode(4))
+10-21 12:30:04.982  1294  4912 W RecoverableKeyStoreGms: [WrappingKeyManager] InternalRecoveryServiceException during wrapping key generation [CONTEXT service_id=172 ]
+10-21 12:30:04.982  1294  4912 W RecoverableKeyStoreGms: android.security.keystore.recovery.InternalRecoveryServiceException: Failed to import secret key.
+10-21 12:30:04.982  1294  4912 W RecoverableKeyStoreGms: 	at android.security.keystore.recovery.RecoveryController.wrapUnexpectedServiceSpecificException(RecoveryController.java:773)
+10-21 12:30:04.982  1294  4912 W RecoverableKeyStoreGms: Caused by: android.os.ServiceSpecificException: Failed to import secret key. (code 22)
+10-21 12:30:04.982  1294  4912 W RecoverableKeyStoreGms: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3025)
+10-21 12:30:04.982  1294  4912 W RecoverableKeyStoreGms: 	at android.os.Parcel.createException(Parcel.java:2995)
+10-21 12:30:04.982  1294  4912 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2978)
+10-21 12:30:04.982  1294  4912 W RecoverableKeyStoreGms: 	at android.os.Parcel.readException(Parcel.java:2920)
+10-21 12:30:05.395  1657  1657 E A       : onError
+10-21 12:30:05.395  1657  1657 E A       : com.google.android.apps.gsa.shared.speech.a.m: errorCode: 65561, engine: 2
+10-21 12:30:05.395  1657  1657 E A       : Caused by: com.google.android.apps.gsa.shared.speech.a.o: errorCode: 65586, engine: 2
+10-21 12:30:05.395  1657  1657 E A       : Caused by: com.google.android.apps.gsa.shared.speech.a.k: errorCode: 401, engine: 2
+10-21 12:30:05.435  1133  4669 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.accessibility.VibrationMainSwitchPreferenceController
+10-21 12:30:05.435  1133  4669 W SliceDataConverter: Caused by: java.lang.reflect.InvocationTargetException
+10-21 12:30:05.435  1133  4669 W SliceDataConverter: Caused by: java.lang.RuntimeException: Can't create handler inside thread Thread[binder:1133_6,5,main] that has not called Looper.prepare()
+10-21 12:30:05.460  1133  4669 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.network.NetworkProviderSimsCategoryController
+10-21 12:30:05.460  1133  4669 W SliceDataConverter: Caused by: java.lang.NoSuchMethodException: com.android.settings.network.NetworkProviderSimsCategoryController.<init> [class android.content.Context, class java.lang.String]
+10-21 12:30:05.778  1133  4669 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+10-21 12:30:05.833  1133  4669 W SliceDataConverter: java.lang.IllegalStateException: Invalid preference controller: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+10-21 12:30:05.833  1133  4669 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+10-21 12:30:05.833  1133  4669 W SliceDataConverter: Caused by: java.lang.ClassNotFoundException: com.android.settings.applications.appinfo.ManageAppLocalePreferenceController
+10-21 12:30:06.522  1294  3913 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+10-21 12:30:06.523  1294  3913 E enyj    : java.lang.RuntimeException: ManagedChannel allocation site
+10-21 12:30:06.728  1058  1340 E bwfc    : Phenotype API error. Event # edax@585836cc, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:06.728  1058  1340 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.googlequicksearchbox(change count changed - expected 2  but was 1), resolution=null}]
+10-21 12:30:06.975  1294  4978 W gle.android.gms: Long monitor contention with owner LIT-UnlimitedExecutor #0 (4977) at android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteOpenHelper.getWritableDatabase()(SQLiteOpenHelper.java:316) waiters=0 in android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteOpenHelper.getWritableDatabase() for 336ms
+10-21 12:30:06.976  1294  4979 W gle.android.gms: Long monitor contention with owner LIT-UnlimitedExecutor #0 (4977) at android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteOpenHelper.getWritableDatabase()(SQLiteOpenHelper.java:316) waiters=1 in android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteOpenHelper.getWritableDatabase() for 333ms
+10-21 12:30:07.100  1294  4915 E PhenotypeFlagCommitter: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-21 12:30:07.123  1657  1970 E ApplicationPropertiesBu: Error when converting version: messages.android_20221208_01_RC02_alldpi.x86_64.phone
+10-21 12:30:07.123  1657  1970 E ApplicationPropertiesBu: java.lang.NumberFormatException: For input string: "messages"
+10-21 12:30:07.142  1294  4916 W PeoplePU: android.content.pm.PackageManager$NameNotFoundException: ComponentInfo{com.google.android.gms/com.google.android.gms.people.sync.focus.ContactsSyncAdapterService}
+10-21 12:30:07.143  1294  4915 W PeoplePU: java.lang.IllegalArgumentException: Unknown component: ComponentInfo{com.google.android.syncadapters.contacts/com.google.android.syncadapters.contacts.ProxyGalProvider}
+10-21 12:30:07.143  1294  4915 W PeoplePU: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3015)
+10-21 12:30:07.143  1294  4915 W PeoplePU: 	at android.os.Parcel.createException(Parcel.java:2995)
+10-21 12:30:07.143  1294  4915 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:2978)
+10-21 12:30:07.143  1294  4915 W PeoplePU: 	at android.os.Parcel.readException(Parcel.java:2920)
+10-21 12:30:07.245  1294  4912 W gle.android.gms: Long monitor contention with owner lowpool[17] (4925) at android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteOpenHelper.getWritableDatabase()(SQLiteOpenHelper.java:316) waiters=0 in android.database.sqlite.SQLiteDatabase android.database.sqlite.SQLiteOpenHelper.getWritableDatabase() for 392ms
+10-21 12:30:07.429  1657  1970 W A       : Exception while fetching versionCode for package[com.google.android.apps.tv.dreamx].
+10-21 12:30:07.429  1657  1970 W A       : android.content.pm.PackageManager$NameNotFoundException: com.google.android.apps.tv.dreamx
+10-21 12:30:07.433  1657  1970 W A       : Exception while fetching versionCode for package[com.google.android.apps.tv.launcherx].
+10-21 12:30:07.433  1657  1970 W A       : android.content.pm.PackageManager$NameNotFoundException: com.google.android.apps.tv.launcherx
+10-21 12:30:07.961  1058  1340 E bwfc    : Phenotype API error. Event # edax@343d0aab, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:07.961  1058  1340 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 3  but was 1), resolution=null}]
+10-21 12:30:07.962  1058  1340 E bwfc    : Phenotype API error. Event # edax@343d0aab, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:07.962  1058  1340 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 3  but was 1), resolution=null}]
+10-21 12:30:07.962  1058  1340 E bwfc    : Phenotype API error. Event # edax@343d0aab, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:07.962  1058  1340 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 3  but was 1), resolution=null}]
+10-21 12:30:08.030  1058  3222 I NearbyDiscovery: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-21 12:30:08.337  1058  1090 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:30:08.336  1294  4913 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:30:08.347  1058  1340 E bwfc    : Phenotype API error. Event # edax@70290302, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:08.347  1058  1340 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.inputmethod.latin#com.google.android.inputmethod.latin(change count changed - expected 3  but was 2), resolution=null}]
+10-21 12:30:08.375  1294  4913 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:30:08.380  1058  1090 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-21 12:30:08.445  1058  1090 W GLSUser : [AppCertManager] Exception while requesting key: 
+10-21 12:30:08.445  1058  1090 W GLSUser : java.io.IOException: Invalid device key response.
+10-21 12:30:08.526  1058  1338 E bwfc    : Phenotype API error. Event # edax@ad1ff4c4, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:08.526  1058  1338 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 3  but was 2), resolution=null}]
+10-21 12:30:08.581  1058  4942 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+10-21 12:30:08.581  1058  4942 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-21 12:30:08.626  1058  1340 E bwfc    : Phenotype API error. Event # edax@be78197, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:08.626  1058  1340 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.gms.personalsafety(change count changed - expected 1  but was 0), resolution=null}]
+10-21 12:30:08.719  1058  4942 I SemanticLocation: java.io.FileNotFoundException: /data/user/0/com.google.android.gms/files/model_bundle_metadata.pb: open failed: ENOENT (No such file or directory)
+10-21 12:30:08.719  1058  4942 I SemanticLocation: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-21 12:30:10.341  1058  1338 E bwfc    : Phenotype API error. Event # edax@bbb4501c, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:10.342  1058  1338 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 4  but was 3), resolution=null}]
+10-21 12:30:10.343  1058  1338 E bwfc    : Phenotype API error. Event # edax@8f1862f2, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:10.343  1058  1338 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.partnersetup(change count changed - expected 1  but was 0), resolution=null}]
+10-21 12:30:10.401  1058  1338 E bwfc    : Phenotype API error. Event # edax@ad278056, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:10.401  1058  1338 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.gms.lockbox(change count changed - expected 1  but was 0), resolution=null}]
+10-21 12:30:10.402  1058  3636 W PhenotypeFlagCommitter: java.util.concurrent.ExecutionException: aard: 29501: Stale snapshot for com.google.android.gms.lockbox(change count changed - expected 1  but was 0)
+10-21 12:30:10.405  1058  1338 E bwfc    : Phenotype API error. Event # edax@11af643d, EventCode: 5 [CONTEXT service_id=51 ]
+10-21 12:30:10.405  1058  1338 W AsyncOperation: OperationException[Status{statusCode=Stale snapshot for com.google.android.apps.messaging#com.google.android.apps.messaging(change count changed - expected 4  but was 3), resolution=null}]
+10-21 12:30:10.978   486   585 E RoleControllerManager: Error calling grantDefaultRoles()
+10-21 12:30:10.978   486   585 E RoleControllerManager: java.util.concurrent.TimeoutException
+10-21 12:30:11.231  1657  1970 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:11.231  1657  1970 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:12.789   486  5106 E StatsCompanionService: android.content.pm.PackageManager$NameNotFoundException: com.google.android.trichromelibrary
+10-21 12:30:12.933   486  1902 W SoundTriggerService: error onStop(): Model 9f6ad62a-1f0b-11e7-87c5-40a8f03d3f15 has no stats available
+10-21 12:30:14.268  1017  1017 W BcSmartspaceView: java.lang.SecurityException: No access to content://settings/secure/doze_always_on: Neither user 10153 nor current process has android.permission.INTERACT_ACROSS_USERS_FULL.
+10-21 12:30:14.268  1017  1017 W BcSmartspaceView: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3011)
+10-21 12:30:14.268  1017  1017 W BcSmartspaceView: 	at android.os.Parcel.createException(Parcel.java:2995)
+10-21 12:30:14.268  1017  1017 W BcSmartspaceView: 	at android.os.Parcel.readException(Parcel.java:2978)
+10-21 12:30:14.268  1017  1017 W BcSmartspaceView: 	at android.os.Parcel.readException(Parcel.java:2920)
+10-21 12:30:14.268  1017  1017 W BcSmartspaceView: Caused by: android.os.RemoteException: Remote stack trace:
+10-21 12:30:15.142  1133  1148 W BaseSearchIndex: Error initial controller
+10-21 12:30:15.578   486  2318 W WifiService: Permission violation - getConfiguredNetworks not allowed for uid=10107, packageName=com.google.android.settings.intelligence, reason=java.lang.SecurityException: UID 10107 has no location permission
+10-21 12:30:15.782  1657  1969 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:15.782  1657  1969 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:15.836  1133  1485 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+10-21 12:30:15.970  1133  1485 W BaseSearchIndex: Error initial controller
+10-21 12:30:16.006  1657  1969 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.006  1657  1969 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:16.131  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.131  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:16.249  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.249  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:16.536  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.536  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:16.629  1657  1970 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.629  1657  1970 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:16.695  1657  1970 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.695  1657  1970 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:16.812  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.812  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:16.901  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.901  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:16.991  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:16.991  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:17.411  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:17.411  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:17.562  1294  3935 W GCM-GMS : Failed to get direct boot token: java.io.IOException: QUOTA_EXCEEDED
+10-21 12:30:17.580  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:17.580  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:18.534  1294  3935 W GmsPipelineLogger: java.lang.NullPointerException
+10-21 12:30:18.897  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:18.897  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:20.470  1657  1657 E A       : onError
+10-21 12:30:20.470  1657  1657 E A       : com.google.android.apps.gsa.shared.speech.a.m: errorCode: 65561, engine: 2
+10-21 12:30:20.470  1657  1657 E A       : Caused by: com.google.android.apps.gsa.shared.speech.a.o: errorCode: 65586, engine: 2
+10-21 12:30:20.470  1657  1657 E A       : Caused by: com.google.android.apps.gsa.shared.speech.a.k: errorCode: 401, engine: 2
+10-21 12:30:20.899  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:20.899  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:21.240  1657  1968 W CorpusConfigHelper: android.util.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 123 column 2
+10-21 12:30:21.240  1657  1968 W CorpusConfigHelper: 	at android.util.JsonReader.syntaxError(JsonReader.java:1162)
+10-21 12:30:22.086  1058  5215 W PhenotypeConfigurationU: Update for unknown DeviceConfig package com.google.android.client_error_logging [CONTEXT service_id=204 ]
+10-21 12:30:22.086  1058  5215 W PhenotypeConfigurationU: bwix: No package exists for config package: com.google.android.client_error_logging
