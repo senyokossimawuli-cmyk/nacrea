@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'apercu.dart';
 import 'config.dart';
 import 'data/base_locale.dart';
 import 'screens/auth_gate.dart';
@@ -10,6 +11,10 @@ import 'theme/nacrea_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (const bool.fromEnvironment('APERCU')) {
+    runApp(const ApercuApp());
+    return;
+  }
   await Affichage.charger();
   NacreaColors.sombre = Affichage.estSombre();
   await Supabase.initialize(

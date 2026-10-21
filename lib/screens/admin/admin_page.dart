@@ -6,7 +6,6 @@ import '../../data/admin_repo.dart';
 import '../../services/erreurs.dart';
 import '../../theme/nacrea_theme.dart';
 import '../../utils/format.dart';
-import '../../widgets/auth_layout.dart';
 import '../../widgets/carte_chiffre.dart';
 import '../clientes/cliente_dialogs.dart' show ouvrirWhatsApp;
 import 'admin_licences.dart';

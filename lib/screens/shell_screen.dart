@@ -142,7 +142,14 @@ class _ShellScreenState extends State<ShellScreen> {
           key: ValueKey('rapports-${boutique.id}'), membre: m, boutique: boutique, boutiques: boutiques),
       'equipe' => EquipePage(membre: m, boutiques: boutiques),
       'admin' => const AdminPage(),
-      _ => DashboardPage(membre: m, boutiques: boutiques),
+      _ => DashboardPage(
+          membre: m,
+          boutiques: boutiques,
+          quandAller: (cle) {
+            final i = _menu.indexWhere((d) => d.cle == cle);
+            if (i >= 0) setState(() => _page = i);
+          },
+        ),
     };
     final large = MediaQuery.sizeOf(context).width >= 900;
 
