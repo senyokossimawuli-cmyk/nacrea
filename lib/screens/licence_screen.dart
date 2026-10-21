@@ -185,6 +185,7 @@ class _EcranLicenceState extends State<EcranLicence> {
   Widget build(BuildContext context) {
     return switch (e.etat) {
       'desactivee' => _desactivee(),
+      'expiree' => _expiree(),
       'limite' => _limite(),
       _ => _aucune(),
     };
@@ -260,6 +261,30 @@ class _EcranLicenceState extends State<EcranLicence> {
               onPressed: () => _contacter('ma licence est désactivée, je souhaite la réactiver'),
               icon: const Icon(Icons.chat_outlined),
               label: const Text('Contacter YDS Beauty'),
+            ),
+          ..._basDePage(),
+        ],
+      ),
+    );
+  }
+
+  // ---------- Licence expirée ----------
+  Widget _expiree() {
+    final le = e.expireLe;
+    return AuthLayout(
+      titre: 'Licence expirée',
+      sousTitre: 'Votre licence YDS Beauty${le == null ? '' : ' a pris fin le ${dateCourte(le)}'}. '
+          'Vos données sont en sécurité : tout revient dès le renouvellement. '
+          '${_patronne ? 'Contactez YDS Beauty pour renouveler.' : 'Prévenez la patronne.'}',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_erreur != null) MessageErreur(_erreur!),
+          if (_patronne)
+            FilledButton.icon(
+              onPressed: () => _contacter('ma licence est expirée, je souhaite la renouveler'),
+              icon: const Icon(Icons.chat_outlined),
+              label: const Text('Renouveler ma licence'),
             ),
           ..._basDePage(),
         ],
@@ -380,7 +405,8 @@ class _CarteMaLicenceState extends State<CarteMaLicence> {
                 Text(
                   e.horsLigne
                       ? 'Vérifiée sans internet. Les appareils s\'afficheront une fois connecté.'
-                      : 'Valable sur ${e.resume}.',
+                      : 'Valable sur ${e.resume} · '
+                          '${e.illimitee ? 'sans date de fin' : 'jusqu\'au ${dateCourte(e.expireLe!)}'}.',
                   style: const TextStyle(color: NacreaColors.gris),
                 ),
                 for (final a in e.appareils)

@@ -124,7 +124,7 @@ class BandeauAbonnement extends StatelessWidget {
 
   /// Rien à afficher ?
   static bool utile(EtatAbonnement? e) =>
-      e != null && (e.enRetard || ((e.essai || e.statut == 'active') && (e.joursRestants ?? 99) <= 3));
+      e != null && (e.enRetard || ((e.essai || e.statut == 'active') && (e.joursRestants ?? 99) <= 7));
 
   @override
   Widget build(BuildContext context) {

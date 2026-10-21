@@ -81,11 +81,47 @@ Future<void> montrerCle(BuildContext context, String cle,
   );
 }
 
-/// Formulaire : note + nombre d'appareils. Renvoie (note, pc, téléphones).
-Future<(String?, int, int)?> _formulaireLicence(BuildContext context,
-    {required String titre, String? note, int pc = 1, int tel = 1, bool avecNote = true}) {
+/// Durées proposées à la création d'une licence.
+enum _Duree {
+  essai('Essai 14 jours', 0, 14),
+  m1('1 mois', 1, 0),
+  m3('3 mois', 3, 0),
+  m6('6 mois', 6, 0),
+  an('1 an', 12, 0),
+  illimitee('Illimitée', 0, 0),
+  date('Date précise', 0, 0);
+
+  const _Duree(this.libelle, this.mois, this.jours);
+  final String libelle;
+  final int mois, jours;
+}
+
+typedef _ChoixLicence = ({String? note, int pc, int tel, int? mois, int? jours, DateTime? fin});
+
+DateTime _finDeJournee(DateTime d) => DateTime(d.year, d.month, d.day, 23, 59);
+
+/// Choisir une date (fin de journée).
+Future<DateTime?> _choisirDate(BuildContext context, DateTime? initiale) async {
+  final maintenant = DateTime.now();
+  final d = await showDatePicker(
+    context: context,
+    initialDate: initiale != null && initiale.isAfter(maintenant) && initiale.year < 2900
+        ? initiale
+        : maintenant.add(const Duration(days: 30)),
+    firstDate: maintenant.subtract(const Duration(days: 365)),
+    lastDate: DateTime(maintenant.year + 10),
+    helpText: 'Date de fin de la licence',
+  );
+  return d == null ? null : _finDeJournee(d);
+}
+
+/// Formulaire : note, nombre d'appareils et (à la création) durée.
+Future<_ChoixLicence?> _formulaireLicence(BuildContext context,
+    {required String titre, String? note, int pc = 1, int tel = 1, bool avecDuree = false}) {
   final champNote = TextEditingController(text: note);
   var nbPc = pc, nbTel = tel;
+  var duree = _Duree.m1;
+  DateTime? date;
   Widget compteur(String libelle, IconData icone, int valeur, void Function(int) changer) => Row(
         children: [
           Icon(icone, color: NacreaColors.prune),
@@ -95,26 +131,28 @@ Future<(String?, int, int)?> _formulaireLicence(BuildContext context,
             onPressed: valeur > 0 ? () => changer(valeur - 1) : null,
             icon: const Icon(Icons.remove_circle_outline),
           ),
-          SizedBox(width: 28, child: Text('$valeur', textAlign: TextAlign.center, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700))),
+          SizedBox(
+              width: 28,
+              child: Text('$valeur',
+                  textAlign: TextAlign.center, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700))),
           IconButton(
             onPressed: valeur < 50 ? () => changer(valeur + 1) : null,
-            icon: const Icon(Icons.add_circle_outline, color: NacreaColors.prune),
+            icon: Icon(Icons.add_circle_outline, color: NacreaColors.prune),
           ),
         ],
       );
-  return showDialog<(String?, int, int)>(
+  return showDialog<_ChoixLicence>(
     context: context,
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setD) => AlertDialog(
-        backgroundColor: Colors.white,
         title: Text(titre),
         content: SizedBox(
-          width: 420,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (avecNote) ...[
+          width: 440,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                 TextField(
                   controller: champNote,
                   autofocus: true,
@@ -124,16 +162,62 @@ Future<(String?, int, int)?> _formulaireLicence(BuildContext context,
                   ),
                 ),
                 const SizedBox(height: 16),
+                compteur('Ordinateurs', Icons.computer, nbPc, (v) => setD(() => nbPc = v)),
+                compteur('Téléphones', Icons.smartphone, nbTel, (v) => setD(() => nbTel = v)),
+                if (avecDuree) ...[
+                  const SizedBox(height: 16),
+                  const Text('Durée', style: TextStyle(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final d in _Duree.values)
+                        ChoiceChip(
+                          label: Text(d == _Duree.date && date != null ? dateCourte(date!) : d.libelle),
+                          selected: duree == d,
+                          onSelected: (_) async {
+                            if (d == _Duree.date) {
+                              final choisie = await _choisirDate(ctx, date);
+                              if (choisie == null) return;
+                              setD(() {
+                                date = choisie;
+                                duree = d;
+                              });
+                            } else {
+                              setD(() => duree = d);
+                            }
+                          },
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    switch (duree) {
+                      _Duree.illimitee => 'Pas de date de fin.',
+                      _Duree.date => 'Se termine le ${date == null ? '…' : dateCourte(date!)}.',
+                      _ => 'La durée démarre le jour où la cliente active sa clé.',
+                    },
+                    style: TextStyle(color: NacreaColors.gris, fontSize: 13),
+                  ),
+                ],
               ],
-              compteur('Ordinateurs', Icons.computer, nbPc, (v) => setD(() => nbPc = v)),
-              compteur('Téléphones', Icons.smartphone, nbTel, (v) => setD(() => nbTel = v)),
-            ],
+            ),
           ),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
           TextButton(
-            onPressed: nbPc + nbTel == 0 ? null : () => Navigator.pop(ctx, (champNote.text.trim(), nbPc, nbTel)),
+            onPressed: nbPc + nbTel == 0
+                ? null
+                : () => Navigator.pop(ctx, (
+                      note: champNote.text.trim(),
+                      pc: nbPc,
+                      tel: nbTel,
+                      mois: avecDuree && duree.mois > 0 ? duree.mois : null,
+                      jours: avecDuree && duree.jours > 0 ? duree.jours : null,
+                      fin: avecDuree && duree == _Duree.date ? date : null,
+                    )),
             child: const Text('Valider'),
           ),
         ],
@@ -148,19 +232,141 @@ Future<bool> nouvelleLicence(BuildContext context, {String? compteId, String? no
     context,
     titre: compteId == null ? 'Nouvelle licence' : 'Licence pour cette cliente',
     note: note,
+    avecDuree: true,
   );
   if (choix == null || !context.mounted) return false;
-  final (texte, pc, tel) = choix;
   try {
-    final cle = await _repo.creerLicence(note: texte, maxPc: pc, maxTelephones: tel, compteId: compteId);
+    final cle = await _repo.creerLicence(
+      note: choix.note,
+      maxPc: choix.pc,
+      maxTelephones: choix.tel,
+      compteId: compteId,
+      mois: choix.mois,
+      jours: choix.jours,
+      expireLe: choix.fin,
+    );
     if (context.mounted) {
       await montrerCle(context, cle,
-          telephone: telephone, patronne: patronne, pc: pc, tel: tel, dejaLiee: compteId != null, titre: 'Licence créée');
+          telephone: telephone,
+          patronne: patronne,
+          pc: choix.pc,
+          tel: choix.tel,
+          dejaLiee: compteId != null,
+          titre: 'Licence créée');
     }
     return true;
   } catch (e) {
     if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(messageErreur(e))));
     return false;
+  }
+}
+
+/// Texte court sur la durée d'une licence.
+String texteDuree(LicenceAdmin l) {
+  if (l.enAttente) return 'Durée : ${l.dureeEnAttente}, à partir de l\'activation';
+  if (l.illimitee) return 'Sans date de fin';
+  final fin = l.expireLe!;
+  if (l.bloquee) return 'Expirée le ${dateCourte(fin)} (bloquée)';
+  if (l.expiree) {
+    return 'Expirée le ${dateCourte(fin)} · bloquée le ${dateCourte(fin.add(Duration(days: l.graceJours)))}';
+  }
+  return 'Jusqu\'au ${dateCourte(fin)}';
+}
+
+/// Paiement reçu pour une licence : montant, nombre de mois, moyen.
+Future<void> enregistrerPaiement(BuildContext context, LicenceAdmin l, {VoidCallback? apres}) async {
+  final prix = l.mensuel > 0 ? l.mensuel : 22000;
+  final montant = TextEditingController(text: '$prix');
+  final note = TextEditingController();
+  var mois = 1;
+  var moyen = 'mobile_money';
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setD) => AlertDialog(
+        title: Text('Paiement de ${l.compte ?? l.cle}'),
+        content: SizedBox(
+          width: 420,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              DropdownButtonFormField<int>(
+                initialValue: mois,
+                decoration: const InputDecoration(labelText: 'Nombre de mois payés'),
+                items: [
+                  for (final m in const [1, 2, 3, 6, 12]) DropdownMenuItem(value: m, child: Text('$m mois')),
+                ],
+                onChanged: (v) => setD(() {
+                  mois = v ?? 1;
+                  montant.text = '${prix * mois}';
+                }),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: montant,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: const InputDecoration(labelText: 'Montant reçu', suffixText: 'FCFA'),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                initialValue: moyen,
+                decoration: const InputDecoration(labelText: 'Payé par'),
+                items: [
+                  for (final e in libellesMoyen.entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
+                ],
+                onChanged: (v) => setD(() => moyen = v ?? 'mobile_money'),
+              ),
+              const SizedBox(height: 12),
+              TextField(controller: note, decoration: const InputDecoration(labelText: 'Note (facultatif)')),
+              const SizedBox(height: 8),
+              Text(
+                l.illimitee
+                    ? 'Licence illimitée : le paiement est noté, la date ne change pas.'
+                    : 'La licence sera prolongée de $mois mois.',
+                style: TextStyle(color: NacreaColors.gris, fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Enregistrer')),
+        ],
+      ),
+    ),
+  );
+  if (ok != true || !context.mounted) return;
+  final somme = int.tryParse(montant.text) ?? 0;
+  try {
+    final fin = await _repo.enregistrerPaiementLicence(l.id,
+        montant: somme, mois: mois, moyen: moyen, note: note.text.trim().isEmpty ? null : note.text.trim());
+    apres?.call();
+    if (!context.mounted) return;
+    final envoyer = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Paiement enregistré'),
+        content: Text('Licence active${fin == null ? '' : ' jusqu\'au ${dateCourte(fin)}'}.\n'
+            'Envoyer la confirmation à la patronne sur WhatsApp ?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Non')),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Envoyer')),
+        ],
+      ),
+    );
+    if (envoyer == true && context.mounted) {
+      await _envoyerWhatsApp(
+        context,
+        l.telephone,
+        'Bonjour${l.patronne == null ? '' : ' ${l.patronne}'}, nous avons bien reçu votre paiement de '
+        '${fcfa(somme)} ($mois mois). Votre licence YDS Beauty est active'
+        '${fin == null ? '' : ' jusqu\'au ${dateCourte(fin)}'}. Merci pour votre confiance !',
+      );
+    }
+  } catch (e) {
+    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(messageErreur(e))));
   }
 }
 
@@ -204,14 +410,46 @@ class CarteLicenceAdmin extends StatelessWidget {
     switch (choix) {
       case 'montrer':
         await montrerCle(context, l.cle,
-            telephone: telephone, patronne: patronne, pc: l.maxPc, tel: l.maxTelephones, dejaLiee: !l.libre);
+            telephone: telephone ?? l.telephone,
+            patronne: patronne ?? l.patronne,
+            pc: l.maxPc,
+            tel: l.maxTelephones,
+            dejaLiee: !l.libre);
       case 'modifier':
         final r = await _formulaireLicence(context,
             titre: 'Modifier la licence', note: l.note, pc: l.maxPc, tel: l.maxTelephones);
         if (r == null || !context.mounted) return;
-        final (note, pc, tel) = r;
-        await _action(context, () => _repo.modifierLicence(l.id, note: note, maxPc: pc, maxTelephones: tel),
+        await _action(context, () => _repo.modifierLicence(l.id, note: r.note, maxPc: r.pc, maxTelephones: r.tel),
             'Licence modifiée.');
+      case 'payer':
+        await enregistrerPaiement(context, l, apres: quandChange);
+      case 'prolonger':
+        await _prolonger(context);
+      case 'date':
+        final choix = await showDialog<String>(
+          context: context,
+          builder: (ctx) => SimpleDialog(
+            title: const Text('Date de fin de la licence'),
+            children: [
+              SimpleDialogOption(
+                onPressed: () => Navigator.pop(ctx, 'date'),
+                child: const Padding(padding: EdgeInsets.symmetric(vertical: 6), child: Text('Choisir une date')),
+              ),
+              SimpleDialogOption(
+                onPressed: () => Navigator.pop(ctx, 'illimitee'),
+                child: const Padding(padding: EdgeInsets.symmetric(vertical: 6), child: Text('Illimitée (sans date de fin)')),
+              ),
+            ],
+          ),
+        );
+        if (choix == null || !context.mounted) return;
+        if (choix == 'illimitee') {
+          await _action(context, () => _repo.changerExpiration(l.id, null), 'Licence illimitée.');
+        } else {
+          final d = await _choisirDate(context, l.expireLe);
+          if (d == null || !context.mounted) return;
+          await _action(context, () => _repo.changerExpiration(l.id, d), 'Nouvelle date de fin : ${dateCourte(d)}.');
+        }
       case 'activer':
         if (l.active &&
             !await _confirmer(
@@ -241,14 +479,52 @@ class CarteLicenceAdmin extends StatelessWidget {
     }
   }
 
+  Future<void> _prolonger(BuildContext context) async {
+    final l = licence;
+    if (l.illimitee) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Licence illimitée : choisissez d\'abord une date de fin.')));
+      return;
+    }
+    final choix = await showDialog<(int, int)>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: Text('Prolonger ${l.compte ?? l.cle}'),
+        children: [
+          for (final (libelle, mois, jours) in const [
+            ('+ 7 jours (geste commercial)', 0, 7),
+            ('+ 14 jours', 0, 14),
+            ('+ 1 mois', 1, 0),
+            ('+ 3 mois', 3, 0),
+            ('+ 6 mois', 6, 0),
+            ('+ 1 an', 12, 0),
+          ])
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(ctx, (mois, jours)),
+              child: Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Text(libelle)),
+            ),
+        ],
+      ),
+    );
+    if (choix == null || !context.mounted) return;
+    await _action(context, () => _repo.prolongerLicence(l.id, mois: choix.$1, jours: choix.$2), 'Licence prolongée.');
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = licence;
+    final jours = l.joursRestants;
     final (texteStatut, couleur, fond) = !l.active
-        ? ('Désactivée', NacreaColors.erreur, const Color(0xFFFCEBEB))
-        : l.libre
-            ? ('Pas encore utilisée', NacreaColors.orTexte, const Color(0xFFF7EEDB))
-            : ('Active', NacreaColors.succes, const Color(0xFFE5F3EA));
+        ? ('Désactivée', NacreaColors.erreur, NacreaColors.fondErreur)
+        : l.bloquee
+            ? ('Expirée', NacreaColors.erreur, NacreaColors.fondErreur)
+            : l.expiree
+                ? ('En retard', NacreaColors.erreur, NacreaColors.fondErreur)
+                : l.libre
+                    ? ('Pas encore utilisée', NacreaColors.orTexte, NacreaColors.fondOr)
+                    : (jours != null && jours <= 7)
+                        ? ('Expire ${jours <= 0 ? 'aujourd\'hui' : 'dans $jours j'}', NacreaColors.orTexte, NacreaColors.fondOr)
+                        : ('Active', NacreaColors.succes, NacreaColors.fondSucces);
     return Card(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(18, 14, 8, 14),
@@ -272,6 +548,9 @@ class CarteLicenceAdmin extends StatelessWidget {
                   onSelected: (c) => _menu(context, c),
                   itemBuilder: (_) => [
                     const PopupMenuItem(value: 'montrer', child: Text('Copier / envoyer la clé')),
+                    if (!l.libre) const PopupMenuItem(value: 'payer', child: Text('Enregistrer un paiement')),
+                    const PopupMenuItem(value: 'prolonger', child: Text('Prolonger')),
+                    const PopupMenuItem(value: 'date', child: Text('Changer la date de fin')),
                     const PopupMenuItem(value: 'modifier', child: Text('Nombre d\'appareils, note')),
                     PopupMenuItem(value: 'activer', child: Text(l.active ? 'Désactiver' : 'Réactiver')),
                     const PopupMenuItem(
@@ -290,7 +569,39 @@ class CarteLicenceAdmin extends StatelessWidget {
                 'Ordinateurs ${l.nbPc}/${l.maxPc} · Téléphones ${l.nbTelephones}/${l.maxTelephones}',
                 if (l.creeLe != null) 'créée le ${dateCourte(l.creeLe!)}',
               ].join(' · '),
-              style: const TextStyle(color: NacreaColors.gris),
+              style: TextStyle(color: NacreaColors.gris),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Icon(Icons.event_outlined, size: 18, color: l.expiree ? NacreaColors.erreur : NacreaColors.prune),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(texteDuree(l),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, color: l.expiree ? NacreaColors.erreur : null)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                if (!l.libre)
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
+                    onPressed: () => enregistrerPaiement(context, l, apres: quandChange),
+                    icon: const Icon(Icons.payments_outlined, size: 18),
+                    label: const Text('Paiement reçu'),
+                  ),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(minimumSize: const Size(0, 40)),
+                  onPressed: () => _prolonger(context),
+                  icon: const Icon(Icons.more_time, size: 18),
+                  label: const Text('Prolonger'),
+                ),
+              ],
             ),
             for (final a in l.appareils)
               ListTile(
@@ -448,8 +759,10 @@ class _OngletLicencesState extends State<OngletLicences> {
 // =====================================================================
 
 class LicenceDeLaCliente extends StatefulWidget {
-  const LicenceDeLaCliente({super.key, required this.compteId, this.nomCompte, this.telephone, this.patronne});
+  const LicenceDeLaCliente(
+      {super.key, required this.compteId, this.nomCompte, this.telephone, this.patronne, this.quandChange});
   final String compteId;
+  final VoidCallback? quandChange;
   final String? nomCompte, telephone, patronne;
 
   @override
@@ -459,7 +772,10 @@ class LicenceDeLaCliente extends StatefulWidget {
 class _LicenceDeLaClienteState extends State<LicenceDeLaCliente> {
   late Future<List<LicenceAdmin>> _licence = _repo.licences(compteId: widget.compteId);
 
-  void _recharger() => setState(() => _licence = _repo.licences(compteId: widget.compteId));
+  void _recharger() {
+    setState(() => _licence = _repo.licences(compteId: widget.compteId));
+    widget.quandChange?.call();
+  }
 
   @override
   Widget build(BuildContext context) {

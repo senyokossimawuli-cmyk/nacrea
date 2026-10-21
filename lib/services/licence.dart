@@ -44,17 +44,28 @@ class EtatLicence {
         maxTelephones = _entier(j['max_mobile']),
         peutRemplacer = j['peut_remplacer'] == true,
         remplacementLe = _date(j['remplacement_le']),
+        expireLe = _date(j['expire_le']),
+        graceJours = j['grace_jours'] == null ? NacreaConfig.joursDeGrace : _entier(j['grace_jours']),
         appareils = [
           for (final a in (j['appareils'] as List? ?? const [])) AppareilLicence(Map<String, dynamic>.from(a as Map))
         ];
 
-  /// ok, aucune, desactivee, limite, cle_incorrecte, cle_deja_utilisee, sans_entreprise
+  /// ok, aucune, desactivee, expiree, limite, cle_incorrecte, cle_deja_utilisee, sans_entreprise
   final String etat;
   final bool patronne, admin, peutRemplacer, horsLigne;
   final String? cle, type;
   final int maxPc, maxTelephones;
   final DateTime? remplacementLe;
+
+  /// Date de fin de la licence (null : illimitée).
+  final DateTime? expireLe;
+  final int graceJours;
   final List<AppareilLicence> appareils;
+
+  bool get illimitee => expireLe == null || expireLe!.year >= 2900;
+
+  /// Date à partir de laquelle YDS Beauty se bloque (fin + jours de grâce).
+  DateTime? get blocageLe => illimitee ? null : expireLe!.add(Duration(days: graceJours));
 
   /// YDS Beauty peut s'ouvrir. (« sans_entreprise » : l'écran de création de boutique s'en occupe.)
   bool get valide => etat == 'ok' || etat == 'sans_entreprise';
@@ -101,6 +112,8 @@ class Licence {
           'le': DateTime.now().toUtc().toIso8601String(),
           'cle': e.cle,
           'admin': e.admin,
+          'expire_le': e.expireLe?.toUtc().toIso8601String(),
+          'grace_jours': e.graceJours,
         }));
       } else {
         await appareil.effacerDonnee('nacrea-licence.json');
@@ -119,7 +132,19 @@ class Licence {
       if (j['user'] != _serveur.auth.currentUser?.id || le == null) return null;
       final age = DateTime.now().toUtc().difference(le);
       if (age.isNegative || age.inDays >= NacreaConfig.joursLicenceHorsLigne) return null;
-      return EtatLicence({'etat': 'ok', 'cle': j['cle'], 'admin': j['admin']}, horsLigne: true);
+      final e = EtatLicence({
+        'etat': 'ok',
+        'cle': j['cle'],
+        'admin': j['admin'],
+        'expire_le': j['expire_le'],
+        'grace_jours': j['grace_jours'],
+      }, horsLigne: true);
+      // Même sans internet, la licence ne dépasse jamais sa date de fin.
+      final blocage = e.blocageLe;
+      if (blocage != null && DateTime.now().isAfter(blocage)) {
+        return EtatLicence({'etat': 'expiree', 'cle': j['cle'], 'expire_le': j['expire_le']}, horsLigne: true);
+      }
+      return e;
     } catch (_) {
       return null;
     }

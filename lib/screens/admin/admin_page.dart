@@ -439,61 +439,6 @@ class _FicheAdminState extends State<_FicheAdmin> {
     }
   }
 
-  Future<void> _paiement(FicheClienteNacrea f, BoutiqueAdmin b) async {
-    final resultat = await showDialog<(int, int, DateTime?)>(
-      context: context,
-      builder: (_) => _PaiementDialog(boutique: b),
-    );
-    if (resultat == null || !mounted) return;
-    final (montant, mois, fin) = resultat;
-    _recharger();
-    final envoyer = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        title: const Text('Paiement enregistré'),
-        content: Text('« ${b.nom} » est active${fin == null ? '' : ' jusqu\'au ${dateCourte(fin)}'}.\n'
-            'Envoyer la confirmation à la patronne sur WhatsApp ?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Non')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Envoyer')),
-        ],
-      ),
-    );
-    if (envoyer == true && mounted) {
-      await ouvrirWhatsApp(
-        context,
-        f.telephoneContact,
-        'Bonjour${f.patronne == null ? '' : ' ${f.patronne}'}, nous avons bien reçu votre paiement de '
-                '${fcfa(montant)} pour « ${b.nom} » ($mois mois). Votre abonnement YDS Beauty est actif'
-                '${fin == null ? '' : ' jusqu\'au ${dateCourte(fin)}'}. Merci pour votre confiance !'
-            .replaceAll(' ', ' '),
-      );
-    }
-  }
-
-  Future<void> _offrir(BoutiqueAdmin b) async {
-    final jours = await showDialog<int>(
-      context: context,
-      builder: (ctx) => SimpleDialog(
-        backgroundColor: Colors.white,
-        title: Text('Offrir des jours à « ${b.nom} »'),
-        children: [
-          for (final j in const [3, 7, 14, 30])
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(ctx, j),
-              child: Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: Text('$j jours')),
-            ),
-        ],
-      ),
-    );
-    if (jours == null) return;
-    await _action(() async {
-      final fin = await _repo.offrirJours(b.id, jours);
-      return '$jours jours offerts${fin == null ? '' : ' : jusqu\'au ${dateCourte(fin)}'}.';
-    });
-  }
-
   Future<void> _prix(BoutiqueAdmin b) async {
     final champ = TextEditingController(text: '${b.prix}');
     final prix = await showDialog<int>(
@@ -518,30 +463,6 @@ class _FicheAdminState extends State<_FicheAdmin> {
     await _action(() async {
       await _repo.changerPrix(b.id, prix);
       return 'Nouveau prix : ${fcfa(prix)} par mois.';
-    });
-  }
-
-  Future<void> _suspendre(BoutiqueAdmin b) async {
-    final suspendre = b.statut != 'suspended';
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        title: Text(suspendre ? 'Suspendre « ${b.nom} » ?' : 'Réactiver « ${b.nom} » ?'),
-        content: Text(suspendre
-            ? 'Sa caisse se mettra en pause dès la prochaine synchronisation. Ses données restent consultables.'
-            : 'La caisse redevient utilisable si la date d\'abonnement n\'est pas dépassée. '
-                'Sinon, enregistrez un paiement ou offrez des jours.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(suspendre ? 'Suspendre' : 'Réactiver')),
-        ],
-      ),
-    );
-    if (ok != true) return;
-    await _action(() async {
-      final statut = await _repo.suspendre(b.id, suspendre);
-      return 'Statut : ${libellesStatut[statut] ?? statut}.';
     });
   }
 
@@ -632,6 +553,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
               nomCompte: f.nom,
               telephone: f.telephoneContact,
               patronne: f.patronne,
+              quandChange: _recharger,
             ),
             const SizedBox(height: 8),
             for (final b in f.boutiques)
@@ -651,9 +573,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
                           _PastilleStatut(b.statut),
                           PopupMenuButton<String>(
                             onSelected: (choix) => switch (choix) {
-                              'offrir' => _offrir(b),
                               'prix' => _prix(b),
-                              'suspendre' => _suspendre(b),
                               'supprimer' => _supprimer(b),
                               'relancer' => ouvrirWhatsApp(
                                   context,
@@ -665,12 +585,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
                             },
                             itemBuilder: (_) => [
                               const PopupMenuItem(value: 'relancer', child: Text('Relancer par WhatsApp')),
-                              const PopupMenuItem(value: 'offrir', child: Text('Offrir des jours')),
                               const PopupMenuItem(value: 'prix', child: Text('Changer le prix mensuel')),
-                              PopupMenuItem(
-                                value: 'suspendre',
-                                child: Text(b.statut == 'suspended' ? 'Réactiver' : 'Suspendre'),
-                              ),
                               if (f.boutiques.length > 1)
                                 const PopupMenuItem(
                                   value: 'supprimer',
@@ -683,7 +598,9 @@ class _FicheAdminState extends State<_FicheAdmin> {
                       const SizedBox(height: 8),
                       Text(
                         [
-                          if (b.fin != null) '${b.statut == 'trial' ? 'Fin de l\'essai' : 'Payé jusqu\'au'} : ${dateCourte(b.fin!)}',
+                          if (b.fin != null && b.fin!.year >= 2900) 'Licence sans date de fin'
+                          else if (b.fin != null)
+                            '${b.statut == 'trial' ? 'Fin de l\'essai' : 'Payé jusqu\'au'} : ${dateCourte(b.fin!)}',
                           '${fcfa(b.prix)}/mois',
                         ].join(' · '),
                       ),
@@ -693,16 +610,6 @@ class _FicheAdminState extends State<_FicheAdmin> {
                       ),
                       if (b.adresse != null)
                         Text(b.adresse!, style: const TextStyle(color: NacreaColors.gris)),
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: FilledButton.icon(
-                          style: FilledButton.styleFrom(minimumSize: const Size(0, 46)),
-                          onPressed: () => _paiement(f, b),
-                          icon: const Icon(Icons.payments_outlined),
-                          label: const Text('Enregistrer un paiement'),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -763,140 +670,3 @@ class _FicheAdminState extends State<_FicheAdmin> {
   }
 }
 
-class _PaiementDialog extends StatefulWidget {
-  const _PaiementDialog({required this.boutique});
-  final BoutiqueAdmin boutique;
-
-  @override
-  State<_PaiementDialog> createState() => _PaiementDialogState();
-}
-
-class _PaiementDialogState extends State<_PaiementDialog> {
-  int _mois = 1;
-  late final _montant = TextEditingController(text: '${widget.boutique.prix}');
-  final _note = TextEditingController();
-  String _moyen = 'mobile_money';
-  bool _chargement = false;
-  String? _erreur;
-
-  @override
-  void dispose() {
-    _montant.dispose();
-    _note.dispose();
-    super.dispose();
-  }
-
-  void _choisirMois(int m) => setState(() {
-        _mois = m;
-        _montant.text = '${widget.boutique.prix * m}';
-      });
-
-  Future<void> _valider() async {
-    final montant = int.tryParse(_montant.text) ?? 0;
-    if (montant <= 0 || _chargement) {
-      setState(() => _erreur = 'Indiquez le montant reçu');
-      return;
-    }
-    setState(() {
-      _chargement = true;
-      _erreur = null;
-    });
-    try {
-      final fin = await _repo.enregistrerPaiement(
-        boutiqueId: widget.boutique.id,
-        montant: montant,
-        mois: _mois,
-        moyen: _moyen,
-        note: _note.text,
-      );
-      if (mounted) Navigator.pop(context, (montant, _mois, fin));
-    } catch (e) {
-      if (mounted) setState(() => _erreur = messageErreur(e));
-    } finally {
-      if (mounted) setState(() => _chargement = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      title: Text('Paiement · ${widget.boutique.nom}', style: NacreaTheme.titre(size: 24)),
-      content: SizedBox(
-        width: 420,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text('Durée payée', style: TextStyle(color: NacreaColors.gris)),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  for (final m in const [1, 3, 6, 12])
-                    ChoiceChip(
-                      label: Text('$m mois'),
-                      selected: _mois == m,
-                      onSelected: (_) => _choisirMois(m),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _montant,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                decoration: const InputDecoration(
-                  labelText: 'Montant reçu',
-                  suffixText: 'FCFA',
-                  helperText: 'Modifiable en cas de remise (paiement annuel…)',
-                ),
-              ),
-              const SizedBox(height: 14),
-              DropdownButtonFormField<String>(
-                initialValue: _moyen,
-                decoration: const InputDecoration(labelText: 'Reçu par'),
-                items: [
-                  for (final e in libellesMoyen.entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
-                ],
-                onChanged: (v) => setState(() => _moyen = v ?? 'mobile_money'),
-              ),
-              const SizedBox(height: 14),
-              TextField(
-                controller: _note,
-                decoration: const InputDecoration(
-                  labelText: 'Note (facultatif)',
-                  hintText: 'Référence de la transaction Flooz / T-Money…',
-                ),
-              ),
-              if (_erreur != null) ...[
-                const SizedBox(height: 12),
-                MessageErreur(_erreur!),
-              ],
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _chargement ? null : () => Navigator.pop(context),
-                      child: const Text('Annuler'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: _chargement ? null : _valider,
-                      child: const Text('Enregistrer'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

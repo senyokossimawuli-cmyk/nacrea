@@ -221,18 +221,44 @@ class LicenceAdmin {
         activeeLe = _date(j['activee_le']),
         compteId = j['compte_id'] as String?,
         compte = j['compte'] as String?,
+        patronne = j['patronne'] as String?,
+        telephone = j['telephone'] as String?,
+        mensuel = _entier(j['mensuel']),
+        expireLe = _date(j['expire_le']),
+        attenteMois = j['attente_mois'] == null ? null : _entier(j['attente_mois']),
+        attenteJours = j['attente_jours'] == null ? null : _entier(j['attente_jours']),
+        graceJours = j['grace_jours'] == null ? 7 : _entier(j['grace_jours']),
         appareils = [
           for (final a in (j['appareils'] as List? ?? const [])) AppareilAdmin(Map<String, dynamic>.from(a as Map))
         ];
 
   final String id, cle;
-  final String? note, compteId, compte;
+  final String? note, compteId, compte, patronne, telephone;
+  final int mensuel, graceJours;
+  final int? attenteMois, attenteJours;
+
+  /// Date de fin (null : illimitée, ou durée qui démarrera à l'activation).
+  final DateTime? expireLe;
   final bool active;
   final int maxPc, maxTelephones;
   final DateTime? creeLe, activeeLe;
   final List<AppareilAdmin> appareils;
 
   bool get libre => compteId == null;
+
+  /// Durée qui démarrera quand la cliente activera la clé.
+  bool get enAttente => expireLe == null && ((attenteMois ?? 0) > 0 || (attenteJours ?? 0) > 0);
+  bool get illimitee => !enAttente && (expireLe == null || expireLe!.year >= 2900);
+  bool get expiree => !illimitee && expireLe != null && DateTime.now().isAfter(expireLe!);
+  bool get bloquee => expiree && DateTime.now().isAfter(expireLe!.add(Duration(days: graceJours)));
+
+  /// Jours restants avant la fin (négatif si dépassée).
+  int? get joursRestants => illimitee || expireLe == null ? null : expireLe!.difference(DateTime.now()).inHours ~/ 24;
+
+  String get dureeEnAttente => [
+        if ((attenteMois ?? 0) > 0) '$attenteMois mois',
+        if ((attenteJours ?? 0) > 0) '$attenteJours jour${attenteJours! > 1 ? 's' : ''}',
+      ].join(' et ');
   int get nbPc => appareils.where((a) => a.estPc).length;
   int get nbTelephones => appareils.where((a) => !a.estPc).length;
 }
@@ -244,14 +270,46 @@ extension LicencesAdmin on AdminRepo {
   }
 
   /// Renvoie la clé créée.
-  Future<String> creerLicence({String? note, int maxPc = 1, int maxTelephones = 1, String? compteId}) async {
+  Future<String> creerLicence({
+    String? note,
+    int maxPc = 1,
+    int maxTelephones = 1,
+    String? compteId,
+    int? mois,
+    int? jours,
+    DateTime? expireLe,
+  }) async {
     final r = await _serveur.rpc('admin_create_license', params: {
       'p_note': note,
       'p_max_pc': maxPc,
       'p_max_mobile': maxTelephones,
       'p_account_id': compteId,
+      'p_months': mois,
+      'p_days': jours,
+      'p_expires_at': expireLe?.toUtc().toIso8601String(),
     });
     return '${(r as Map)['cle']}';
+  }
+
+  /// Prolonge de N mois / N jours.
+  Future<void> prolongerLicence(String id, {int mois = 0, int jours = 0}) =>
+      _serveur.rpc('admin_extend_license', params: {'p_id': id, 'p_months': mois, 'p_days': jours});
+
+  /// Date de fin précise (null : illimitée).
+  Future<void> changerExpiration(String id, DateTime? fin) =>
+      _serveur.rpc('admin_set_license_expiry', params: {'p_id': id, 'p_expires_at': fin?.toUtc().toIso8601String()});
+
+  /// Paiement reçu : la licence est prolongée. Renvoie la nouvelle date de fin (null : illimitée).
+  Future<DateTime?> enregistrerPaiementLicence(String id,
+      {required int montant, required int mois, required String moyen, String? note}) async {
+    final r = await _serveur.rpc('admin_record_license_payment', params: {
+      'p_id': id,
+      'p_amount': montant,
+      'p_months': mois,
+      'p_method': moyen,
+      'p_note': note,
+    });
+    return _date(r);
   }
 
   Future<void> modifierLicence(String id, {String? note, required int maxPc, required int maxTelephones}) =>
