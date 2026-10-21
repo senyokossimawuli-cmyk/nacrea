@@ -5,6 +5,7 @@ import '../data/admin_repo.dart';
 import '../data/base_locale.dart';
 import '../services/erreurs.dart';
 import '../services/membre.dart';
+import '../theme/mode_affichage.dart';
 import '../theme/nacrea_theme.dart';
 import '../widgets/deconnexion.dart';
 import '../widgets/nacrea_logo.dart';
@@ -64,7 +65,7 @@ class _ChargementMembreState extends State<_ChargementMembre> {
       future: _membre,
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -125,6 +126,7 @@ class _AdminSeul extends StatelessWidget {
         toolbarHeight: 64,
         title: const NacreaLogo(taille: 22, avecSlogan: false),
         actions: [
+          const BoutonModeAffichage(),
           IconButton(
             tooltip: 'Se déconnecter',
             icon: const Icon(Icons.logout),
@@ -132,7 +134,7 @@ class _AdminSeul extends StatelessWidget {
           ),
           const SizedBox(width: 8),
         ],
-        bottom: const PreferredSize(
+        bottom: PreferredSize(
           preferredSize: Size.fromHeight(1),
           child: Divider(height: 1, color: NacreaColors.bordure),
         ),

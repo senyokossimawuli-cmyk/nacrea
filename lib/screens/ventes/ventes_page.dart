@@ -63,7 +63,7 @@ class _VentesPageState extends State<VentesPage> {
     final choix = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         contentPadding: const EdgeInsets.all(24),
         content: SizedBox(
           width: 380,
@@ -77,7 +77,7 @@ class _VentesPageState extends State<VentesPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Text('Retours sur ce reçu : ${fcfa(v.rembourse)} remboursés',
-                        style: const TextStyle(color: NacreaColors.orTexte, fontWeight: FontWeight.w600)),
+                        style: TextStyle(color: NacreaColors.orTexte, fontWeight: FontWeight.w600)),
                   ),
               ],
             ),
@@ -136,7 +136,7 @@ class _VentesPageState extends State<VentesPage> {
     final confirme = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: Text('Annuler le reçu n° ${v.ticket} ?'),
         content: SizedBox(
           width: 380,
@@ -230,7 +230,7 @@ class _VentesPageState extends State<VentesPage> {
               ),
               const SizedBox(height: 16),
               if (snap.hasError)
-                Text(messageErreur(snap.error!), style: const TextStyle(color: NacreaColors.erreur))
+                Text(messageErreur(snap.error!), style: TextStyle(color: NacreaColors.erreur))
               else ...[
                 Wrap(
                   spacing: 12,
@@ -257,12 +257,12 @@ class _VentesPageState extends State<VentesPage> {
                 ),
                 const SizedBox(height: 24),
                 if (chargement)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(32),
                     child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                   )
                 else if (ventes.isEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(32),
                     child: Center(
                       child: Text('Aucune vente ce jour-là.', style: TextStyle(color: NacreaColors.gris)),
@@ -301,7 +301,7 @@ class _Chiffre extends StatelessWidget {
       width: principal ? 260 : 170,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: principal ? NacreaColors.prune : Colors.white,
+        color: principal ? NacreaColors.prune : NacreaColors.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: principal ? NacreaColors.prune : NacreaColors.bordure),
       ),
@@ -355,7 +355,7 @@ class _LigneVente extends StatelessWidget {
                     Text('Reçu n° ${v.ticket} · ${v.nbArticles} article${v.nbArticles > 1 ? 's' : ''}',
                         style: TextStyle(fontWeight: FontWeight.w600, decoration: barre)),
                     Text('${v.cliente != null ? '${v.cliente} · ' : ''}$moyens · ${v.vendeuse}',
-                        style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
+                        style: TextStyle(color: NacreaColors.gris, fontSize: 13)),
                   ],
                 ),
               ),
@@ -364,11 +364,11 @@ class _LigneVente extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 12),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF7EEDB),
+                    color: NacreaColors.fondOr,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text('Retour -${fcfa(v.rembourse)}',
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: NacreaColors.orTexte, fontSize: 12, fontWeight: FontWeight.w600)),
                 ),
               if (v.annulee)
@@ -376,10 +376,10 @@ class _LigneVente extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 12),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFCEBEB),
+                    color: NacreaColors.fondErreur,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Text('Annulée',
+                  child: Text('Annulée',
                       style: TextStyle(
                           color: NacreaColors.erreur, fontSize: 12, fontWeight: FontWeight.w600)),
                 ),
@@ -448,7 +448,7 @@ class _SessionsDuJourState extends State<_SessionsDuJour> {
                                   if (s.compte != null) 'Compté ${fcfa(s.compte!)}',
                                   if (s.fermeePar != null) 'Clôturée par ${s.fermeePar}',
                                 ].join(' · '),
-                                style: const TextStyle(color: NacreaColors.gris, fontSize: 13),
+                                style: TextStyle(color: NacreaColors.gris, fontSize: 13),
                               ),
                               if ((s.note ?? '').isNotEmpty)
                                 Text('« ${s.note} »',

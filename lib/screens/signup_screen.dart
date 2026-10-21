@@ -127,7 +127,7 @@ class _SignupScreenState extends State<SignupScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Déjà un compte ?', style: TextStyle(color: NacreaColors.gris)),
+                Text('Déjà un compte ?', style: TextStyle(color: NacreaColors.gris)),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: const Text('Se connecter'),

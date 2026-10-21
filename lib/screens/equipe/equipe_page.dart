@@ -51,7 +51,7 @@ class _EquipePageState extends State<EquipePage> {
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: Text('Code pour $nom'),
         content: SizedBox(
           width: 400,
@@ -63,7 +63,7 @@ class _EquipePageState extends State<EquipePage> {
                 style: NacreaTheme.titre(size: 56, color: NacreaColors.prune).copyWith(letterSpacing: 8),
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'Sur le PC de la boutique, l\'employée crée son compte, choisit « Je suis employée » '
                 'et tape ce code. Il est valable 7 jours et ne sert qu\'une fois.',
                 textAlign: TextAlign.center,
@@ -91,7 +91,7 @@ class _EquipePageState extends State<EquipePage> {
           final ok = await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: NacreaColors.surface,
               title: Text('Désactiver ${m.nom} ?'),
               content: const Text(
                 'Elle ne pourra plus se connecter à YDS Beauty. Ses ventes passées restent dans l\'historique. '
@@ -117,7 +117,7 @@ class _EquipePageState extends State<EquipePage> {
           final id = await showDialog<String>(
             context: context,
             builder: (ctx) => SimpleDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: NacreaColors.surface,
               title: Text('Boutique de ${m.nom}'),
               children: [
                 for (final b in widget.boutiques)
@@ -158,7 +158,7 @@ class _EquipePageState extends State<EquipePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Équipe', style: NacreaTheme.titre(size: 36)),
-                const Text('Vos employées et la boutique de chacune.',
+                Text('Vos employées et la boutique de chacune.',
                     style: TextStyle(color: NacreaColors.gris)),
               ],
             ),
@@ -201,7 +201,7 @@ class _EquipePageState extends State<EquipePage> {
           future: _invitations,
           builder: (context, snap) {
             if (snap.connectionState != ConnectionState.done) {
-              return const Padding(
+              return Padding(
                 padding: EdgeInsets.all(16),
                 child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
               );
@@ -209,7 +209,7 @@ class _EquipePageState extends State<EquipePage> {
             if (snap.hasError) {
               return Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text('Connexion internet nécessaire pour voir les invitations.',
                         style: TextStyle(color: NacreaColors.gris)),
                   ),
@@ -219,7 +219,7 @@ class _EquipePageState extends State<EquipePage> {
             }
             final invitations = snap.data!;
             if (invitations.isEmpty) {
-              return const Text('Aucune invitation en attente.', style: TextStyle(color: NacreaColors.gris));
+              return Text('Aucune invitation en attente.', style: TextStyle(color: NacreaColors.gris));
             }
             return Column(
               children: [
@@ -232,7 +232,7 @@ class _EquipePageState extends State<EquipePage> {
                         child: Row(
                           children: [
                             Text(i.code,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 3,
@@ -244,14 +244,14 @@ class _EquipePageState extends State<EquipePage> {
                                 children: [
                                   Text(i.nom, style: const TextStyle(fontWeight: FontWeight.w600)),
                                   Text('${i.boutiqueNom} · valable jusqu\'au ${dateCourte(i.expireLe)}',
-                                      style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
+                                      style: TextStyle(color: NacreaColors.gris, fontSize: 13)),
                                 ],
                               ),
                             ),
                             IconButton(
                               tooltip: 'Envoyer par WhatsApp',
                               onPressed: () => _partager(i.nom, i.code),
-                              icon: const Icon(Icons.chat_outlined, color: NacreaColors.prune),
+                              icon: Icon(Icons.chat_outlined, color: NacreaColors.prune),
                             ),
                             IconButton(
                               tooltip: 'Supprimer l\'invitation',
@@ -263,7 +263,7 @@ class _EquipePageState extends State<EquipePage> {
                                   if (mounted) _message(messageErreur(e));
                                 }
                               },
-                              icon: const Icon(Icons.delete_outline, color: NacreaColors.gris),
+                              icon: Icon(Icons.delete_outline, color: NacreaColors.gris),
                             ),
                           ],
                         ),
@@ -318,7 +318,7 @@ class _CarteMembre extends StatelessWidget {
                         if (!m.estPatronne && m.peutVoirCouts) 'voit les prix d\'achat',
                         if (!m.actif) 'désactivée',
                       ].join(' · '),
-                      style: const TextStyle(color: NacreaColors.gris, fontSize: 13),
+                      style: TextStyle(color: NacreaColors.gris, fontSize: 13),
                     ),
                   ],
                 ),
@@ -394,7 +394,7 @@ class _InvitationDialogState extends State<_InvitationDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: const Text('Inviter une employée'),
       content: SizedBox(
         width: 420,
@@ -426,7 +426,7 @@ class _InvitationDialogState extends State<_InvitationDialog> {
               title: const Text('Peut voir les prix d\'achat et les marges'),
             ),
             if (_erreur != null)
-              Text(_erreur!, style: const TextStyle(color: NacreaColors.erreur)),
+              Text(_erreur!, style: TextStyle(color: NacreaColors.erreur)),
           ],
         ),
       ),

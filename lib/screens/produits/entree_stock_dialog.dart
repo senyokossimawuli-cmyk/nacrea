@@ -111,7 +111,7 @@ class _EntreeStockDialogState extends State<_EntreeStockDialog> {
     final nom = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: const Text('Nouveau fournisseur'),
         content: TextField(
           controller: champ,
@@ -176,7 +176,7 @@ class _EntreeStockDialogState extends State<_EntreeStockDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text('Ajouter du stock', style: NacreaTheme.titre(size: 28)),
       content: SizedBox(
         width: 420,
@@ -189,7 +189,7 @@ class _EntreeStockDialogState extends State<_EntreeStockDialog> {
               children: [
                 Text(
                   '${widget.produit.nomComplet} · ${widget.boutique.nom}',
-                  style: const TextStyle(color: NacreaColors.gris),
+                  style: TextStyle(color: NacreaColors.gris),
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
@@ -240,7 +240,7 @@ class _EntreeStockDialogState extends State<_EntreeStockDialog> {
                     IconButton(
                       tooltip: 'Nouveau fournisseur',
                       onPressed: _nouveauFournisseur,
-                      icon: const Icon(Icons.add_circle_outline, color: NacreaColors.prune),
+                      icon: Icon(Icons.add_circle_outline, color: NacreaColors.prune),
                     ),
                   ],
                 ),

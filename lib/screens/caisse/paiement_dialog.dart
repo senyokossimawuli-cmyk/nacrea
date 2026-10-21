@@ -159,17 +159,17 @@ class _PaiementDialogState extends State<_PaiementDialog> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFFCEBEB),
+              color: NacreaColors.fondErreur,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
                 Expanded(
                   child: Text('Reste à payer par ${widget.cliente}',
-                      style: const TextStyle(fontSize: 15, color: NacreaColors.erreur)),
+                      style: TextStyle(fontSize: 15, color: NacreaColors.erreur)),
                 ),
                 Text(fcfa(reste),
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 22, fontWeight: FontWeight.w700, color: NacreaColors.erreur)),
               ],
             ),
@@ -185,7 +185,7 @@ class _PaiementDialogState extends State<_PaiementDialog> {
     final monnaie = _recuValeur - widget.total;
 
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       contentPadding: const EdgeInsets.all(24),
       content: SizedBox(
         width: 460,
@@ -194,7 +194,7 @@ class _PaiementDialogState extends State<_PaiementDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('Total à payer', style: TextStyle(color: NacreaColors.gris)),
+              Text('Total à payer', style: TextStyle(color: NacreaColors.gris)),
               Text(fcfa(widget.total),
                   style: NacreaTheme.titre(size: 44, color: NacreaColors.prune)),
               if (widget.cliente != null)
@@ -238,16 +238,16 @@ class _PaiementDialogState extends State<_PaiementDialog> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE5F3EA),
+                        color: NacreaColors.fondSucces,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
-                          const Text('Monnaie à rendre',
+                          Text('Monnaie à rendre',
                               style: TextStyle(fontSize: 16, color: NacreaColors.succes)),
                           const Spacer(),
                           Text(fcfa(monnaie),
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
                                   color: NacreaColors.succes)),
@@ -275,7 +275,7 @@ class _PaiementDialogState extends State<_PaiementDialog> {
               if (probleme != null) ...[
                 const SizedBox(height: 8),
                 Text(probleme,
-                    style: const TextStyle(color: NacreaColors.erreur, fontWeight: FontWeight.w600)),
+                    style: TextStyle(color: NacreaColors.erreur, fontWeight: FontWeight.w600)),
               ],
               const SizedBox(height: 16),
               Row(
@@ -319,7 +319,7 @@ class _BoutonMoyen extends StatelessWidget {
       MoyenPaiement.credit => Icons.event_note_outlined,
     };
     return Material(
-      color: actif ? NacreaColors.prune : Colors.white,
+      color: actif ? NacreaColors.prune : NacreaColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: actif ? NacreaColors.prune : NacreaColors.bordure),

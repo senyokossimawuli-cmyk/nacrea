@@ -26,7 +26,7 @@ class CarteChiffre extends StatelessWidget {
       constraints: BoxConstraints(minWidth: largeurMin),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: fond ?? Colors.white,
+        color: fond ?? NacreaColors.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: NacreaColors.bordure),
       ),
@@ -34,13 +34,13 @@ class CarteChiffre extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(titre, style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
+          Text(titre, style: TextStyle(color: NacreaColors.gris, fontSize: 13)),
           const SizedBox(height: 4),
           Text(valeur,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: couleur ?? NacreaColors.chocolat)),
           if (sousTitre != null) ...[
             const SizedBox(height: 2),
-            Text(sousTitre!, style: const TextStyle(color: NacreaColors.gris, fontSize: 12)),
+            Text(sousTitre!, style: TextStyle(color: NacreaColors.gris, fontSize: 12)),
           ],
         ],
       ),

@@ -5,10 +5,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'config.dart';
 import 'data/base_locale.dart';
 import 'screens/auth_gate.dart';
+import 'theme/mode_affichage.dart';
 import 'theme/nacrea_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Affichage.charger();
+  NacreaColors.sombre = Affichage.estSombre();
   await Supabase.initialize(
     url: NacreaConfig.supabaseUrl,
     publishableKey: NacreaConfig.supabasePublishableKey,
@@ -17,15 +20,55 @@ Future<void> main() async {
   runApp(const NacreaApp());
 }
 
-class NacreaApp extends StatelessWidget {
+class NacreaApp extends StatefulWidget {
   const NacreaApp({super.key});
+
+  @override
+  State<NacreaApp> createState() => _NacreaAppState();
+}
+
+class _NacreaAppState extends State<NacreaApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    Affichage.mode.addListener(_appliquer);
+  }
+
+  @override
+  void dispose() {
+    Affichage.mode.removeListener(_appliquer);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Le téléphone ou le PC passe en mode sombre (mode « Automatique »).
+  @override
+  void didChangePlatformBrightness() => _appliquer();
+
+  void _appliquer() {
+    final sombre = Affichage.estSombre();
+    if (sombre == NacreaColors.sombre) return;
+    NacreaColors.sombre = sombre;
+    setState(() {});
+    // Les couleurs sont lues partout dans l'appli : on redessine tous les écrans ouverts.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      void redessiner(Element e) {
+        e.markNeedsBuild();
+        e.visitChildren(redessiner);
+      }
+
+      (context as Element).visitChildren(redessiner);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'YDS Beauty',
       debugShowCheckedModeBanner: false,
-      theme: NacreaTheme.light(),
+      theme: NacreaTheme.actuel(),
       locale: const Locale('fr', 'FR'),
       supportedLocales: const [Locale('fr', 'FR')],
       localizationsDelegates: const [

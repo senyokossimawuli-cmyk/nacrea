@@ -79,7 +79,7 @@ class CaisseBloquee extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.lock_outline, size: 56, color: NacreaColors.prune),
+              Icon(Icons.lock_outline, size: 56, color: NacreaColors.prune),
               const SizedBox(height: 16),
               Text('Caisse en pause', style: NacreaTheme.titre(size: 32), textAlign: TextAlign.center),
               const SizedBox(height: 12),
@@ -143,7 +143,7 @@ class BandeauAbonnement extends StatelessWidget {
           : 'Votre abonnement se termine $quand.';
     }
     return Material(
-      color: etat.enRetard ? const Color(0xFFFCEBEB) : const Color(0xFFF7EEDB),
+      color: etat.enRetard ? NacreaColors.fondErreur : NacreaColors.fondOr,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(

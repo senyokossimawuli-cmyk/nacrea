@@ -119,7 +119,7 @@ class _ClientesPageState extends State<ClientesPage> {
                     ),
                     const SizedBox(height: 12),
                     if (!snap.hasData)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.all(32),
                         child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                       )
@@ -132,7 +132,7 @@ class _ClientesPageState extends State<ClientesPage> {
                                 ? 'Aucune cliente pour l\'instant.\nAjoutez-en une ici ou depuis la caisse.'
                                 : 'Aucune cliente trouvée.',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: NacreaColors.gris, height: 1.5),
+                            style: TextStyle(color: NacreaColors.gris, height: 1.5),
                           ),
                         ),
                       )
@@ -165,15 +165,15 @@ class _Chiffre extends StatelessWidget {
       constraints: const BoxConstraints(minWidth: 150),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: alerte ? const Color(0xFFFCEBEB) : Colors.white,
+        color: alerte ? NacreaColors.fondErreur : NacreaColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: alerte ? const Color(0xFFF2C9C9) : NacreaColors.bordure),
+        border: Border.all(color: alerte ? NacreaColors.bordureErreur : NacreaColors.bordure),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(titre, style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
+          Text(titre, style: TextStyle(color: NacreaColors.gris, fontSize: 13)),
           const SizedBox(height: 4),
           Text(valeur,
               style: TextStyle(
@@ -221,7 +221,7 @@ class _CarteCliente extends StatelessWidget {
                         if (c.telephone != null) c.telephone!,
                         if (c.derniereVisite != null) 'Dernier achat ${dateCourte(c.derniereVisite!)}',
                       ].join(' · '),
-                      style: const TextStyle(color: NacreaColors.gris, fontSize: 13),
+                      style: TextStyle(color: NacreaColors.gris, fontSize: 13),
                     ),
                   ],
                 ),
@@ -230,14 +230,14 @@ class _CarteCliente extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFCEBEB),
+                    color: NacreaColors.fondErreur,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text('Doit ${fcfa(c.dette)}',
-                      style: const TextStyle(color: NacreaColors.erreur, fontWeight: FontWeight.w700)),
+                      style: TextStyle(color: NacreaColors.erreur, fontWeight: FontWeight.w700)),
                 )
               else
-                const Icon(Icons.chevron_right, color: NacreaColors.gris),
+                Icon(Icons.chevron_right, color: NacreaColors.gris),
             ],
           ),
         ),
@@ -277,7 +277,7 @@ class _FicheClienteState extends State<FicheCliente> {
         builder: (context, snap) {
           final c = snap.data;
           if (c == null) {
-            return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
+            return Center(child: CircularProgressIndicator(color: NacreaColors.prune));
           }
           return ListView(
             padding: const EdgeInsets.all(20),
@@ -304,7 +304,7 @@ class _FicheClienteState extends State<FicheCliente> {
                               children: [
                                 Text(c.nom, style: NacreaTheme.titre(size: 30)),
                                 if (c.telephone != null)
-                                  Text(c.telephone!, style: const TextStyle(color: NacreaColors.gris)),
+                                  Text(c.telephone!, style: TextStyle(color: NacreaColors.gris)),
                               ],
                             ),
                           ),
@@ -323,7 +323,7 @@ class _FicheClienteState extends State<FicheCliente> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: c.doit ? const Color(0xFFFCEBEB) : const Color(0xFFE5F3EA),
+                          color: c.doit ? NacreaColors.fondErreur : NacreaColors.fondSucces,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -381,13 +381,13 @@ class _FicheClienteState extends State<FicheCliente> {
                         builder: (context, h) {
                           final liste = h.data;
                           if (liste == null) {
-                            return const Padding(
+                            return Padding(
                               padding: EdgeInsets.all(24),
                               child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                             );
                           }
                           if (liste.isEmpty) {
-                            return const Padding(
+                            return Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
                               child: Text('Aucun achat pour l\'instant.', style: TextStyle(color: NacreaColors.gris)),
                             );
@@ -434,7 +434,7 @@ class _LigneHistorique extends StatelessWidget {
     }
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: NacreaColors.bordure))),
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: NacreaColors.bordure))),
       child: Row(
         children: [
           Icon(m.achat ? Icons.shopping_bag_outlined : Icons.check_circle_outline, color: couleur),
@@ -444,7 +444,7 @@ class _LigneHistorique extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(titre, style: TextStyle(fontWeight: FontWeight.w600, decoration: barre)),
-                Text(detail, style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
+                Text(detail, style: TextStyle(color: NacreaColors.gris, fontSize: 13)),
               ],
             ),
           ),

@@ -100,7 +100,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 const SizedBox(height: 6),
                 Text(
                   '${m.nomCompte} · ${m.estPatronne ? 'Patronne' : 'Employée'}',
-                  style: const TextStyle(fontSize: 15, color: NacreaColors.gris),
+                  style: TextStyle(fontSize: 15, color: NacreaColors.gris),
                 ),
                 const SizedBox(height: 28),
                 StreamBuilder<List<_BoutiqueAbo>>(
@@ -108,10 +108,10 @@ class _DashboardPageState extends State<DashboardPage> {
                   builder: (context, snap) {
                     if (snap.hasError) {
                       return Text(messageErreur(snap.error!),
-                          style: const TextStyle(color: NacreaColors.erreur));
+                          style: TextStyle(color: NacreaColors.erreur));
                     }
                     if (!snap.hasData) {
-                      return const Padding(
+                      return Padding(
                         padding: EdgeInsets.all(32),
                         child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                       );
@@ -160,7 +160,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           Text(
                             'Abonnement : ${liste.length} boutique${liste.length > 1 ? 's' : ''} · '
                             '${fcfa(total)} par mois',
-                            style: const TextStyle(color: NacreaColors.gris, fontWeight: FontWeight.w600),
+                            style: TextStyle(color: NacreaColors.gris, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ],
@@ -171,13 +171,13 @@ class _DashboardPageState extends State<DashboardPage> {
                   const SizedBox(height: 32),
                   Text('En un coup d\'œil', style: NacreaTheme.titre(size: 26)),
                   const SizedBox(height: 4),
-                  const Text('Toutes vos boutiques', style: TextStyle(color: NacreaColors.gris)),
+                  Text('Toutes vos boutiques', style: TextStyle(color: NacreaColors.gris)),
                   const SizedBox(height: 16),
                   FutureBuilder<(Rapport, Rapport)>(
                     future: _chiffres,
                     builder: (context, snap) {
                       if (!snap.hasData) {
-                        return const SizedBox(
+                        return SizedBox(
                           height: 80,
                           child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                         );
@@ -251,21 +251,21 @@ class _CarteBoutique extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.storefront_outlined, color: NacreaColors.prune, size: 28),
+                    Icon(Icons.storefront_outlined, color: NacreaColors.prune, size: 28),
                     const Spacer(),
                     if (quandTouche != null)
-                      const Icon(Icons.edit_outlined, color: NacreaColors.gris, size: 20),
+                      Icon(Icons.edit_outlined, color: NacreaColors.gris, size: 20),
                   ],
                 ),
                 const SizedBox(height: 14),
                 Text(boutique.nom, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                 if (boutique.adresse?.isNotEmpty ?? false) ...[
                   const SizedBox(height: 4),
-                  Text(boutique.adresse!, style: const TextStyle(color: NacreaColors.gris)),
+                  Text(boutique.adresse!, style: TextStyle(color: NacreaColors.gris)),
                 ],
                 if (boutique.telephone?.isNotEmpty ?? false) ...[
                   const SizedBox(height: 2),
-                  Text(boutique.telephone!, style: const TextStyle(color: NacreaColors.gris)),
+                  Text(boutique.telephone!, style: TextStyle(color: NacreaColors.gris)),
                 ],
                 if (avecAbonnement) ...[
                   const SizedBox(height: 14),
@@ -288,13 +288,13 @@ class _CarteBoutique extends StatelessWidget {
     final date = fin == null ? '' : ' jusqu\'au ${dateCourte(fin)}';
     switch (statut) {
       case 'trial':
-        return ('Essai gratuit$date', NacreaColors.orTexte, const Color(0xFFF7EEDB));
+        return ('Essai gratuit$date', NacreaColors.orTexte, NacreaColors.fondOr);
       case 'active':
-        return ('Abonnement actif$date', NacreaColors.succes, const Color(0xFFE5F3EA));
+        return ('Abonnement actif$date', NacreaColors.succes, NacreaColors.fondSucces);
       case 'late':
-        return ('Paiement en retard', NacreaColors.erreur, const Color(0xFFFCEBEB));
+        return ('Paiement en retard', NacreaColors.erreur, NacreaColors.fondErreur);
       case 'suspended':
-        return ('Suspendu (lecture seule)', NacreaColors.erreur, const Color(0xFFFCEBEB));
+        return ('Suspendu (lecture seule)', NacreaColors.erreur, NacreaColors.fondErreur);
       default:
         return ('Abonnement en préparation…', NacreaColors.gris, NacreaColors.nude);
     }
@@ -378,13 +378,13 @@ class _BoutiqueDialogState extends State<_BoutiqueDialog> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF7EEDB),
+                      color: NacreaColors.fondOr,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       'Chaque point de vente a son propre stock, sa caisse et ses ventes.\n'
                       'Abonnement : ${fcfa(22000)} par mois, après 14 jours d\'essai gratuit.',
-                      style: const TextStyle(color: NacreaColors.chocolat),
+                      style: TextStyle(color: NacreaColors.chocolat),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -422,13 +422,13 @@ class _BoutiqueDialogState extends State<_BoutiqueDialog> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'L\'adresse et le téléphone sont imprimés sur les reçus.',
                   style: TextStyle(color: NacreaColors.gris, fontSize: 13),
                 ),
                 if (_erreur != null) ...[
                   const SizedBox(height: 12),
-                  Text(_erreur!, style: const TextStyle(color: NacreaColors.erreur)),
+                  Text(_erreur!, style: TextStyle(color: NacreaColors.erreur)),
                 ],
                 const SizedBox(height: 20),
                 Row(

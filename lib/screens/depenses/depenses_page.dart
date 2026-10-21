@@ -29,8 +29,8 @@ class DepensesPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            color: Colors.white,
-            child: const TabBar(
+            color: NacreaColors.surface,
+            child: TabBar(
               labelColor: NacreaColors.prune,
               indicatorColor: NacreaColors.prune,
               unselectedLabelColor: NacreaColors.gris,
@@ -99,14 +99,14 @@ class _OngletDepensesState extends State<_OngletDepenses> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: const Text('Supprimer cette dépense ?'),
         content: Text('${d.titre} · ${fcfa(d.montant)} · ${dateCourte(d.date)}'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Garder')),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Supprimer', style: TextStyle(color: NacreaColors.erreur)),
+            child: Text('Supprimer', style: TextStyle(color: NacreaColors.erreur)),
           ),
         ],
       ),
@@ -189,12 +189,12 @@ class _OngletDepensesState extends State<_OngletDepenses> {
                     ),
                     const SizedBox(height: 16),
                     if (!snap.hasData)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.all(32),
                         child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                       )
                     else if (liste.isEmpty)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.all(32),
                         child: Text(
                           'Aucune dépense sur cette période.\n'
@@ -208,7 +208,7 @@ class _OngletDepensesState extends State<_OngletDepenses> {
                         child: Column(
                           children: [
                             for (final (i, d) in liste.indexed) ...[
-                              if (i > 0) const Divider(height: 1, color: NacreaColors.bordure),
+                              if (i > 0) Divider(height: 1, color: NacreaColors.bordure),
                               ListTile(
                                 leading: CircleAvatar(
                                   backgroundColor: NacreaColors.nude,
@@ -229,7 +229,7 @@ class _OngletDepensesState extends State<_OngletDepenses> {
                                     if (m.estPatronne)
                                       IconButton(
                                         tooltip: 'Supprimer',
-                                        icon: const Icon(Icons.delete_outline, color: NacreaColors.gris),
+                                        icon: Icon(Icons.delete_outline, color: NacreaColors.gris),
                                         onPressed: () => _supprimer(d),
                                       ),
                                   ],
@@ -329,7 +329,7 @@ class _DepenseDialogState extends State<_DepenseDialog> {
   Widget build(BuildContext context) {
     final patronne = widget.membre.estPatronne;
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text('Nouvelle dépense', style: NacreaTheme.titre(size: 28)),
       content: SizedBox(
         width: 440,
@@ -340,7 +340,7 @@ class _DepenseDialogState extends State<_DepenseDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(widget.boutique.nom, style: const TextStyle(color: NacreaColors.gris)),
+                Text(widget.boutique.nom, style: TextStyle(color: NacreaColors.gris)),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   initialValue: _categorie,
@@ -383,7 +383,7 @@ class _DepenseDialogState extends State<_DepenseDialog> {
                   onChanged: (v) => setState(() => _payeAvec = v ?? PayeAvec.caisse),
                 ),
                 if (_payeAvec == PayeAvec.caisse)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(top: 6, left: 4),
                     child: Text(
                       'Elle sera déduite de l\'argent attendu à la clôture de la caisse.',
@@ -503,7 +503,7 @@ class _OngletFournisseursState extends State<_OngletFournisseurs> {
             Text('Livraisons de ${f.nom}', style: NacreaTheme.titre(size: 24)),
             const SizedBox(height: 12),
             if (lignes.isEmpty)
-              const Text(
+              Text(
                 'Aucune livraison enregistrée. Choisissez ce fournisseur dans « Ajouter du stock ».',
                 style: TextStyle(color: NacreaColors.gris),
               ),
@@ -564,12 +564,12 @@ class _OngletFournisseursState extends State<_OngletFournisseurs> {
                     ),
                     const SizedBox(height: 16),
                     if (!snap.hasData)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.all(32),
                         child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                       )
                     else if (liste.isEmpty)
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.all(32),
                         child: Text(
                           'Aucun fournisseur pour l\'instant.\n'
@@ -588,7 +588,7 @@ class _OngletFournisseursState extends State<_OngletFournisseurs> {
                               padding: const EdgeInsets.fromLTRB(18, 14, 8, 14),
                               child: Row(
                                 children: [
-                                  const CircleAvatar(
+                                  CircleAvatar(
                                     backgroundColor: NacreaColors.nude,
                                     child: Icon(Icons.local_shipping_outlined, color: NacreaColors.prune),
                                   ),
@@ -604,7 +604,7 @@ class _OngletFournisseursState extends State<_OngletFournisseurs> {
                                             if (couts && f.achats > 0) 'Achats : ${fcfa(f.achats)}',
                                             if (f.dernierAchat != null) 'Dernière livraison : ${dateCourte(f.dernierAchat!)}',
                                           ].join(' · '),
-                                          style: const TextStyle(color: NacreaColors.gris),
+                                          style: TextStyle(color: NacreaColors.gris),
                                         ),
                                       ],
                                     ),
@@ -612,13 +612,13 @@ class _OngletFournisseursState extends State<_OngletFournisseurs> {
                                   if (f.telephone != null) ...[
                                     IconButton(
                                       tooltip: 'Commander par WhatsApp',
-                                      icon: const Icon(Icons.chat_outlined, color: NacreaColors.prune),
+                                      icon: Icon(Icons.chat_outlined, color: NacreaColors.prune),
                                       onPressed: () => ouvrirWhatsApp(context, f.telephone, 'Bonjour ${f.nom}, '),
                                     ),
                                     if (etroit)
                                       IconButton(
                                         tooltip: 'Appeler',
-                                        icon: const Icon(Icons.call_outlined, color: NacreaColors.prune),
+                                        icon: Icon(Icons.call_outlined, color: NacreaColors.prune),
                                         onPressed: () => _appeler(f.telephone!),
                                       ),
                                   ],
@@ -691,7 +691,7 @@ class _FournisseurDialogState extends State<_FournisseurDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text(widget.fournisseur == null ? 'Nouveau fournisseur' : 'Modifier le fournisseur',
           style: NacreaTheme.titre(size: 26)),
       content: SizedBox(

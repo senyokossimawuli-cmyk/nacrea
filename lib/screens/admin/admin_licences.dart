@@ -38,7 +38,7 @@ Future<void> montrerCle(BuildContext context, String cle,
   return showDialog<void>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text(titre),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -56,7 +56,7 @@ Future<void> montrerCle(BuildContext context, String cle,
             dejaLiee
                 ? 'Déjà liée à cette cliente : elle n\'a rien à taper. Valable sur ${_appareils(pc, tel)}.'
                 : 'À envoyer à la cliente. Elle la tapera une seule fois. Valable sur ${_appareils(pc, tel)}.',
-            style: const TextStyle(color: NacreaColors.gris),
+            style: TextStyle(color: NacreaColors.gris),
           ),
         ],
       ),
@@ -394,7 +394,7 @@ class CarteLicenceAdmin extends StatelessWidget {
       await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: NacreaColors.surface,
           title: Text(titre),
           content: Text(texte),
           actions: [
@@ -533,7 +533,7 @@ class CarteLicenceAdmin extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.key_outlined, color: NacreaColors.prune),
+                Icon(Icons.key_outlined, color: NacreaColors.prune),
                 const SizedBox(width: 10),
                 Expanded(
                   child: SelectableText(l.cle,
@@ -553,7 +553,7 @@ class CarteLicenceAdmin extends StatelessWidget {
                     const PopupMenuItem(value: 'date', child: Text('Changer la date de fin')),
                     const PopupMenuItem(value: 'modifier', child: Text('Nombre d\'appareils, note')),
                     PopupMenuItem(value: 'activer', child: Text(l.active ? 'Désactiver' : 'Réactiver')),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'supprimer',
                       child: Text('Supprimer', style: TextStyle(color: NacreaColors.erreur)),
                     ),
@@ -708,7 +708,7 @@ class _OngletLicencesState extends State<OngletLicences> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'Astuce : pour une cliente déjà inscrite, ouvrez sa fiche (onglet Clientes) '
                         'et créez sa licence là : elle sera activée directement, sans clé à taper.',
                         style: TextStyle(color: NacreaColors.gris, fontSize: 13),
@@ -722,7 +722,7 @@ class _OngletLicencesState extends State<OngletLicences> {
                       ),
                       const SizedBox(height: 12),
                       if (snap.connectionState != ConnectionState.done)
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.all(32),
                           child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                         )
@@ -784,7 +784,7 @@ class _LicenceDeLaClienteState extends State<LicenceDeLaCliente> {
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) return const SizedBox.shrink();
         if (snap.hasError) {
-          return Text(messageErreur(snap.error!), style: const TextStyle(color: NacreaColors.erreur));
+          return Text(messageErreur(snap.error!), style: TextStyle(color: NacreaColors.erreur));
         }
         final liste = snap.data!;
         if (liste.isNotEmpty) {
@@ -804,7 +804,7 @@ class _LicenceDeLaClienteState extends State<LicenceDeLaCliente> {
               crossAxisAlignment: WrapCrossAlignment.center,
               alignment: WrapAlignment.spaceBetween,
               children: [
-                const Row(
+                Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.key_off_outlined, color: NacreaColors.orTexte),

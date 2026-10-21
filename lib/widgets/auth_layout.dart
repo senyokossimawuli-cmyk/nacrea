@@ -23,7 +23,7 @@ class AuthLayout extends StatelessWidget {
         children: [
           Text(titre, style: NacreaTheme.titre(size: 36)),
           const SizedBox(height: 8),
-          Text(sousTitre, style: const TextStyle(fontSize: 15, color: NacreaColors.gris)),
+          Text(sousTitre, style: TextStyle(fontSize: 15, color: NacreaColors.gris)),
           const SizedBox(height: 32),
           child,
         ],
@@ -40,7 +40,7 @@ class AuthLayout extends StatelessWidget {
                   child: Container(
                     color: NacreaColors.prune,
                     padding: const EdgeInsets.all(48),
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         NacreaLogo(taille: 64, surFondFonce: true),
@@ -94,14 +94,14 @@ class MessageErreur extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFCEBEB),
+        color: NacreaColors.fondErreur,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: NacreaColors.erreur),
+          Icon(Icons.error_outline, color: NacreaColors.erreur),
           const SizedBox(width: 12),
-          Expanded(child: Text(message, style: const TextStyle(color: NacreaColors.erreur))),
+          Expanded(child: Text(message, style: TextStyle(color: NacreaColors.erreur))),
         ],
       ),
     );

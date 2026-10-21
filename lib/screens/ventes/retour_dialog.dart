@@ -74,7 +74,7 @@ class _RetourDialogState extends State<_RetourDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text('Retour · reçu n° ${widget.vente.ticket}', style: NacreaTheme.titre(size: 24)),
       content: SizedBox(
         width: 480,
@@ -82,7 +82,7 @@ class _RetourDialogState extends State<_RetourDialog> {
           future: _articles,
           builder: (context, snap) {
             if (!snap.hasData) {
-              return const SizedBox(
+              return SizedBox(
                 height: 120,
                 child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
               );
@@ -98,7 +98,7 @@ class _RetourDialogState extends State<_RetourDialog> {
                   if (rien)
                     const Text('Tous les articles de ce reçu ont déjà été retournés.')
                   else
-                    const Text('Choisissez les articles rapportés par la cliente :',
+                    Text('Choisissez les articles rapportés par la cliente :',
                         style: TextStyle(color: NacreaColors.gris)),
                   const SizedBox(height: 8),
                   for (final a in articles)
@@ -117,7 +117,7 @@ class _RetourDialogState extends State<_RetourDialog> {
                                     Text(
                                       '${fcfa(a.remboursementUnitaire)} l\'unité · acheté ${a.vendu}'
                                       '${a.dejaRetourne > 0 ? ' · déjà rendu ${a.dejaRetourne}' : ''}',
-                                      style: const TextStyle(color: NacreaColors.gris, fontSize: 13),
+                                      style: TextStyle(color: NacreaColors.gris, fontSize: 13),
                                     ),
                                   ],
                                 ),
@@ -134,7 +134,7 @@ class _RetourDialogState extends State<_RetourDialog> {
                                 onPressed: (_quantites[a.produitId] ?? 0) < a.retournable
                                     ? () => setState(() => _quantites[a.produitId] = (_quantites[a.produitId] ?? 0) + 1)
                                     : null,
-                                icon: const Icon(Icons.add_circle_outline, color: NacreaColors.prune),
+                                icon: Icon(Icons.add_circle_outline, color: NacreaColors.prune),
                               ),
                             ],
                           ),
@@ -152,7 +152,7 @@ class _RetourDialogState extends State<_RetourDialog> {
                         ],
                       ),
                     ),
-                  const Divider(color: NacreaColors.bordure),
+                  Divider(color: NacreaColors.bordure),
                   DropdownButtonFormField<Remboursement>(
                     initialValue: _remboursement,
                     isExpanded: true,

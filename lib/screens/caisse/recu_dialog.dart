@@ -62,7 +62,7 @@ Future<void> afficherRecu(BuildContext context, Recu r, {String bouton = 'Nouvel
   return showDialog<void>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       contentPadding: const EdgeInsets.all(24),
       content: SizedBox(
         width: 380,
@@ -115,7 +115,7 @@ class RecuVue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = recu;
-    const petit = TextStyle(fontSize: 13, color: NacreaColors.gris);
+    final petit = TextStyle(fontSize: 13, color: NacreaColors.gris);
     Widget ligne(String a, String b, {bool fort = false, Color? couleur}) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 2),
           child: Row(
@@ -144,8 +144,8 @@ class RecuVue extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(8),
-            color: const Color(0xFFFCEBEB),
-            child: const Text('VENTE ANNULÉE',
+            color: NacreaColors.fondErreur,
+            child: Text('VENTE ANNULÉE',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: NacreaColors.erreur, fontWeight: FontWeight.w700)),
           ),
@@ -158,7 +158,7 @@ class RecuVue extends StatelessWidget {
             textAlign: TextAlign.center, style: petit),
         if (t.vendeuse != null)
           Text('Servi par ${t.vendeuse}', textAlign: TextAlign.center, style: petit),
-        const Divider(height: 28, color: NacreaColors.bordure),
+        Divider(height: 28, color: NacreaColors.bordure),
         for (final l in t.lignes)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -175,7 +175,7 @@ class RecuVue extends StatelessWidget {
               ],
             ),
           ),
-        const Divider(height: 24, color: NacreaColors.bordure),
+        Divider(height: 24, color: NacreaColors.bordure),
         if (t.remise > 0) ...[
           ligne('Sous-total', fcfa(t.sousTotal)),
           ligne('Remise', '- ${fcfa(t.remise)}', couleur: NacreaColors.orTexte),
@@ -316,7 +316,7 @@ Future<void> envoyerRecuWhatsApp(BuildContext context, Recu r) async {
   final numero = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: const Text('Envoyer le reçu par WhatsApp'),
       content: SizedBox(
         width: 380,

@@ -127,7 +127,7 @@ class _ImportPageState extends State<ImportPage> {
       await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: NacreaColors.surface,
           title: const Text('Import terminé'),
           content: Text([
             '$crees produit${crees > 1 ? 's' : ''} créé${crees > 1 ? 's' : ''}',
@@ -194,7 +194,7 @@ class _ImportPageState extends State<ImportPage> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          const Text(
+                          Text(
                             'Les quantités en stock sont ajoutées au stock de cette boutique. '
                             'Accepte les fichiers .xlsx et .csv.',
                             style: TextStyle(color: NacreaColors.gris, fontSize: 13),
@@ -205,7 +205,7 @@ class _ImportPageState extends State<ImportPage> {
                   ),
                   if (_erreur != null) ...[
                     const SizedBox(height: 12),
-                    Text(_erreur!, style: const TextStyle(color: NacreaColors.erreur)),
+                    Text(_erreur!, style: TextStyle(color: NacreaColors.erreur)),
                   ],
                   if (lignes != null) ...[
                     const SizedBox(height: 16),
@@ -231,7 +231,7 @@ class _ImportPageState extends State<ImportPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(_fichier ?? '', style: const TextStyle(color: NacreaColors.gris)),
+            Text(_fichier ?? '', style: TextStyle(color: NacreaColors.gris)),
             const SizedBox(height: 8),
             Text('$aCreer nouveau${aCreer > 1 ? 'x' : ''} produit${aCreer > 1 ? 's' : ''}'
                 '${aMettreAJour > 0 ? ' · $aMettreAJour déjà dans YDS Beauty' : ''}'
@@ -250,7 +250,7 @@ class _ImportPageState extends State<ImportPage> {
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: const Color(0xFFFCEBEB), borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(color: NacreaColors.fondErreur, borderRadius: BorderRadius.circular(10)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

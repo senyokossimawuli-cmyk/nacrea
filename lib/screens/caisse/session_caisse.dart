@@ -60,7 +60,7 @@ class _CaissePorteState extends State<CaissePorte> {
       stream: _session,
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting && !snap.hasData) {
-          return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
+          return Center(child: CircularProgressIndicator(color: NacreaColors.prune));
         }
         final session = snap.data;
         if (session == null) return _Ouverture(repo: _repo, boutique: widget.boutique);
@@ -126,7 +126,7 @@ class _OuvertureState extends State<_Ouverture> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.point_of_sale_outlined, size: 48, color: NacreaColors.prune),
+                  Icon(Icons.point_of_sale_outlined, size: 48, color: NacreaColors.prune),
                   const SizedBox(height: 12),
                   Text('Ouvrir la caisse',
                       textAlign: TextAlign.center, style: NacreaTheme.titre(size: 32)),
@@ -135,7 +135,7 @@ class _OuvertureState extends State<_Ouverture> {
                     'Comptez la monnaie présente dans le tiroir de ${widget.boutique.nom} '
                     'avant la première vente de la journée.',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: NacreaColors.gris, height: 1.5),
+                    style: TextStyle(color: NacreaColors.gris, height: 1.5),
                   ),
                   const SizedBox(height: 24),
                   TextField(
@@ -169,7 +169,7 @@ class _OuvertureState extends State<_Ouverture> {
                   if (_erreur != null)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: Text(_erreur!, style: const TextStyle(color: NacreaColors.erreur)),
+                      child: Text(_erreur!, style: TextStyle(color: NacreaColors.erreur)),
                     ),
                   FilledButton(
                     onPressed: _chargement ? null : _ouvrir,
@@ -208,7 +208,7 @@ class _BarreSession extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.lock_open, size: 18, color: NacreaColors.succes),
+              Icon(Icons.lock_open, size: 18, color: NacreaColors.succes),
               const SizedBox(width: 8),
               Text(
                 'Caisse ouverte depuis ${_heure(session.ouverteLe)}'
@@ -309,7 +309,7 @@ class _MouvementDialogState extends State<_MouvementDialog> {
         ? ['Apport de monnaie', 'Remboursement']
         : ['Transport', 'Achat boutique', 'Dépôt en banque', 'Remise à la patronne'];
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: const Text('Entrée ou sortie d\'argent'),
       content: SizedBox(
         width: 400,
@@ -354,7 +354,7 @@ class _MouvementDialogState extends State<_MouvementDialog> {
             ),
             if (_erreur != null) ...[
               const SizedBox(height: 12),
-              Text(_erreur!, style: const TextStyle(color: NacreaColors.erreur)),
+              Text(_erreur!, style: TextStyle(color: NacreaColors.erreur)),
             ],
           ],
         ),
@@ -429,7 +429,7 @@ class _ClotureDialogState extends State<_ClotureDialog> {
         );
 
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text('Clôturer la caisse', style: NacreaTheme.titre(size: 28)),
       content: SizedBox(
         width: 420,
@@ -437,7 +437,7 @@ class _ClotureDialogState extends State<_ClotureDialog> {
           future: _resume,
           builder: (context, snap) {
             if (!snap.hasData) {
-              return const SizedBox(
+              return SizedBox(
                 height: 120,
                 child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
               );
@@ -459,7 +459,7 @@ class _ClotureDialogState extends State<_ClotureDialog> {
                   if (r.retours > 0) ligne('Retours remboursés en espèces', '- ${fcfa(r.retours)}'),
                   if (r.entrees > 0) ligne('Entrées d\'argent', '+ ${fcfa(r.entrees)}'),
                   if (r.sorties > 0) ligne('Sorties d\'argent', '- ${fcfa(r.sorties)}'),
-                  const Divider(color: NacreaColors.bordure),
+                  Divider(color: NacreaColors.bordure),
                   ligne('Doit être dans le tiroir', fcfa(r.attendu), fort: true),
                   const SizedBox(height: 16),
                   TextField(
@@ -496,7 +496,7 @@ class _ClotureDialogState extends State<_ClotureDialog> {
                   ),
                   if (_erreur != null) ...[
                     const SizedBox(height: 12),
-                    Text(_erreur!, style: const TextStyle(color: NacreaColors.erreur)),
+                    Text(_erreur!, style: TextStyle(color: NacreaColors.erreur)),
                   ],
                 ],
               ),

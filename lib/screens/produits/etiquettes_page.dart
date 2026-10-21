@@ -80,7 +80,7 @@ class _EtiquettesPageState extends State<EtiquettesPage> {
       body: StreamBuilder<List<Produit>>(
         stream: _produits,
         builder: (context, snap) {
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
+          if (!snap.hasData) return Center(child: CircularProgressIndicator(color: NacreaColors.prune));
           final tous = snap.data!;
           final q = _recherche.text.trim().toLowerCase();
           final visibles = tous
@@ -148,7 +148,7 @@ class _EtiquettesPageState extends State<EtiquettesPage> {
                 child: ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: visibles.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1, color: NacreaColors.bordure),
+                  separatorBuilder: (_, _) => Divider(height: 1, color: NacreaColors.bordure),
                   itemBuilder: (context, i) {
                     final p = visibles[i];
                     final n = _quantites[p.id] ?? 0;
@@ -174,7 +174,7 @@ class _EtiquettesPageState extends State<EtiquettesPage> {
                           ),
                           IconButton(
                             onPressed: p.id == null ? null : () => setState(() => _quantites[p.id!] = n + 1),
-                            icon: const Icon(Icons.add_circle_outline, color: NacreaColors.prune),
+                            icon: Icon(Icons.add_circle_outline, color: NacreaColors.prune),
                           ),
                         ],
                       ),
@@ -183,7 +183,7 @@ class _EtiquettesPageState extends State<EtiquettesPage> {
                 ),
               ),
               Material(
-                color: Colors.white,
+                color: NacreaColors.surface,
                 elevation: 8,
                 child: SafeArea(
                   top: false,

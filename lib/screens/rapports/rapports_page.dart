@@ -111,7 +111,7 @@ class _RapportsPageState extends State<RapportsPage> {
                             children: [
                               Text('Rapports', style: NacreaTheme.titre(size: etroit ? 30 : 36)),
                               Text('${_titrePeriode()} · $_perimetre',
-                                  style: const TextStyle(color: NacreaColors.gris)),
+                                  style: TextStyle(color: NacreaColors.gris)),
                             ],
                           ),
                           Row(
@@ -120,7 +120,7 @@ class _RapportsPageState extends State<RapportsPage> {
                               IconButton(
                                 tooltip: 'Actualiser',
                                 onPressed: () => _changer(),
-                                icon: const Icon(Icons.refresh, color: NacreaColors.prune),
+                                icon: Icon(Icons.refresh, color: NacreaColors.prune),
                               ),
                               if (r != null)
                                 OutlinedButton.icon(
@@ -155,9 +155,9 @@ class _RapportsPageState extends State<RapportsPage> {
                       ),
                       const SizedBox(height: 20),
                       if (snap.hasError)
-                        Text(messageErreur(snap.error!), style: const TextStyle(color: NacreaColors.erreur))
+                        Text(messageErreur(snap.error!), style: TextStyle(color: NacreaColors.erreur))
                       else if (r == null)
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.all(48),
                           child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
                         )
@@ -184,7 +184,7 @@ class _RapportsPageState extends State<RapportsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(positif ? 'Bénéfice' : 'Perte', style: const TextStyle(color: NacreaColors.gris, fontSize: 15)),
+              Text(positif ? 'Bénéfice' : 'Perte', style: TextStyle(color: NacreaColors.gris, fontSize: 15)),
               const SizedBox(height: 4),
               Text(
                 fcfa(r.benefice),
@@ -197,7 +197,7 @@ class _RapportsPageState extends State<RapportsPage> {
               _ligne("Chiffre d'affaires", fcfa(r.chiffreAffaires)),
               if (r.retours > 0) _ligne('Retours remboursés', '- ${fcfa(r.retours)}'),
               _ligne('Coût des produits vendus', '- ${fcfa(r.coutNet)}'),
-              const Divider(color: NacreaColors.bordure),
+              Divider(color: NacreaColors.bordure),
               _ligne('Marge', '${fcfa(r.margeBrute)}  (${(r.tauxMarge * 100).round()} %)', fort: true),
               _ligne('Dépenses', '- ${fcfa(r.totalDepenses)}'),
               if (r.ecartsStock != 0)
@@ -205,10 +205,10 @@ class _RapportsPageState extends State<RapportsPage> {
                   r.ecartsStock < 0 ? 'Pertes de stock (casse, vol, inventaire…)' : 'Écarts de stock (en plus)',
                   '${r.ecartsStock < 0 ? '- ' : '+ '}${fcfa(r.ecartsStock.abs())}',
                 ),
-              const Divider(color: NacreaColors.bordure),
+              Divider(color: NacreaColors.bordure),
               _ligne(positif ? 'Bénéfice' : 'Perte', fcfa(r.benefice), fort: true),
               if (r.coutMarchandises == 0 && r.chiffreAffaires > 0)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Text(
                     'Le coût des produits est à 0 : indiquez les prix d\'achat de vos produits '
@@ -242,7 +242,7 @@ class _RapportsPageState extends State<RapportsPage> {
       _section(
         r.parMois ? 'Ventes par mois' : 'Ventes par jour',
         r.chiffreAffaires == 0
-            ? const Text('Aucune vente sur cette période.', style: TextStyle(color: NacreaColors.gris))
+            ? Text('Aucune vente sur cette période.', style: TextStyle(color: NacreaColors.gris))
             : _Barres(points: r.courbe, parMois: r.parMois),
       ),
       // ---------- Encaissements ----------
@@ -259,7 +259,7 @@ class _RapportsPageState extends State<RapportsPage> {
               if ((r.parMoyen[code] ?? 0) > 0) _ligne(nom, fcfa(r.parMoyen[code]!)),
             if (r.remboursements > 0) _ligne('Dettes remboursées par les clientes', '+ ${fcfa(r.remboursements)}'),
             if (r.parMoyen.isEmpty && r.remboursements == 0)
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
                 child: Text('Rien sur cette période.', style: TextStyle(color: NacreaColors.gris)),
               ),
@@ -270,7 +270,7 @@ class _RapportsPageState extends State<RapportsPage> {
       _section(
         'Dépenses par catégorie',
         r.depenses.isEmpty
-            ? const Text('Aucune dépense notée sur cette période.', style: TextStyle(color: NacreaColors.gris))
+            ? Text('Aucune dépense notée sur cette période.', style: TextStyle(color: NacreaColors.gris))
             : _BarresHorizontales(valeurs: {
                 for (final e in r.depenses.entries) libelleCategorie(e.key): e.value,
               }),
@@ -291,7 +291,7 @@ class _RapportsPageState extends State<RapportsPage> {
       _section(
         'Produits les plus vendus',
         r.topProduits.isEmpty
-            ? const Text('Aucune vente sur cette période.', style: TextStyle(color: NacreaColors.gris))
+            ? Text('Aucune vente sur cette période.', style: TextStyle(color: NacreaColors.gris))
             : Column(
                 children: [
                   for (final (i, p) in r.topProduits.indexed)
@@ -301,7 +301,7 @@ class _RapportsPageState extends State<RapportsPage> {
                         children: [
                           SizedBox(
                             width: 28,
-                            child: Text('${i + 1}', style: const TextStyle(color: NacreaColors.gris, fontWeight: FontWeight.w600)),
+                            child: Text('${i + 1}', style: TextStyle(color: NacreaColors.gris, fontWeight: FontWeight.w600)),
                           ),
                           Expanded(
                             child: Column(
@@ -309,7 +309,7 @@ class _RapportsPageState extends State<RapportsPage> {
                               children: [
                                 Text(p.nom, style: const TextStyle(fontWeight: FontWeight.w600)),
                                 Text('${p.quantite} vendu${p.quantite > 1 ? 's' : ''} · marge ${fcfa(p.marge)}',
-                                    style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
+                                    style: TextStyle(color: NacreaColors.gris, fontSize: 13)),
                               ],
                             ),
                           ),
@@ -392,11 +392,11 @@ class _BarresState extends State<_Barres> {
         Text.rich(TextSpan(children: [
           TextSpan(
             text: fcfa(points[choisi].montant),
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: NacreaColors.chocolat),
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: NacreaColors.chocolat),
           ),
           TextSpan(
             text: '  ${_libelle(points[choisi], long: true)}${_choisi == null ? ' · meilleur ${widget.parMois ? 'mois' : 'jour'}' : ''}',
-            style: const TextStyle(color: NacreaColors.gris),
+            style: TextStyle(color: NacreaColors.gris),
           ),
         ])),
         const SizedBox(height: 12),
@@ -432,7 +432,7 @@ class _BarresState extends State<_Barres> {
             );
           }),
         ),
-        const Divider(height: 1, color: NacreaColors.bordure),
+        Divider(height: 1, color: NacreaColors.bordure),
         const SizedBox(height: 6),
         Row(
           children: [
@@ -443,7 +443,7 @@ class _BarresState extends State<_Barres> {
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.clip,
-                  style: const TextStyle(color: NacreaColors.gris, fontSize: 11),
+                  style: TextStyle(color: NacreaColors.gris, fontSize: 11),
                 ),
               ),
           ],

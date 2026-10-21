@@ -145,7 +145,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
       stream: _produits,
       builder: (context, snap) {
         if (!snap.hasData && !snap.hasError) {
-          return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
+          return Center(child: CircularProgressIndicator(color: NacreaColors.prune));
         }
         if (snap.hasError) {
           return Center(
@@ -188,7 +188,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
                     children: [
                       Text('Produits', style: NacreaTheme.titre(size: 36)),
                       Text('${tous.length} produits · stock de ${widget.boutique.nom}',
-                          style: const TextStyle(color: NacreaColors.gris)),
+                          style: TextStyle(color: NacreaColors.gris)),
                     ],
                   ),
                   Wrap(
@@ -243,7 +243,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
                       ? (scanCameraDisponible
                           ? IconButton(
                               tooltip: 'Scanner un produit',
-                              icon: const Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
+                              icon: Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
                               onPressed: () => _scanner(tous),
                             )
                           : null)
@@ -280,7 +280,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
             ),
             Expanded(
               child: visibles.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text('Aucun produit ne correspond.',
                           style: TextStyle(color: NacreaColors.gris)),
                     )
@@ -317,7 +317,7 @@ class _ProduitsPageState extends State<ProduitsPage> {
         onSelected: (_) => quandTouche(),
         showCheckmark: false,
         selectedColor: NacreaColors.prune,
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         side: BorderSide(color: actif ? NacreaColors.prune : NacreaColors.bordure),
         labelStyle: TextStyle(
           color: actif ? Colors.white : NacreaColors.chocolat,
@@ -336,11 +336,11 @@ class _ProduitsPageState extends State<ProduitsPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.spa_outlined, size: 56, color: NacreaColors.rosePoudre),
+              Icon(Icons.spa_outlined, size: 56, color: NacreaColors.rosePoudre),
               const SizedBox(height: 16),
               Text('Ajoutez votre premier produit', style: NacreaTheme.titre(size: 30)),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Photo, prix et stock : votre catalogue se construit ici, '
                 'puis il sera prêt pour la caisse.',
                 textAlign: TextAlign.center,
@@ -402,7 +402,7 @@ class _LigneProduit extends StatelessWidget {
                       Text(details.join(' · '),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(color: NacreaColors.gris, fontSize: 13)),
+                          style: TextStyle(color: NacreaColors.gris, fontSize: 13)),
                     const SizedBox(height: 6),
                     Wrap(spacing: 6, runSpacing: 4, children: _badges(p)),
                   ],
@@ -432,7 +432,7 @@ class _LigneProduit extends StatelessWidget {
                   : IconButton(
                       tooltip: 'Ajouter du stock',
                       onPressed: quandStock,
-                      icon: const Icon(Icons.add_box_outlined, color: NacreaColors.prune),
+                      icon: Icon(Icons.add_box_outlined, color: NacreaColors.prune),
                     ),
             ],
           ),
@@ -447,8 +447,8 @@ class _LigneProduit extends StatelessWidget {
           decoration: BoxDecoration(color: f, borderRadius: BorderRadius.circular(6)),
           child: Text(t, style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w600)),
         );
-    const rouge = Color(0xFFFCEBEB);
-    const ambre = Color(0xFFF7EEDB);
+    final rouge = NacreaColors.fondErreur;
+    final ambre = NacreaColors.fondOr;
     return [
       if (p.enRupture) badge('Rupture', NacreaColors.erreur, rouge),
       if (p.stockBas) badge('Stock bas', NacreaColors.orTexte, ambre),

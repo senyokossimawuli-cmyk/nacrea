@@ -9,7 +9,7 @@ Future<void> deconnexion(BuildContext context) async {
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: const Text('Pas encore'),
         content: Text(refus),
         actions: [

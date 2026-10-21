@@ -69,7 +69,7 @@ class _EtatSynchroState extends State<EtatSynchro> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: enLigne ? Colors.transparent : const Color(0xFFF7EEDB),
+              color: enLigne ? Colors.transparent : NacreaColors.fondOr,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(

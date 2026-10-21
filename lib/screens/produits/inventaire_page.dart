@@ -76,7 +76,7 @@ class _InventairePageState extends State<InventairePage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: const Text('Effacer le comptage ?'),
         content: const Text('Tout ce qui a été compté sera effacé. Le stock ne change pas.'),
         actions: [
@@ -103,7 +103,7 @@ class _InventairePageState extends State<InventairePage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: Text('Valider l\'inventaire ?', style: NacreaTheme.titre(size: 26)),
         content: SizedBox(
           width: 460,
@@ -137,9 +137,9 @@ class _InventairePageState extends State<InventairePage> {
                       ],
                     ),
                   ),
-                if (ecarts.length > 12) Text('… et ${ecarts.length - 12} autres', style: const TextStyle(color: NacreaColors.gris)),
+                if (ecarts.length > 12) Text('… et ${ecarts.length - 12} autres', style: TextStyle(color: NacreaColors.gris)),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Le stock de ces produits sera remplacé par ce que vous avez compté. '
                   'Les produits non comptés ne changent pas.',
                   style: TextStyle(color: NacreaColors.gris, fontSize: 13),
@@ -195,14 +195,14 @@ class _InventairePageState extends State<InventairePage> {
           children: [
             Text('Inventaires', style: NacreaTheme.titre(size: 24)),
             if (inventaires.isEmpty)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Text('Aucun inventaire validé.', style: TextStyle(color: NacreaColors.gris)),
               ),
             for (final i in inventaires)
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.fact_check_outlined, color: NacreaColors.prune),
+                leading: Icon(Icons.fact_check_outlined, color: NacreaColors.prune),
                 title: Text('${dateCourte(i.le)} · ${i.nbProduits} comptés, ${i.nbEcarts} écarts'),
                 subtitle: i.note == null ? null : Text(i.note!),
                 trailing: couts
@@ -216,7 +216,7 @@ class _InventairePageState extends State<InventairePage> {
             const SizedBox(height: 16),
             Text('Derniers ajustements', style: NacreaTheme.titre(size: 24)),
             if (ajustements.isEmpty)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Text('Aucun ajustement.', style: TextStyle(color: NacreaColors.gris)),
               ),
@@ -251,7 +251,7 @@ class _InventairePageState extends State<InventairePage> {
         stream: _lignes,
         builder: (context, snap) {
           if (!snap.hasData) {
-            return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
+            return Center(child: CircularProgressIndicator(color: NacreaColors.prune));
           }
           final lignes = snap.data!;
           _dernieres = lignes;
@@ -292,7 +292,7 @@ class _InventairePageState extends State<InventairePage> {
                     suffixIcon: scanCameraDisponible
                         ? IconButton(
                             tooltip: 'Scanner avec la caméra',
-                            icon: const Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
+                            icon: Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
                             onPressed: _scanner,
                           )
                         : null,
@@ -324,11 +324,11 @@ class _InventairePageState extends State<InventairePage> {
               const SizedBox(height: 8),
               Expanded(
                 child: visibles.isEmpty
-                    ? const Center(child: Text('Aucun produit ici.', style: TextStyle(color: NacreaColors.gris)))
+                    ? Center(child: Text('Aucun produit ici.', style: TextStyle(color: NacreaColors.gris)))
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         itemCount: visibles.length,
-                        separatorBuilder: (_, _) => const Divider(height: 1, color: NacreaColors.bordure),
+                        separatorBuilder: (_, _) => Divider(height: 1, color: NacreaColors.bordure),
                         itemBuilder: (context, i) {
                           final l = visibles[i];
                           final champ = _champ(l);
@@ -367,7 +367,7 @@ class _InventairePageState extends State<InventairePage> {
                                       hintText: 'Compté',
                                       isDense: true,
                                       filled: true,
-                                      fillColor: l.compteFait ? const Color(0xFFE5F3EA) : Colors.white,
+                                      fillColor: l.compteFait ? NacreaColors.fondSucces : NacreaColors.surface,
                                     ),
                                     onChanged: (v) => _repo.compter(l.produitId, int.tryParse(v)),
                                   ),
@@ -379,7 +379,7 @@ class _InventairePageState extends State<InventairePage> {
                       ),
               ),
               Material(
-                color: Colors.white,
+                color: NacreaColors.surface,
                 elevation: 8,
                 child: SafeArea(
                   top: false,

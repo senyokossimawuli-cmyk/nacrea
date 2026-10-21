@@ -108,7 +108,7 @@ class _FormClienteState extends State<_FormCliente> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text(widget.cliente == null ? 'Nouvelle cliente' : 'Modifier la cliente',
           style: NacreaTheme.titre(size: 26)),
       content: SizedBox(
@@ -151,7 +151,7 @@ class _FormClienteState extends State<_FormCliente> {
                 ),
                 if (_erreur != null) ...[
                   const SizedBox(height: 12),
-                  Text(_erreur!, style: const TextStyle(color: NacreaColors.erreur)),
+                  Text(_erreur!, style: TextStyle(color: NacreaColors.erreur)),
                 ],
                 const SizedBox(height: 20),
                 Row(
@@ -214,7 +214,7 @@ class _ChoixClienteState extends State<_ChoixCliente> {
   Widget build(BuildContext context) {
     final hauteur = MediaQuery.sizeOf(context).height;
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text('Cliente de la vente', style: NacreaTheme.titre(size: 26)),
       contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
       content: SizedBox(
@@ -237,7 +237,7 @@ class _ChoixClienteState extends State<_ChoixCliente> {
                 stream: _clientes,
                 builder: (context, snap) {
                   if (!snap.hasData) {
-                    return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
+                    return Center(child: CircularProgressIndicator(color: NacreaColors.prune));
                   }
                   final q = _recherche.text.trim().toLowerCase();
                   final qChiffres = q.replaceAll(RegExp(r'\D'), '');
@@ -252,7 +252,7 @@ class _ChoixClienteState extends State<_ChoixCliente> {
                     return Center(
                       child: Text(
                         snap.data!.isEmpty ? 'Aucune cliente enregistrée pour l\'instant.' : 'Aucune cliente trouvée.',
-                        style: const TextStyle(color: NacreaColors.gris),
+                        style: TextStyle(color: NacreaColors.gris),
                       ),
                     );
                   }
@@ -272,7 +272,7 @@ class _ChoixClienteState extends State<_ChoixCliente> {
                         subtitle: c.telephone == null ? null : Text(c.telephone!),
                         trailing: c.doit
                             ? Text('Doit ${fcfa(c.dette)}',
-                                style: const TextStyle(color: NacreaColors.erreur, fontWeight: FontWeight.w600))
+                                style: TextStyle(color: NacreaColors.erreur, fontWeight: FontWeight.w600))
                             : null,
                         onTap: () => Navigator.of(context).pop(c),
                       );
@@ -370,7 +370,7 @@ class _RemboursementState extends State<_Remboursement> {
     final saisi = int.tryParse(_montant.text) ?? 0;
     final reste = c.dette - saisi;
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text('Paiement de ${c.nom}', style: NacreaTheme.titre(size: 26)),
       content: SizedBox(
         width: 420,
@@ -379,7 +379,7 @@ class _RemboursementState extends State<_Remboursement> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Elle doit ${fcfa(c.dette)}', style: const TextStyle(color: NacreaColors.gris)),
+              Text('Elle doit ${fcfa(c.dette)}', style: TextStyle(color: NacreaColors.gris)),
               const SizedBox(height: 16),
               TextField(
                 controller: _montant,
@@ -426,7 +426,7 @@ class _RemboursementState extends State<_Remboursement> {
               ],
               if (_erreur != null) ...[
                 const SizedBox(height: 12),
-                Text(_erreur!, style: const TextStyle(color: NacreaColors.erreur)),
+                Text(_erreur!, style: TextStyle(color: NacreaColors.erreur)),
               ],
               const SizedBox(height: 20),
               Row(

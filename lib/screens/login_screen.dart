@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Pas encore de compte ?', style: TextStyle(color: NacreaColors.gris)),
+                Text('Pas encore de compte ?', style: TextStyle(color: NacreaColors.gris)),
                 TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const SignupScreen()),

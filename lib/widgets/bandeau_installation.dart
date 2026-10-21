@@ -18,7 +18,7 @@ class BandeauInstallation extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: NacreaColors.or),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.install_mobile_outlined, color: NacreaColors.prune),

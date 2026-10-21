@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/produits_repo.dart';
 import '../services/erreurs.dart';
 import '../services/membre.dart';
+import '../theme/mode_affichage.dart';
 import '../theme/nacrea_theme.dart';
 import '../widgets/deconnexion.dart';
 import '../widgets/etat_synchro.dart';
@@ -96,7 +97,7 @@ class _ShellScreenState extends State<ShellScreen> {
       stream: _boutiques,
       builder: (context, snap) {
         if (!snap.hasData && !snap.hasError) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
           );
         }
@@ -160,7 +161,7 @@ class _ShellScreenState extends State<ShellScreen> {
             child: DropdownButton<String>(
               value: boutique.id,
               underline: const SizedBox.shrink(),
-              icon: const Icon(Icons.expand_more, color: NacreaColors.prune),
+              icon: Icon(Icons.expand_more, color: NacreaColors.prune),
               items: [
                 for (final b in boutiques)
                   DropdownMenuItem(
@@ -180,7 +181,7 @@ class _ShellScreenState extends State<ShellScreen> {
             child: Center(
               child: Row(
                 children: [
-                  const Icon(Icons.storefront_outlined, size: 20, color: NacreaColors.prune),
+                  Icon(Icons.storefront_outlined, size: 20, color: NacreaColors.prune),
                   const SizedBox(width: 8),
                   ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: large ? 260 : 110),
@@ -197,8 +198,9 @@ class _ShellScreenState extends State<ShellScreen> {
         if (large)
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: Center(child: Text(m.nom, style: const TextStyle(color: NacreaColors.gris))),
+            child: Center(child: Text(m.nom, style: TextStyle(color: NacreaColors.gris))),
           ),
+        const BoutonModeAffichage(),
         IconButton(
           tooltip: 'Se déconnecter',
           icon: const Icon(Icons.logout),
@@ -206,7 +208,7 @@ class _ShellScreenState extends State<ShellScreen> {
         ),
         SizedBox(width: large ? 16 : 4),
       ],
-      bottom: const PreferredSize(
+      bottom: PreferredSize(
         preferredSize: Size.fromHeight(1),
         child: Divider(height: 1, color: NacreaColors.bordure),
       ),
@@ -220,19 +222,19 @@ class _ShellScreenState extends State<ShellScreen> {
             // Menu défilant si l'écran est trop bas pour toutes les entrées.
             LayoutBuilder(
               builder: (context, c) => Container(
-                color: Colors.white,
+                color: NacreaColors.surface,
                 child: SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minHeight: c.maxHeight),
                     child: IntrinsicHeight(
                       child: NavigationRail(
-                        backgroundColor: Colors.white,
+                        backgroundColor: NacreaColors.surface,
                         selectedIndex: _page,
                         onDestinationSelected: (i) => setState(() => _page = i),
                         labelType: NavigationRailLabelType.all,
                         indicatorColor: NacreaColors.nude,
-                        selectedIconTheme: const IconThemeData(color: NacreaColors.prune),
-                        selectedLabelTextStyle: const TextStyle(
+                        selectedIconTheme: IconThemeData(color: NacreaColors.prune),
+                        selectedLabelTextStyle: TextStyle(
                           color: NacreaColors.prune,
                           fontWeight: FontWeight.w600,
                         ),
@@ -250,7 +252,7 @@ class _ShellScreenState extends State<ShellScreen> {
                 ),
               ),
             ),
-            const VerticalDivider(width: 1, color: NacreaColors.bordure),
+            VerticalDivider(width: 1, color: NacreaColors.bordure),
             Expanded(child: page),
           ],
         ),
@@ -265,7 +267,7 @@ class _ShellScreenState extends State<ShellScreen> {
         final visibles = avecPlus ? _menu.take(_nbVisiblesTelephone).toList() : _menu;
         final dansPlus = avecPlus && _page >= _nbVisiblesTelephone;
         return NavigationBar(
-          backgroundColor: Colors.white,
+          backgroundColor: NacreaColors.surface,
           indicatorColor: NacreaColors.nude,
           selectedIndex: dansPlus ? _nbVisiblesTelephone : _page,
           onDestinationSelected: (i) {
@@ -285,7 +287,7 @@ class _ShellScreenState extends State<ShellScreen> {
             if (avecPlus)
               NavigationDestination(
                 icon: const Icon(Icons.more_horiz),
-                selectedIcon: const Icon(Icons.more_horiz, color: NacreaColors.prune),
+                selectedIcon: Icon(Icons.more_horiz, color: NacreaColors.prune),
                 label: dansPlus ? _menu[_page].titre : 'Plus',
               ),
           ],

@@ -35,7 +35,7 @@ class _LicenceGateState extends State<LicenceGate> {
       future: _etat,
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -146,7 +146,7 @@ class _EcranLicenceState extends State<EcranLicence> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: Text('Remplacer « ${a.libelle} » ?'),
         content: const Text(
           'Cet ancien appareil ne pourra plus ouvrir YDS Beauty, et celui-ci prendra sa place.\n\n'
@@ -322,7 +322,7 @@ class _EcranLicenceState extends State<EcranLicence> {
                               if (a.email != null) a.email!,
                               if (a.vuLe != null) 'utilisé le ${dateCourte(a.vuLe!)}',
                             ].join(' · '),
-                            style: const TextStyle(color: NacreaColors.gris, fontSize: 13),
+                            style: TextStyle(color: NacreaColors.gris, fontSize: 13),
                           ),
                         ],
                       ),
@@ -338,7 +338,7 @@ class _EcranLicenceState extends State<EcranLicence> {
           if (!_patronne)
             Text(
               'Demandez à la patronne de remplacer un appareil, ou d\'ajouter un $nature à la licence.',
-              style: const TextStyle(color: NacreaColors.gris),
+              style: TextStyle(color: NacreaColors.gris),
             )
           else ...[
             Text(
@@ -348,7 +348,7 @@ class _EcranLicenceState extends State<EcranLicence> {
                   : 'Vous avez déjà remplacé un appareil récemment'
                       '${e.remplacementLe == null ? '' : ' : prochain remplacement possible le ${dateCourte(e.remplacementLe!)}'}. '
                       'Contactez YDS Beauty pour libérer une place ou ajouter un $nature.',
-              style: const TextStyle(color: NacreaColors.gris, height: 1.4),
+              style: TextStyle(color: NacreaColors.gris, height: 1.4),
             ),
             const SizedBox(height: 16),
             OutlinedButton.icon(
@@ -391,7 +391,7 @@ class _CarteMaLicenceState extends State<CarteMaLicence> {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.verified_outlined, color: NacreaColors.prune),
+                    Icon(Icons.verified_outlined, color: NacreaColors.prune),
                     const SizedBox(width: 10),
                     const Text('Licence YDS Beauty', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
                     const SizedBox(width: 12),
@@ -407,7 +407,7 @@ class _CarteMaLicenceState extends State<CarteMaLicence> {
                       ? 'Vérifiée sans internet. Les appareils s\'afficheront une fois connecté.'
                       : 'Valable sur ${e.resume} · '
                           '${e.illimitee ? 'sans date de fin' : 'jusqu\'au ${dateCourte(e.expireLe!)}'}.',
-                  style: const TextStyle(color: NacreaColors.gris),
+                  style: TextStyle(color: NacreaColors.gris),
                 ),
                 for (final a in e.appareils)
                   ListTile(

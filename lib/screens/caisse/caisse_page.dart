@@ -124,7 +124,7 @@ class _CaissePageState extends State<CaissePage> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setD) => AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: NacreaColors.surface,
           title: Text(l.produit.nomComplet),
           content: SizedBox(
             width: 380,
@@ -200,7 +200,7 @@ class _CaissePageState extends State<CaissePage> {
           final pourcent = _sousTotal == 0 ? 0 : montant * 100 / _sousTotal;
           final tropElevee = !patronne && pourcent > remiseMaxEmployeePourcent;
           return AlertDialog(
-            backgroundColor: Colors.white,
+            backgroundColor: NacreaColors.surface,
             title: const Text('Remise sur la vente'),
             content: SizedBox(
               width: 380,
@@ -231,7 +231,7 @@ class _CaissePageState extends State<CaissePage> {
                   const SizedBox(height: 12),
                   Text('Remise : ${fcfa(montant)}', style: const TextStyle(fontWeight: FontWeight.w600)),
                   if (tropElevee)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 8),
                       child: Text(
                         'Au-delà de $remiseMaxEmployeePourcent %, la remise doit être faite par la patronne.',
@@ -341,8 +341,8 @@ class _CaissePageState extends State<CaissePage> {
               Expanded(child: catalogue),
               Container(
                 width: 400,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: NacreaColors.surface,
                   border: Border(left: BorderSide(color: NacreaColors.bordure)),
                 ),
                 child: _panneauPanier(),
@@ -385,7 +385,7 @@ class _CaissePageState extends State<CaissePage> {
                   ? (scanCameraDisponible && tous != null
                       ? IconButton(
                           tooltip: 'Scanner avec la caméra',
-                          icon: const Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
+                          icon: Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
                           onPressed: () => _scanner(tous),
                         )
                       : null)
@@ -402,14 +402,14 @@ class _CaissePageState extends State<CaissePage> {
         ),
         Expanded(
           child: tous == null
-              ? const Center(child: CircularProgressIndicator(color: NacreaColors.prune))
+              ? Center(child: CircularProgressIndicator(color: NacreaColors.prune))
               : visibles.isEmpty
                   ? Center(
                       child: Text(
                         tous.isEmpty
                             ? 'Ajoutez d\'abord des produits dans « Produits ».'
                             : 'Aucun produit trouvé.',
-                        style: const TextStyle(color: NacreaColors.gris),
+                        style: TextStyle(color: NacreaColors.gris),
                       ),
                     )
                   : GridView.builder(
@@ -433,7 +433,7 @@ class _CaissePageState extends State<CaissePage> {
 
   Widget _barreBas() {
     return Material(
-      color: Colors.white,
+      color: NacreaColors.surface,
       elevation: 8,
       child: SafeArea(
         top: false,
@@ -447,7 +447,7 @@ class _CaissePageState extends State<CaissePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('$_nbArticles article${_nbArticles > 1 ? 's' : ''}',
-                        style: const TextStyle(color: NacreaColors.gris)),
+                        style: TextStyle(color: NacreaColors.gris)),
                     Text(fcfa(_total),
                         style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
                   ],
@@ -461,7 +461,7 @@ class _CaissePageState extends State<CaissePage> {
                       : () => showModalBottomSheet<void>(
                             context: context,
                             isScrollControlled: true,
-                            backgroundColor: Colors.white,
+                            backgroundColor: NacreaColors.surface,
                             builder: (_) => FractionallySizedBox(
                               heightFactor: 0.85,
                               child: StatefulBuilder(
@@ -500,7 +500,7 @@ class _CaissePageState extends State<CaissePage> {
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: [
-          const Icon(Icons.person_outline, size: 18, color: NacreaColors.prune),
+          Icon(Icons.person_outline, size: 18, color: NacreaColors.prune),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -509,7 +509,7 @@ class _CaissePageState extends State<CaissePage> {
                 Text(c.nom, style: const TextStyle(fontWeight: FontWeight.w600)),
                 if (c.doit)
                   Text('Doit déjà ${fcfa(c.dette)}',
-                      style: const TextStyle(color: NacreaColors.erreur, fontSize: 12)),
+                      style: TextStyle(color: NacreaColors.erreur, fontSize: 12)),
               ],
             ),
           ),
@@ -541,7 +541,7 @@ class _CaissePageState extends State<CaissePage> {
               Text('Panier', style: NacreaTheme.titre(size: 28)),
               const SizedBox(width: 8),
               if (_nbArticles > 0)
-                Text('($_nbArticles)', style: const TextStyle(color: NacreaColors.gris)),
+                Text('($_nbArticles)', style: TextStyle(color: NacreaColors.gris)),
               const Spacer(),
               if (_panier.isNotEmpty)
                 TextButton(
@@ -555,10 +555,10 @@ class _CaissePageState extends State<CaissePage> {
             ],
           ),
         ),
-        const Divider(height: 1, color: NacreaColors.bordure),
+        Divider(height: 1, color: NacreaColors.bordure),
         Expanded(
           child: _panier.isEmpty
-              ? const Center(
+              ? Center(
                   child: Padding(
                     padding: EdgeInsets.all(24),
                     child: Text(
@@ -632,7 +632,7 @@ class _CaissePageState extends State<CaissePage> {
         ),
         Container(
           padding: const EdgeInsets.all(20),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: NacreaColors.page,
             border: Border(top: BorderSide(color: NacreaColors.bordure)),
           ),
@@ -662,7 +662,7 @@ class _CaissePageState extends State<CaissePage> {
                   ),
                   const Spacer(),
                   if (_remise > 0)
-                    Text('- ${fcfa(_remise)}', style: const TextStyle(color: NacreaColors.orTexte)),
+                    Text('- ${fcfa(_remise)}', style: TextStyle(color: NacreaColors.orTexte)),
                 ],
               ),
               const SizedBox(height: 4),
@@ -717,7 +717,7 @@ class _TuileProduit extends StatelessWidget {
             SizedBox(
               height: 120,
               child: p.photoUrl == null
-                  ? const ColoredBox(
+                  ? ColoredBox(
                       color: NacreaColors.nude,
                       child: Icon(Icons.spa_outlined, color: NacreaColors.rosePoudre, size: 40),
                     )
@@ -739,7 +739,7 @@ class _TuileProduit extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.w600, height: 1.2)),
                     const Spacer(),
                     Text(fcfa(p.prixVente),
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: NacreaColors.prune, fontSize: 16, fontWeight: FontWeight.w700)),
                     Text(
                       p.enRupture ? 'Rupture' : 'Stock : ${p.stock}',
@@ -773,7 +773,7 @@ class _BoutonRond extends StatelessWidget {
       icon: Icon(icone, size: 18),
       style: IconButton.styleFrom(
         foregroundColor: NacreaColors.prune,
-        side: const BorderSide(color: NacreaColors.bordure),
+        side: BorderSide(color: NacreaColors.bordure),
         minimumSize: const Size(40, 40),
       ),
     );

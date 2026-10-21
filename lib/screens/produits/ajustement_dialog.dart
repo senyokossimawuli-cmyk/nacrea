@@ -85,7 +85,7 @@ class _AjustementDialogState extends State<_AjustementDialog> {
     final q = int.tryParse(_quantite.text) ?? 0;
     final apres = p.stock + (_estAjout ? q : -q);
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: NacreaColors.surface,
       title: Text('Retirer ou corriger', style: NacreaTheme.titre(size: 28)),
       content: SizedBox(
         width: 440,
@@ -94,7 +94,7 @@ class _AjustementDialogState extends State<_AjustementDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('${p.nomComplet} · stock actuel : ${p.stock}', style: const TextStyle(color: NacreaColors.gris)),
+              Text('${p.nomComplet} · stock actuel : ${p.stock}', style: TextStyle(color: NacreaColors.gris)),
               const SizedBox(height: 16),
               const Text('Motif', style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
@@ -148,11 +148,11 @@ class _AjustementDialogState extends State<_AjustementDialog> {
                 const SizedBox(height: 12),
                 Text(
                   'Perte estimée : ${fcfa(q * p.prixAchat)} au prix d\'achat (déduite du bénéfice).',
-                  style: const TextStyle(color: NacreaColors.orTexte, fontSize: 13),
+                  style: TextStyle(color: NacreaColors.orTexte, fontSize: 13),
                 ),
               ],
               if (_motif.retrait == null)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(top: 12),
                   child: Text(
                     'Pour recompter tout le rayon, utilisez plutôt « Inventaire » dans Produits.',

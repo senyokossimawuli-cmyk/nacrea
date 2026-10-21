@@ -16,9 +16,9 @@ final _repo = AdminRepo();
 const _jours = Duration(days: NacreaConfig.joursDeGrace);
 
 (Color, Color) _couleursStatut(String s) => switch (s) {
-      'active' => (NacreaColors.succes, const Color(0xFFE5F3EA)),
-      'trial' => (NacreaColors.orTexte, const Color(0xFFF7EEDB)),
-      _ => (NacreaColors.erreur, const Color(0xFFFCEBEB)),
+      'active' => (NacreaColors.succes, NacreaColors.fondSucces),
+      'trial' => (NacreaColors.orTexte, NacreaColors.fondOr),
+      _ => (NacreaColors.erreur, NacreaColors.fondErreur),
     };
 
 class _PastilleStatut extends StatelessWidget {
@@ -108,7 +108,7 @@ class _AdminPageState extends State<AdminPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                color: Colors.white,
+                color: NacreaColors.surface,
                 child: TabBar(
                   isScrollable: etroit,
                   tabAlignment: etroit ? TabAlignment.start : null,
@@ -133,7 +133,7 @@ class _AdminPageState extends State<AdminPage> {
               Expanded(
                 child: Builder(builder: (context) {
                   if (snap.connectionState != ConnectionState.done) {
-                    return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
+                    return Center(child: CircularProgressIndicator(color: NacreaColors.prune));
                   }
                   if (snap.hasError) {
                     return Center(
@@ -211,7 +211,7 @@ class _OngletApercu extends StatelessWidget {
           IconButton(
             tooltip: 'Actualiser',
             onPressed: quandActualiser,
-            icon: const Icon(Icons.refresh, color: NacreaColors.prune),
+            icon: Icon(Icons.refresh, color: NacreaColors.prune),
           ),
         ],
       ),
@@ -302,14 +302,14 @@ class _CarteCliente extends StatelessWidget {
                         if (c.patronne != null) c.patronne!,
                         '${c.nbBoutiques} boutique${c.nbBoutiques > 1 ? 's' : ''} · ${fcfa(c.mensuel)}/mois',
                       ].join(' · '),
-                      style: const TextStyle(color: NacreaColors.gris),
+                      style: TextStyle(color: NacreaColors.gris),
                     ),
                     Text(
                       [
                         if (c.prochaineFin != null) 'Échéance : ${dateCourte(c.prochaineFin!)}',
                         'Dernière vente : ${_ilYa(c.derniereVente)}',
                       ].join(' · '),
-                      style: const TextStyle(color: NacreaColors.gris, fontSize: 13),
+                      style: TextStyle(color: NacreaColors.gris, fontSize: 13),
                     ),
                   ],
                 ),
@@ -317,7 +317,7 @@ class _CarteCliente extends StatelessWidget {
               if (avecRelance)
                 IconButton(
                   tooltip: 'Relancer par WhatsApp',
-                  icon: const Icon(Icons.chat_outlined, color: NacreaColors.prune),
+                  icon: Icon(Icons.chat_outlined, color: NacreaColors.prune),
                   onPressed: () => ouvrirWhatsApp(
                     context,
                     c.telephone,
@@ -330,7 +330,7 @@ class _CarteCliente extends StatelessWidget {
                     ),
                   ),
                 ),
-              const Icon(Icons.chevron_right, color: NacreaColors.gris),
+              Icon(Icons.chevron_right, color: NacreaColors.gris),
             ],
           ),
         ),
@@ -376,7 +376,7 @@ class _OngletClientes extends StatelessWidget {
       ),
       const SizedBox(height: 8),
       Text('${visibles.length} cliente${visibles.length > 1 ? 's' : ''}, les plus récentes en premier',
-          style: const TextStyle(color: NacreaColors.gris)),
+          style: TextStyle(color: NacreaColors.gris)),
       const SizedBox(height: 8),
       for (final c in visibles) _CarteCliente(c: c, quandTouche: () => quandOuvrir(c)),
     ]);
@@ -394,7 +394,7 @@ class _OngletRelances extends StatelessWidget {
     final triees = [...clientes]
       ..sort((a, b) => (a.prochaineFin ?? DateTime(2100)).compareTo(b.prochaineFin ?? DateTime(2100)));
     return _cadre(etroit, [
-      const Text(
+      Text(
         'Essais et abonnements qui se terminent sous 3 jours, en retard ou suspendus. '
         'Le bouton WhatsApp prépare un message adapté.',
         style: TextStyle(color: NacreaColors.gris, height: 1.4),
@@ -444,7 +444,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
     final prix = await showDialog<int>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: Text('Prix mensuel de « ${b.nom} »'),
         content: TextField(
           controller: champ,
@@ -472,7 +472,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setD) => AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: NacreaColors.surface,
           title: Text('Supprimer « ${b.nom} » ?'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -490,7 +490,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
             TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
             TextButton(
               onPressed: champ.text.trim() == b.nom.trim() ? () => Navigator.pop(ctx, true) : null,
-              child: const Text('Supprimer définitivement', style: TextStyle(color: NacreaColors.erreur)),
+              child: Text('Supprimer définitivement', style: TextStyle(color: NacreaColors.erreur)),
             ),
           ],
         ),
@@ -512,7 +512,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
         future: _fiche,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator(color: NacreaColors.prune));
+            return Center(child: CircularProgressIndicator(color: NacreaColors.prune));
           }
           if (snap.hasError) {
             return Center(child: Text(messageErreur(snap.error!)));
@@ -527,14 +527,14 @@ class _FicheAdminState extends State<_FicheAdmin> {
                 if (f.email != null) f.email!,
                 if (f.telephoneContact != null) f.telephoneContact!,
               ].join(' · '),
-              style: const TextStyle(color: NacreaColors.gris),
+              style: TextStyle(color: NacreaColors.gris),
             ),
             Text(
               [
                 if (f.creeLe != null) 'Cliente depuis le ${dateCourte(f.creeLe!)}',
                 '${f.nbEmployees} employée${f.nbEmployees > 1 ? 's' : ''}',
               ].join(' · '),
-              style: const TextStyle(color: NacreaColors.gris),
+              style: TextStyle(color: NacreaColors.gris),
             ),
             const SizedBox(height: 12),
             Align(
@@ -565,7 +565,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.storefront_outlined, color: NacreaColors.prune),
+                          Icon(Icons.storefront_outlined, color: NacreaColors.prune),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(b.nom, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
@@ -587,7 +587,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
                               const PopupMenuItem(value: 'relancer', child: Text('Relancer par WhatsApp')),
                               const PopupMenuItem(value: 'prix', child: Text('Changer le prix mensuel')),
                               if (f.boutiques.length > 1)
-                                const PopupMenuItem(
+                                PopupMenuItem(
                                   value: 'supprimer',
                                   child: Text('Supprimer la boutique', style: TextStyle(color: NacreaColors.erreur)),
                                 ),
@@ -606,10 +606,10 @@ class _FicheAdminState extends State<_FicheAdmin> {
                       ),
                       Text(
                         '${b.ventes30j} ventes sur 30 jours · dernière vente : ${_ilYa(b.derniereVente)}',
-                        style: const TextStyle(color: NacreaColors.gris),
+                        style: TextStyle(color: NacreaColors.gris),
                       ),
                       if (b.adresse != null)
-                        Text(b.adresse!, style: const TextStyle(color: NacreaColors.gris)),
+                        Text(b.adresse!, style: TextStyle(color: NacreaColors.gris)),
                     ],
                   ),
                 ),
@@ -618,7 +618,7 @@ class _FicheAdminState extends State<_FicheAdmin> {
             Text('Paiements reçus', style: NacreaTheme.titre(size: 22)),
             const SizedBox(height: 8),
             if (f.paiements.isEmpty)
-              const Text('Aucun paiement pour l\'instant.', style: TextStyle(color: NacreaColors.gris))
+              Text('Aucun paiement pour l\'instant.', style: TextStyle(color: NacreaColors.gris))
             else
               Card(
                 child: Column(
@@ -634,12 +634,12 @@ class _FicheAdminState extends State<_FicheAdmin> {
                         ].join(' · ')),
                         trailing: IconButton(
                           tooltip: 'Effacer (erreur de saisie)',
-                          icon: const Icon(Icons.delete_outline, color: NacreaColors.gris),
+                          icon: Icon(Icons.delete_outline, color: NacreaColors.gris),
                           onPressed: () async {
                             final ok = await showDialog<bool>(
                               context: context,
                               builder: (ctx) => AlertDialog(
-                                backgroundColor: Colors.white,
+                                backgroundColor: NacreaColors.surface,
                                 title: const Text('Effacer ce paiement ?'),
                                 content: const Text(
                                   'À utiliser seulement pour une erreur de saisie. '

@@ -149,7 +149,7 @@ class _ProduitFormState extends State<ProduitForm> {
                 : 'Commencez par scanner : la fiche peut se remplir toute seule',
             prefixIcon: const Icon(Icons.qr_code_scanner),
             suffixIcon: _rechercheFiche
-                ? const Padding(
+                ? Padding(
                     padding: EdgeInsets.all(14),
                     child: SizedBox(
                       width: 20,
@@ -163,13 +163,13 @@ class _ProduitFormState extends State<ProduitForm> {
                       if (scanCameraDisponible)
                         IconButton(
                           tooltip: 'Scanner avec la caméra',
-                          icon: const Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
+                          icon: Icon(Icons.photo_camera_outlined, color: NacreaColors.prune),
                           onPressed: _scannerCode,
                         ),
                       if (!_modification)
                         IconButton(
                           tooltip: 'Chercher la fiche',
-                          icon: const Icon(Icons.travel_explore, color: NacreaColors.prune),
+                          icon: Icon(Icons.travel_explore, color: NacreaColors.prune),
                           onPressed: _chercherFiche,
                         ),
                     ],
@@ -181,7 +181,7 @@ class _ProduitFormState extends State<ProduitForm> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: _infoAlerte ? const Color(0xFFFCEBEB) : const Color(0xFFF7EEDB),
+              color: _infoAlerte ? NacreaColors.fondErreur : NacreaColors.fondOr,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -224,7 +224,7 @@ class _ProduitFormState extends State<ProduitForm> {
     final nom = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: const Text('Nouvelle catégorie'),
         content: TextField(
           controller: champ,
@@ -334,7 +334,7 @@ class _ProduitFormState extends State<ProduitForm> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: NacreaColors.surface,
         title: const Text('Retirer ce produit ?'),
         content: const Text(
           'Il n\'apparaîtra plus dans le catalogue ni à la caisse. '
@@ -496,7 +496,7 @@ class _ProduitFormState extends State<ProduitForm> {
       future: _lots,
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
-          return const Padding(
+          return Padding(
             padding: EdgeInsets.all(16),
             child: Center(child: CircularProgressIndicator(color: NacreaColors.prune)),
           );
@@ -510,7 +510,7 @@ class _ProduitFormState extends State<ProduitForm> {
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             if (lots.isEmpty)
-              const Text('Aucun lot en stock.', style: TextStyle(color: NacreaColors.gris))
+              Text('Aucun lot en stock.', style: TextStyle(color: NacreaColors.gris))
             else
               for (final l in lots)
                 Container(
@@ -636,7 +636,7 @@ class _ProduitFormState extends State<ProduitForm> {
                               IconButton(
                                 tooltip: 'Nouvelle catégorie',
                                 onPressed: _nouvelleCategorie,
-                                icon: const Icon(Icons.add_circle_outline,
+                                icon: Icon(Icons.add_circle_outline,
                                     color: NacreaColors.prune),
                               ),
                             ],
@@ -677,7 +677,7 @@ class _ProduitFormState extends State<ProduitForm> {
                       else
                         _section('Stock de départ', [
                           Text('Combien en avez-vous déjà dans ${widget.boutique.nom} ?',
-                              style: const TextStyle(color: NacreaColors.gris)),
+                              style: TextStyle(color: NacreaColors.gris)),
                           const SizedBox(height: 16),
                           _deuxColonnes(
                             TextFormField(
