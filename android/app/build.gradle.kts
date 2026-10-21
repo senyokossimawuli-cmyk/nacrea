@@ -52,6 +52,10 @@ android {
 
     buildTypes {
         release {
+            // Pas de réduction du code : certains modules (préférences, fichiers) appellent
+            // du code Java que la réduction supprimait, et l'appli restait bloquée sur le logo.
+            isMinifyEnabled = false
+            isShrinkResources = false
             signingConfig = if (keystorePropertiesFile.exists()) {
                 signingConfigs.getByName("release")
             } else {

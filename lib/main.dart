@@ -15,14 +15,61 @@ Future<void> main() async {
     runApp(const ApercuApp());
     return;
   }
-  await Affichage.charger();
+  try {
+    await Affichage.charger();
+  } catch (_) {
+    // Préférence d'affichage illisible : on garde le mode clair.
+  }
   NacreaColors.sombre = Affichage.estSombre();
-  await Supabase.initialize(
-    url: NacreaConfig.supabaseUrl,
-    publishableKey: NacreaConfig.supabasePublishableKey,
-  );
-  await ouvrirBaseLocale();
+  try {
+    await Supabase.initialize(
+      url: NacreaConfig.supabaseUrl,
+      publishableKey: NacreaConfig.supabasePublishableKey,
+    );
+    await ouvrirBaseLocale();
+  } catch (e) {
+    // Plutôt qu'un écran bloqué sur le logo : on explique le problème.
+    runApp(_ErreurDemarrage(e));
+    return;
+  }
   runApp(const NacreaApp());
+}
+
+class _ErreurDemarrage extends StatelessWidget {
+  const _ErreurDemarrage(this.erreur);
+  final Object erreur;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: NacreaTheme.actuel(),
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.error_outline, size: 48, color: NacreaColors.erreur),
+                const SizedBox(height: 16),
+                Text('YDS Beauty n\'a pas pu démarrer', style: NacreaTheme.titre(size: 28), textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                const Text(
+                  'Fermez complètement l\'application puis rouvrez-la. Si le problème continue, '
+                  'envoyez une capture de cet écran au service YDS Beauty.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                SelectableText('$erreur',
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: NacreaColors.gris)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class NacreaApp extends StatefulWidget {
