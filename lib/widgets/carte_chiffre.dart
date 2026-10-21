@@ -36,8 +36,12 @@ class CarteChiffre extends StatelessWidget {
         children: [
           Text(titre, style: TextStyle(color: NacreaColors.gris, fontSize: 13)),
           const SizedBox(height: 4),
-          Text(valeur,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: couleur ?? NacreaColors.chocolat)),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(valeur,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: couleur ?? NacreaColors.chocolat)),
+          ),
           if (sousTitre != null) ...[
             const SizedBox(height: 2),
             Text(sousTitre!, style: TextStyle(color: NacreaColors.gris, fontSize: 12)),
