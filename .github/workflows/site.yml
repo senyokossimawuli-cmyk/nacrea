@@ -1,5 +1,6 @@
 # Fabrique la version web de YDS Beauty (pour les iPhone) et la publie sur GitHub Pages.
 # Adresse : https://senyokossimawuli-cmyk.github.io/<nom du dépôt>/
+# Administration (YDS Admin) : la même adresse + /admin/
 # À activer une seule fois : Settings > Pages > Source : « GitHub Actions ».
 name: Site web (iPhone)
 
@@ -10,6 +11,7 @@ on:
     paths:
       - 'lib/**'
       - 'web/**'
+      - 'admin/**'
       - 'pubspec.yaml'
       - 'pubspec.lock'
       - '.github/workflows/site.yml'
@@ -44,6 +46,9 @@ jobs:
             --build-name=1.0.${{ github.run_number }}
           # Nouvelle version du site : le téléphone remplace son ancienne copie.
           sed -i "s/yds-beauty-v1/yds-beauty-${{ github.run_number }}/" build/web/sw.js
+          # Page d'administration (séparée du logiciel) : même site, adresse /admin/
+          mkdir -p build/web/admin
+          cp admin/index.html build/web/admin/index.html
           ls -lh build/web
       - uses: actions/upload-pages-artifact@v3
         with:

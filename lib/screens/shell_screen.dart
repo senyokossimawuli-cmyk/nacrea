@@ -10,7 +10,6 @@ import '../widgets/etat_synchro.dart';
 import '../widgets/nacrea_logo.dart';
 import 'caisse/session_caisse.dart';
 import 'clientes/clientes_page.dart';
-import 'admin/admin_page.dart';
 import 'dashboard_page.dart';
 import 'depenses/depenses_page.dart';
 import 'rapports/rapports_page.dart';
@@ -21,11 +20,8 @@ import 'ventes/ventes_page.dart';
 /// Cadre principal après connexion : menu (à gauche sur PC, en bas sur téléphone),
 /// choix de la boutique et page affichée.
 class ShellScreen extends StatefulWidget {
-  const ShellScreen({super.key, required this.membre, this.estAdmin = false});
+  const ShellScreen({super.key, required this.membre});
   final Membre membre;
-
-  /// Administrateur de YDS Beauty : voit en plus l'espace admin.
-  final bool estAdmin;
 
   @override
   State<ShellScreen> createState() => _ShellScreenState();
@@ -54,14 +50,10 @@ class _ShellScreenState extends State<ShellScreen> {
   static const _equipe =
       (cle: 'equipe', icone: Icons.groups_outlined, iconeActive: Icons.groups, titre: 'Équipe');
 
-  static const _admin =
-      (cle: 'admin', icone: Icons.admin_panel_settings_outlined, iconeActive: Icons.admin_panel_settings, titre: 'Admin');
-
   late final _menu = [
     ...(widget.membre.estPatronne
         ? const [_accueil, _caisse, _produits, _ventes, _clientes, _depenses, _rapports, _equipe]
         : const [_caisse, _produits, _ventes, _clientes, _depenses]),
-    if (widget.estAdmin) _admin,
   ];
 
   /// Sur téléphone, au-delà de 5 entrées : les 4 premières + « Plus ».
@@ -141,7 +133,6 @@ class _ShellScreenState extends State<ShellScreen> {
       'rapports' => RapportsPage(
           key: ValueKey('rapports-${boutique.id}'), membre: m, boutique: boutique, boutiques: boutiques),
       'equipe' => EquipePage(membre: m, boutiques: boutiques),
-      'admin' => const AdminPage(),
       _ => DashboardPage(
           membre: m,
           boutiques: boutiques,

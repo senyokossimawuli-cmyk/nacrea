@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../data/admin_repo.dart';
 import '../data/base_locale.dart';
 import '../services/erreurs.dart';
 import '../services/membre.dart';
-import '../theme/mode_affichage.dart';
 import '../theme/nacrea_theme.dart';
 import '../widgets/deconnexion.dart';
 import '../widgets/nacrea_logo.dart';
-import 'admin/admin_page.dart';
 import 'licence_screen.dart';
 import 'shell_screen.dart';
 import 'login_screen.dart';
@@ -43,15 +40,12 @@ class _ChargementMembre extends StatefulWidget {
 }
 
 class _ChargementMembreState extends State<_ChargementMembre> {
-  late Future<(Membre?, bool)> _membre = _charger();
+  late Future<Membre?> _membre = _charger();
 
   /// Attend que les données de l'appareil soient prêtes, puis lit la personne connectée.
-  /// Vérifie aussi (en parallèle) si c'est l'administrateur de YDS Beauty.
-  static Future<(Membre?, bool)> _charger({bool attendreServeur = false}) async {
-    final admin = AdminRepo.estAdmin();
+  static Future<Membre?> _charger({bool attendreServeur = false}) async {
     await attendrePremiereSynchro();
-    final membre = await (attendreServeur ? Membre.attendre() : Membre.charger());
-    return (membre, await admin);
+    return attendreServeur ? Membre.attendre() : Membre.charger();
   }
 
   void _recharger() => setState(() => _membre = _charger());
@@ -102,44 +96,12 @@ class _ChargementMembreState extends State<_ChargementMembre> {
             ),
           );
         }
-        final (membre, admin) = snap.data!;
+        final membre = snap.data;
         if (membre != null) {
-          // L'administrateur de YDS Beauty n'a pas besoin de licence.
-          if (admin) return ShellScreen(membre: membre, estAdmin: true);
-          return LicenceGate(membre: membre, enfant: () => ShellScreen(membre: membre, estAdmin: false));
+          return LicenceGate(membre: membre, enfant: () => ShellScreen(membre: membre));
         }
-        if (admin) return const _AdminSeul();
         return OnboardingScreen(quandCree: _apresCreation);
       },
-    );
-  }
-}
-
-/// L'administrateur sans boutique à lui : il arrive directement sur l'espace admin.
-class _AdminSeul extends StatelessWidget {
-  const _AdminSeul();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 64,
-        title: const NacreaLogo(taille: 22, avecSlogan: false),
-        actions: [
-          const BoutonModeAffichage(),
-          IconButton(
-            tooltip: 'Se déconnecter',
-            icon: const Icon(Icons.logout),
-            onPressed: () => deconnexion(context),
-          ),
-          const SizedBox(width: 8),
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: NacreaColors.bordure),
-        ),
-      ),
-      body: const AdminPage(),
     );
   }
 }
