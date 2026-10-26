@@ -55,7 +55,7 @@ class _ChargementMembreState extends State<_ChargementMembre> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<(Membre?, bool)>(
+    return FutureBuilder<Membre?>(
       future: _membre,
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
