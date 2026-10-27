@@ -1,5 +1,5 @@
 # Fabrique la version web de YDS Beauty (pour les iPhone) et la publie sur GitHub Pages.
-# Adresse : https://senyokossimawuli-cmyk.github.io/<nom du dépôt>/
+# Adresse : https://ydstechnolgy.github.io/<nom du dépôt>/
 # Administration (YDS Admin) : la même adresse + /admin/
 # À activer une seule fois : Settings > Pages > Source : « GitHub Actions ».
 name: Site web (iPhone)
