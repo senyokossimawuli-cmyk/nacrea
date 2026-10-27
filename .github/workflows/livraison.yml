@@ -3,8 +3,8 @@
 #   - yds-beauty-ancien-telephone.apk : Android, pour les téléphones anciens (32 bits)
 #   - YDS-Beauty-Installation.exe     : programme d'installation Windows
 # Liens toujours à jour :
-#   https://github.com/ydstechnolgy/yds-beauty/releases/latest/download/yds-beauty.apk
-#   https://github.com/ydstechnolgy/yds-beauty/releases/latest/download/YDS-Beauty-Installation.exe
+#   https://github.com/ydstechnolgy/YDS-BEAUTY/releases/latest/download/yds-beauty.apk
+#   https://github.com/ydstechnolgy/YDS-BEAUTY/releases/latest/download/YDS-Beauty-Installation.exe
 name: Livraison (Android + Windows)
 
 on:
